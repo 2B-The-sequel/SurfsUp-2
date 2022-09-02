@@ -9,5 +9,7 @@ namespace SurfsUp.Data
             : base(options)
         {
         }
+
+        public DbSet<Models.Board> Board { get; set; } = default!;
     }
 }
