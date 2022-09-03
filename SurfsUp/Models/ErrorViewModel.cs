@@ -1,3 +1,4 @@
+using SurfsUp.Data;
 namespace SurfsUp.Models
 {
     public class ErrorViewModel
