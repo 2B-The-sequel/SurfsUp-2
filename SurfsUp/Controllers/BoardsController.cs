@@ -29,16 +29,47 @@ namespace SurfsUp.Controllers
             var Board = from s in _context.Board
                            select s;
 
+            //Metode der tjekker både navn og type for match med searchString.
+            //Tjek om den første char samt resten af alle chars i searchstring kronologisk passer med Type i hvert board.
+            //Substring(searchString[0],searchString.Length)
+
+
             if (!String.IsNullOrEmpty(searchString))
             {
+                bool hasChanged = false;
                 BoardType Found = BoardType.Shortboard;
-                switch(searchString)
+                searchString.ToLower();
+                switch (searchString)
                 {
-                    case "SUP":
+                    case "sup":
                         Found = BoardType.SUP;
+                        break;
+                    case "shortboard":
+                        hasChanged = true;
+                        break;
+                    case "funboard":
+                        Found = BoardType.Funboard;
+                        break;
+                    case "fish":
+                        Found = BoardType.Fish;
+                        break;
+                    case "longboard":
+                        Found = BoardType.Longboard;
+                        break;
+                    default:
+                        break;
                 }
-
-                Board = Board.Where(s => s.Type == Found);
+                string l = Found.ToString();
+                if (hasChanged && Found == BoardType.Shortboard)
+                { Board = Board.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString)); }
+                else if (!hasChanged && Found == BoardType.Shortboard)
+                { 
+                    Board = Board.Where(s => s.Name.ToLower().Contains(searchString)); 
+                }
+                else
+                {
+                    Board = Board.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString));
+                }
             }
 
             switch (sortOrder)
