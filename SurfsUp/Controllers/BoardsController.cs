@@ -20,11 +20,49 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder,string searchString)
         {
-              return _context.Board != null ? 
-                          View(await _context.Board.ToListAsync()) :
-                          Problem("Entity set 'SurfsUpContext.Board'  is null.");
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
+            ViewData["CurrentFilter"] = searchString;
+            var Board = from s in _context.Board
+                           select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                BoardType Found = BoardType.Shortboard;
+                switch(searchString)
+                {
+                    case "SUP":
+                        Found = BoardType.SUP;
+                }
+
+                Board = Board.Where(s => s.Type == Found);
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    Board = Board.OrderByDescending(s => s.Name);
+                    break;
+                case "Price":
+                    Board = Board.OrderBy(s => s.Price);
+                    break;
+                case "price_desc":
+                    Board = Board.OrderByDescending(s => s.Price);
+                    break;
+                case "Type":
+                    Board = Board.OrderBy(s => s.Type);
+                    break;
+                case "type_desc":
+                    Board = Board.OrderByDescending(s => s.Type);
+                    break;
+                default:
+                    Board = Board.OrderBy(s => s.Name);
+                    break;
+            }
+            return View(await Board.AsNoTracking().ToListAsync());
         }
 
         // GET: Boards/Details/5
