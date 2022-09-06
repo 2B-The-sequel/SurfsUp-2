@@ -97,7 +97,7 @@ namespace SurfsUp.Controllers
                     Board = Board.OrderBy(s => s.Name);
                     break;
             }
-            int pageSize = 3;
+            int pageSize = 5;
             return View(await PaginatedList<Board>.CreateAsync(Board
                             .Include(e => e.BoardEquipments)
                             .ThenInclude(be => be.Equipment).AsNoTracking(), pageNumber ?? 1, pageSize));
