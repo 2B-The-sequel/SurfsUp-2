@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
@@ -23,7 +18,7 @@ namespace SurfsUp.Controllers
         public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["CurrentFilter"] = searchString;
@@ -43,7 +38,7 @@ namespace SurfsUp.Controllers
                 searchString = currentFilter;
             }
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 bool hasChanged = false;
                 BoardType Found = BoardType.Shortboard;
@@ -103,7 +98,9 @@ namespace SurfsUp.Controllers
                     break;
             }
             int pageSize = 3;
-            return View(await PaginatedList<Board>.CreateAsync(Board.AsNoTracking(), pageNumber ?? 1, pageSize));
+            return View(await PaginatedList<Board>.CreateAsync(Board
+                            .Include(e => e.BoardEquipments)
+                            .ThenInclude(be => be.Equipment).AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Boards/Details/5
