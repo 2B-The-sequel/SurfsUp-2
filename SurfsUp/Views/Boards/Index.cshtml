@@ -76,9 +76,13 @@
                 }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.BoardId">Ændr</a> |
-                <a asp-action="Details" asp-route-id="@item.BoardId">Detaljer</a> |
-                <a asp-action="Delete" asp-route-id="@item.BoardId">Slet</a>
+                <a asp-action="Details" asp-route-id="@item.BoardId">Detaljer</a> 
+                @if (User.IsInRole("Adminstrator"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.BoardId">Ændr</a>
+                    <a asp-action="Delete" asp-route-id="@item.BoardId">Slet</a>
+                }
+                
             </td>
         </tr>
 }

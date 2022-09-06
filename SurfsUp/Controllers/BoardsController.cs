@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 
+
 namespace SurfsUp.Controllers
 {
+    
     public class BoardsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -31,8 +34,10 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Details/5
+        
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null || _context.Board == null)
             {
                 return NotFound();
@@ -49,6 +54,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Create
+        [Authorize(Roles = "Adminstrator")]
         public IActionResult Create()
         {
             return View();
@@ -71,6 +77,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Edit/5
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Board == null)
