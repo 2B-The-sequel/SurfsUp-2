@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -115,7 +115,7 @@ namespace SurfsUp.Controllers
             }
 
             var board = await _context.Board
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.BoardId == id);
             if (board == null)
             {
                 return NotFound();
@@ -167,9 +167,9 @@ namespace SurfsUp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
         {
-            if (id != board.Id)
+            if (id != board.BoardId)
             {
                 return NotFound();
             }
@@ -183,7 +183,7 @@ namespace SurfsUp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BoardExists(board.Id))
+                    if (!BoardExists(board.BoardId))
                     {
                         return NotFound();
                     }
@@ -206,7 +206,7 @@ namespace SurfsUp.Controllers
             }
 
             var board = await _context.Board
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.BoardId == id);
             if (board == null)
             {
                 return NotFound();
@@ -236,7 +236,7 @@ namespace SurfsUp.Controllers
 
         private bool BoardExists(int id)
         {
-          return (_context.Board?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
         }
     }
 }

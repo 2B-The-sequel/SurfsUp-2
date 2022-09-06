@@ -1,10 +1,10 @@
-﻿@model PaginatedList<SurfsUp.Models.Board>
+@model PaginatedList<SurfsUp.Models.Board>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Boards";
 }
 
-<h1>Index</h1>
+<h1>Boards</h1>
 
 <p>
     <a asp-action="Create">Tilføj ny</a>
@@ -54,6 +54,10 @@
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]"asp-route-currentFilter="@ViewData["CurrentFilter"]">Type</a>
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Equipment)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -84,9 +88,15 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Ændr</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Slet</a>
+                @foreach (Equipment eq in item.Equipment)
+                {
+                    <p>@eq.Name</p>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.BoardId">Ændr</a> |
+                <a asp-action="Details" asp-route-id="@item.BoardId">Detaljer</a> |
+                <a asp-action="Delete" asp-route-id="@item.BoardId">Slet</a>
             </td>
         </tr>
 }

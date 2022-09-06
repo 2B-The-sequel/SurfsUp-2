@@ -8,11 +8,11 @@ namespace SurfsUp.Models
     public class Board
     {
         [Key]
-        public int Id { get; set; }
+        public int BoardId { get; set; }
         [DisplayName("Navn")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
         [DisplayName("Billede")]
-        public string? Image { get; set; }
+        public string Image { get; set; }
 
         [DisplayName("Længde")]
         public float Length { get; set; }
@@ -27,7 +27,11 @@ namespace SurfsUp.Models
         [DataType(DataType.Currency)]
         [DisplayName("Pris")]
         public float Price { get; set; }
-        public List<Equipment>? Equipment { get; set; }
+
+        [DisplayName("Udstyr")]
+        public ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
+        public List<BoardEquipment> BoardEquipments { get; set; } = new List<BoardEquipment>();
+
         [JsonConverter(typeof(StringEnumConverter))]
         [DisplayName("Type")]
         public BoardType Type { get; set; }
