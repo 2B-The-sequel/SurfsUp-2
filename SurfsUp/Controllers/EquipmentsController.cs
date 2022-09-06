@@ -10,90 +10,87 @@ using SurfsUp.Models;
 
 namespace SurfsUp.Controllers
 {
-    public class BoardsController : Controller
+    public class EquipmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public BoardsController(ApplicationDbContext context)
+        public EquipmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Boards
+        // GET: Equipments
         public async Task<IActionResult> Index()
         {
-              return _context.Board != null ? 
-                          View(await _context.Board
-                            .Include(e => e.BoardEquipments)
-                            .ThenInclude(be => be.Equipment)
-                            .ToListAsync()) :
-                          Problem("Entity set 'SurfsUpContext.Board'  is null.");
+              return _context.Equipment != null ? 
+                          View(await _context.Equipment.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Equipment'  is null.");
         }
 
-        // GET: Boards/Details/5
+        // GET: Equipments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Board == null)
+            if (id == null || _context.Equipment == null)
             {
                 return NotFound();
             }
 
-            var board = await _context.Board
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-            if (board == null)
+            var equipment = await _context.Equipment
+                .FirstOrDefaultAsync(m => m.EquipmentId == id);
+            if (equipment == null)
             {
                 return NotFound();
             }
 
-            return View(board);
+            return View(equipment);
         }
 
-        // GET: Boards/Create
+        // GET: Equipments/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Boards/Create
+        // POST: Equipments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Equipment equipment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(board);
+                _context.Add(equipment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(board);
+            return View(equipment);
         }
 
-        // GET: Boards/Edit/5
+        // GET: Equipments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Board == null)
+            if (id == null || _context.Equipment == null)
             {
                 return NotFound();
             }
 
-            var board = await _context.Board.FindAsync(id);
-            if (board == null)
+            var equipment = await _context.Equipment.FindAsync(id);
+            if (equipment == null)
             {
                 return NotFound();
             }
-            return View(board);
+            return View(equipment);
         }
 
-        // POST: Boards/Edit/5
+        // POST: Equipments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Edit(int id, [Bind("EquipmentId,Name")] Equipment equipment)
         {
-            if (id != board.BoardId)
+            if (id != equipment.EquipmentId)
             {
                 return NotFound();
             }
@@ -102,12 +99,12 @@ namespace SurfsUp.Controllers
             {
                 try
                 {
-                    _context.Update(board);
+                    _context.Update(equipment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BoardExists(board.BoardId))
+                    if (!EquipmentExists(equipment.EquipmentId))
                     {
                         return NotFound();
                     }
@@ -118,49 +115,49 @@ namespace SurfsUp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(board);
+            return View(equipment);
         }
 
-        // GET: Boards/Delete/5
+        // GET: Equipments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Board == null)
+            if (id == null || _context.Equipment == null)
             {
                 return NotFound();
             }
 
-            var board = await _context.Board
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-            if (board == null)
+            var equipment = await _context.Equipment
+                .FirstOrDefaultAsync(m => m.EquipmentId == id);
+            if (equipment == null)
             {
                 return NotFound();
             }
 
-            return View(board);
+            return View(equipment);
         }
 
-        // POST: Boards/Delete/5
+        // POST: Equipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Board == null)
+            if (_context.Equipment == null)
             {
-                return Problem("Entity set 'SurfsUpContext.Board'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Equipment'  is null.");
             }
-            var board = await _context.Board.FindAsync(id);
-            if (board != null)
+            var equipment = await _context.Equipment.FindAsync(id);
+            if (equipment != null)
             {
-                _context.Board.Remove(board);
+                _context.Equipment.Remove(equipment);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BoardExists(int id)
+        private bool EquipmentExists(int id)
         {
-          return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+          return (_context.Equipment?.Any(e => e.EquipmentId == id)).GetValueOrDefault();
         }
     }
 }

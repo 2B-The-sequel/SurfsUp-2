@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfsUp.Data;
 
@@ -11,16 +12,32 @@ using SurfsUp.Data;
 namespace SurfsUp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220905183101_Equipment")]
+    partial class Equipment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("BoardEquipment", b =>
+                {
+                    b.Property<int>("BoardsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BoardsId", "EquipmentId");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.ToTable("BoardEquipment");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -226,11 +243,11 @@ namespace SurfsUp.Data.Migrations
 
             modelBuilder.Entity("SurfsUp.Models.Board", b =>
                 {
-                    b.Property<int>("BoardId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BoardId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
@@ -256,40 +273,40 @@ namespace SurfsUp.Data.Migrations
                     b.Property<float>("Width")
                         .HasColumnType("real");
 
-                    b.HasKey("BoardId");
+                    b.HasKey("Id");
 
                     b.ToTable("Board");
                 });
 
-            modelBuilder.Entity("SurfsUp.Models.BoardEquipment", b =>
-                {
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BoardId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EquipmentId", "BoardId");
-
-                    b.HasIndex("BoardId");
-
-                    b.ToTable("BoardEquipment");
-                });
-
             modelBuilder.Entity("SurfsUp.Models.Equipment", b =>
                 {
-                    b.Property<int>("EquipmentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EquipmentId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("EquipmentId");
+                    b.HasKey("Id");
 
                     b.ToTable("Equipment");
+                });
+
+            modelBuilder.Entity("BoardEquipment", b =>
+                {
+                    b.HasOne("SurfsUp.Models.Board", null)
+                        .WithMany()
+                        .HasForeignKey("BoardsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SurfsUp.Models.Equipment", null)
+                        .WithMany()
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -341,35 +358,6 @@ namespace SurfsUp.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.BoardEquipment", b =>
-                {
-                    b.HasOne("SurfsUp.Models.Board", "Board")
-                        .WithMany("BoardEquipments")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SurfsUp.Models.Equipment", "Equipment")
-                        .WithMany("BoardEquipments")
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Board");
-
-                    b.Navigation("Equipment");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Board", b =>
-                {
-                    b.Navigation("BoardEquipments");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Equipment", b =>
-                {
-                    b.Navigation("BoardEquipments");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<SurfsUp.Models.Equipment>
+
+@{
+    ViewData["Title"] = "Udstyr";
+}
+
+<h1>Udstyr</h1>
+
+<p>
+    <a asp-action="Create">Tilføj ny</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.EquipmentId">Ændr</a> |
+                <a asp-action="Details" asp-route-id="@item.EquipmentId">Detaljer</a> |
+                <a asp-action="Delete" asp-route-id="@item.EquipmentId">Slet</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
