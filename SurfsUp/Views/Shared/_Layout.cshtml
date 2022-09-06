@@ -3,16 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SurfsUp</title>
+    <title>@ViewData["Title"] - Surf's Up</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SurfsUp.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
+<body style="background-repeat: no-repeat; background-size: cover; background-attachment: fixed; background-image: url('https://scontent-cph2-1.xx.fbcdn.net/v/t1.15752-9/298780808_491104146187803_8952875796751174044_n.png?_nc_cat=101&ccb=1-7&_nc_sid=ae9488&_nc_ohc=Pe2dS4iNidkAX-LMXa0&_nc_ht=scontent-cph2-1.xx&oh=03_AVLP7y6XCCe09CngWX_-EmOYPRv4kDWNB9o9hwE40hNGgA&oe=632C5794')">
+    <header style="background-color: #FFFDE0">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SurfsUp</a>
+            <div class="container-fluid" style="background-color: #FFFDE0">
+                <a class="navbar-brand" asp-area="" asp-controller="Boards" asp-action="Index">
+                    <image width="100px" src="https://scontent-cph2-1.xx.fbcdn.net/v/t1.15752-9/297505200_383601303852468_1427977448894262225_n.png?_nc_cat=102&ccb=1-7&_nc_sid=ae9488&_nc_ohc=6gudxJH6lIUAX9hcVNz&_nc_oc=AQkOMnsGAipnjkL-I8-GOdDI0quW1aGmDGFA-2SppCeaye2E5MEqOOjrA_rXbT6Scik&_nc_ht=scontent-cph2-1.xx&oh=03_AVLOnoNaznZMKJM7HKdwho9ZQx3j2lotaotqNZQ5vJqiyA&oe=632E9ECE"></image>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,6 +23,12 @@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Boards" asp-action="Index">Boards</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Equipments" asp-action="Index">Equipment</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

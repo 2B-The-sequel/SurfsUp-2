@@ -1,6 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SurfsUp.Data;
+using SurfsUp.Models;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +22,13 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -28,6 +41,15 @@ else
     app.UseHsts();
 }
 
+var defaultCulture = new CultureInfo("de-DE");
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(defaultCulture),
+    SupportedCultures = new List<CultureInfo> { defaultCulture },
+    SupportedUICultures = new List<CultureInfo> { defaultCulture }
+};
+app.UseRequestLocalization(localizationOptions);
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -38,7 +60,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Boards}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
