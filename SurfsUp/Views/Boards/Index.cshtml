@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SurfsUp.Models.Board>
+@model PaginatedList<SurfsUp.Models.Board>
 
 @{
     ViewData["Title"] = "Boards";
@@ -9,32 +9,50 @@
 <p>
     <a asp-action="Create">Tilføj ny</a>
 </p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name & Type: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
+            <th> 
+                Image
+            </th>
+          
             <th>
-                @Html.DisplayNameFor(model => model.Image)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Last Name</a>
+            </th>
+               @*@Html.DisplayNameFor(model => model.Name)*@
+            
+            <th>
+               @* @Html.DisplayNameFor(model => model.Length)*@
+               Length
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @*@Html.DisplayNameFor(model => model.Width)*@
+                Width
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Length)
+                @*@Html.DisplayNameFor(model => model.Thickness)*@
+                Thickness
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Width)
+                @*@Html.DisplayNameFor(model => model.Volume)*@
+                Volume
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Thickness)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Price</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Volume)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]"asp-route-currentFilter="@ViewData["CurrentFilter"]">Type</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Equipment)
@@ -84,3 +102,25 @@
 }
     </tbody>
 </table>
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+<label style="margin-left:3px">@Model.PageNumInfo</label>

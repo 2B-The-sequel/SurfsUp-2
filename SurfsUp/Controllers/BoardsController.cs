@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,14 +20,90 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber)
         {
-              return _context.Board != null ? 
-                          View(await _context.Board
-                            .Include(e => e.BoardEquipments)
-                            .ThenInclude(be => be.Equipment)
-                            .ToListAsync()) :
-                          Problem("Entity set 'SurfsUpContext.Board'  is null.");
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
+            ViewData["CurrentFilter"] = searchString;
+            var Board = from s in _context.Board
+                           select s;
+
+            //Metode der tjekker både navn og type for match med searchString.
+            //Tjek om den første char samt resten af alle chars i searchstring kronologisk passer med Type i hvert board.
+            //Substring(searchString[0],searchString.Length)
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                bool hasChanged = false;
+                BoardType Found = BoardType.Shortboard;
+                searchString = searchString.ToLower();
+                switch (searchString)
+                {
+                    case "sup":
+                        Found = BoardType.SUP;
+                        break;
+                    case "shortboard":
+                        hasChanged = true;
+                        break;
+                    case "funboard":
+                        Found = BoardType.Funboard;
+                        break;
+                    case "fish":
+                        Found = BoardType.Fish;
+                        break;
+                    case "longboard":
+                        Found = BoardType.Longboard;
+                        break;
+                    default:
+                        break;
+                }
+                string l = Found.ToString();
+                if (hasChanged && Found == BoardType.Shortboard)
+                { Board = Board.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString)); }
+                else if (!hasChanged && Found == BoardType.Shortboard)
+                { 
+                    Board = Board.Where(s => s.Name.ToLower().Contains(searchString)); 
+                }
+                else
+                {
+                    Board = Board.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString));
+                }
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    Board = Board.OrderByDescending(s => s.Name);
+                    break;
+                case "Price":
+                    Board = Board.OrderBy(s => s.Price);
+                    break;
+                case "price_desc":
+                    Board = Board.OrderByDescending(s => s.Price);
+                    break;
+                case "Type":
+                    Board = Board.OrderBy(s => s.Type);
+                    break;
+                case "type_desc":
+                    Board = Board.OrderByDescending(s => s.Type);
+                    break;
+                default:
+                    Board = Board.OrderBy(s => s.Name);
+                    break;
+            }
+            int pageSize = 3;
+            return View(await PaginatedList<Board>.CreateAsync(Board.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Boards/Details/5
