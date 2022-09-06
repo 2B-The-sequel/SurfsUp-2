@@ -20,8 +20,9 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards
-        public async Task<IActionResult> Index(string sortOrder,string searchString)
+        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber)
         {
+            ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
@@ -33,12 +34,20 @@ namespace SurfsUp.Controllers
             //Tjek om den første char samt resten af alle chars i searchstring kronologisk passer med Type i hvert board.
             //Substring(searchString[0],searchString.Length)
 
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 bool hasChanged = false;
                 BoardType Found = BoardType.Shortboard;
-                searchString.ToLower();
+                searchString = searchString.ToLower();
                 switch (searchString)
                 {
                     case "sup":
@@ -93,7 +102,8 @@ namespace SurfsUp.Controllers
                     Board = Board.OrderBy(s => s.Name);
                     break;
             }
-            return View(await Board.AsNoTracking().ToListAsync());
+            int pageSize = 3;
+            return View(await PaginatedList<Board>.CreateAsync(Board.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Boards/Details/5
