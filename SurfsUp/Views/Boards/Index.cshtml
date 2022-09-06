@@ -93,6 +93,7 @@
     </tbody>
 </table>
 
+
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
@@ -112,3 +113,4 @@
    class="btn btn-default @nextDisabled">
     Next
 </a>
+<label style="margin-left:3px">@Model.PageNumInfo</label>
