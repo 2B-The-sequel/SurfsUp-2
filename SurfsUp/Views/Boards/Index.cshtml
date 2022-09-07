@@ -77,10 +77,14 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.BoardId">Detaljer</a> 
-                @if (User.IsInRole("Adminstrator"))
+                @if (User.IsInRole("Adminstrators"))
                 {
+                    <p>|</p>
                     <a asp-action="Edit" asp-route-id="@item.BoardId">Ændr</a>
+                    <p>|</p>
                     <a asp-action="Delete" asp-route-id="@item.BoardId">Slet</a>
+                }else{
+                    <p>You suck, no admin! HAH! Gachi</p>
                 }
                 
             </td>
