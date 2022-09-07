@@ -32,9 +32,10 @@
                 
                 @if (User.IsInRole("Adminstrators"))
                 { 
-                    <a asp-action="Details" asp-route-id="@item.EquipmentId">Detaljer</a> <p>|</p>
+                    <a asp-action="Delete" asp-route-id="@item.EquipmentId">Slet</a>
+                    <p>|</p>
                 }
-                <a asp-action="Delete" asp-route-id="@item.EquipmentId">Slet</a>
+                <a asp-action="Details" asp-route-id="@item.EquipmentId">Detaljer</a>
             </td>
         </tr>
 }
