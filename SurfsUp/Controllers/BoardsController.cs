@@ -55,7 +55,7 @@ namespace SurfsUp.Controllers
 
         // GET: Boards/Create
         // Husk og ændre ting i databasen så rollen er Admin
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
             return View();
@@ -67,7 +67,7 @@ namespace SurfsUp.Controllers
         // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
         {
             if (ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace SurfsUp.Controllers
 
         // GET: Boards/Edit/5
         // Husk og ændre ting i databasen så rollen er Admin
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Board == null)
@@ -103,7 +103,7 @@ namespace SurfsUp.Controllers
         // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
         {
             if (id != board.BoardId)
@@ -135,7 +135,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Board == null)
@@ -156,7 +156,7 @@ namespace SurfsUp.Controllers
         // POST: Boards/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Board == null)

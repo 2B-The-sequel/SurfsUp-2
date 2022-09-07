@@ -76,16 +76,17 @@
                 }
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.BoardId">Detaljer</a> 
                 @if (User.IsInRole("Adminstrators"))
                 {
-                    <p>|</p>
-                    <a asp-action="Edit" asp-route-id="@item.BoardId">Ændr</a>
-                    <p>|</p>
-                    <a asp-action="Delete" asp-route-id="@item.BoardId">Slet</a>
-                }else{
-                    <p>You suck, no admin! HAH! Gachi</p>
+                    <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.BoardId">Ændr </a>
                 }
+                
+                @if (User.IsInRole("Adminstrators"))
+                { 
+                    <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.BoardId">Slet </a>
+                    
+                }
+                <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.BoardId">Detaljer</a>
                 
             </td>
         </tr>

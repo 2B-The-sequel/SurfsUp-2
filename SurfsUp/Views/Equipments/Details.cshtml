@@ -21,7 +21,7 @@
 <div>
     @if (User.IsInRole("Adminstrators"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.EquipmentId">Edit</a> <p>|</p>
+        <a asp-action="Edit" asp-route-id="@Model?.EquipmentId" class="btn btn-outline-success">Edit</a> <p>|</p>
     }
 
     
