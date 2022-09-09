@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Equipments/Create
+
         public IActionResult Create()
         {
             return View();
@@ -54,8 +56,11 @@ namespace SurfsUp.Controllers
         // POST: Equipments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Husk og ændre ting i databasen så rollen er Admin
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create([Bind("Id,Name")] Equipment equipment)
         {
             if (ModelState.IsValid)
@@ -68,6 +73,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Equipments/Edit/5
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Equipment == null)
@@ -88,6 +94,7 @@ namespace SurfsUp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, [Bind("EquipmentId,Name")] Equipment equipment)
         {
             if (id != equipment.EquipmentId)
@@ -119,6 +126,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Equipments/Delete/5
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Equipment == null)
@@ -139,6 +147,7 @@ namespace SurfsUp.Controllers
         // POST: Equipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Equipment == null)

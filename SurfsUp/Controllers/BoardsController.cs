@@ -1,10 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 
+
 namespace SurfsUp.Controllers
 {
+    
     public class BoardsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -104,8 +111,10 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Details/5
+        
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null || _context.Board == null)
             {
                 return NotFound();
@@ -122,6 +131,8 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Create
+        // Husk og ændre ting i databasen så rollen er Admin
+        [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
             return View();
@@ -130,8 +141,10 @@ namespace SurfsUp.Controllers
         // POST: Boards/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
         {
             if (ModelState.IsValid)
@@ -144,6 +157,8 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Edit/5
+        // Husk og ændre ting i databasen så rollen er Admin
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Board == null)
@@ -162,8 +177,10 @@ namespace SurfsUp.Controllers
         // POST: Boards/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
         {
             if (id != board.BoardId)
@@ -195,6 +212,7 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Delete/5
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Board == null)
@@ -215,6 +233,7 @@ namespace SurfsUp.Controllers
         // POST: Boards/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Board == null)

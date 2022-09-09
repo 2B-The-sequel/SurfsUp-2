@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SurfsUp.Models;
 using System.Diagnostics;
 
@@ -17,7 +18,7 @@ namespace SurfsUp.Controllers
         {
             return View();
         }
-
+        
         public IActionResult Privacy()
         {
             return View();
