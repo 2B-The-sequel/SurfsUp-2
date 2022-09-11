@@ -8,5 +8,6 @@ namespace SurfsUp.Models
         public int UsersId { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+        public ICollection<Rental> Rentals { get; set; }
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
+using Microsoft.AspNetCore.Identity;
+
 
 
 namespace SurfsUp.Controllers
@@ -253,6 +255,34 @@ namespace SurfsUp.Controllers
         private bool BoardExists(int id)
         {
           return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> CreateRental(int id)
+        {
+            if (id == null || _context.Board == null)
+            {
+                return NotFound();
+            }
+
+            var board = await _context.Board
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+            if (board == null)
+            {
+                return NotFound();
+            }
+
+            return View(board);
+        }
+
+        public async Task<IActionResult> ConfirmRental([Bind("StartRental, EndRental")] Rental rental)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(rental);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(nameof(Index));
         }
     }
 }
