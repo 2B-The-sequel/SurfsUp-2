@@ -89,9 +89,17 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                @foreach (Equipment eq in item.Equipment)
+                @foreach (BoardEquipment eq in item.BoardEquipments)
                 {
-                    <p>@eq.Name</p>
+                        if (item.BoardEquipments.IndexOf(eq) == item.BoardEquipments.Count-1)
+                        {
+                            <a>@eq.Equipment.Name</a>
+                        }
+                        else
+                        {
+                            <a>@eq.Equipment.Name,</a>
+                        }
+                 
                 }
             </td>
             <td>

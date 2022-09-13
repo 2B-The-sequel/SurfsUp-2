@@ -53,6 +53,16 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Equipment" class="control-label">Check Multiple</label>
+                @for(int i=0; i<ViewBag.EquipmentList.Count;i++)
+                {
+                    @Html.CheckBoxFor(m => ViewBag.EquipmentList[i].IsCheck) 
+
+                }
+                <select asp-for="Type" asp-items="Html.ViewBag.EquipmentList.Name" class="form-control" multiple></select>
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Tilføj" class="btn btn-primary" />
             </div>
         </form>
