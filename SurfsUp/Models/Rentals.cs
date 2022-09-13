@@ -11,27 +11,27 @@ namespace SurfsUp.Models
 
         [Required]
         [ForeignKey("UsersId")]
-        public int UsersId { get; set; }
+        public string UsersId { get; set; }
         [Required]
         [ForeignKey("BoardId")]
         public int BoardId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Startdato")]
         public DateTime StartRental { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Slutdato")]
         public DateTime EndRental { get; set; }
       
 
-        public Users User { get; set; }
+        public Users? User { get; set; }
         
-        public Board Board { get; set; }
+        public Board? Board { get; set; }
 
     }
 }

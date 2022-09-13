@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 using Microsoft.AspNetCore.Identity;
-
-
+using System.Security.Claims;
+using System.Reflection;
 
 namespace SurfsUp.Controllers
 {
@@ -26,6 +26,9 @@ namespace SurfsUp.Controllers
         // GET: Boards
         public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber)
         {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+            ViewData["UserId"] = claims.Value;
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
@@ -274,15 +277,24 @@ namespace SurfsUp.Controllers
             return View(board);
         }
 
-        public async Task<IActionResult> ConfirmRental([Bind("StartRental, EndRental")] Rental rental)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmRental( Rental rental, int id, DateTime start, DateTime end)
         {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+            rental.UsersId = claims.Value;
+            rental.BoardId = id;
+            rental.StartRental = start;
+            rental.EndRental = end;
+
             if (ModelState.IsValid)
             {
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
     }
 }
