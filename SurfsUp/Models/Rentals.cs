@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace SurfsUp.Models
 {
@@ -29,7 +30,7 @@ namespace SurfsUp.Models
         public DateTime EndRental { get; set; }
       
 
-        public Users? User { get; set; }
+        public IdentityUser User { get; set; }
         
         public Board? Board { get; set; }
 

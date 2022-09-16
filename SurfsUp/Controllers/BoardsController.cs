@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Reflection;
 
+
 namespace SurfsUp.Controllers
 {
     
@@ -28,7 +29,7 @@ namespace SurfsUp.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
-            ViewData["UserId"] = claims.Value;
+            
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
@@ -279,20 +280,30 @@ namespace SurfsUp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmRental( Rental rental, int id, DateTime start, DateTime end)
+        public async Task<IActionResult> ConfirmRental( Rental rental, int id)
         {
+            
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
             rental.UsersId = claims.Value;
             rental.BoardId = id;
-            rental.StartRental = start;
-            rental.EndRental = end;
+            ViewData["SelectedBoardId"] = rental.StartRental;
+            rental.Board = await _context.Board
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+            rental.User = await _context.Users
+                .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
 
             if (ModelState.IsValid)
             {
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0)
+                .ToList();
             }
             return RedirectToAction(nameof(Index));
         }
