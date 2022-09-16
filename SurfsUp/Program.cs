@@ -4,6 +4,8 @@ using SurfsUp.Data;
 using Microsoft.AspNetCore.Localization;
 using SurfsUp.Models;
 using System.Globalization;
+using Microsoft.SqlServer.Management.Smo;
+using SurfsUp.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+var backup = new BackUpController();
 
 var app = builder.Build();
 
@@ -63,5 +66,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Boards}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+backup.BtnBackup_Click();
 
 app.Run();
