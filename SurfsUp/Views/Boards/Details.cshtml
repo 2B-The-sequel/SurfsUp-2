@@ -1,5 +1,9 @@
-﻿@model SurfsUp.Models.Board
-
+﻿@using Microsoft.AspNetCore.Identity
+@model SurfsUp.Models.Board
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
 @{
     ViewData["Title"] = "Detaljer";
 }
@@ -54,7 +58,11 @@
         </dd>
     </dl>
 </div>
-<div>
+<div>}
+    @if (hasExternalLogins)
+    { 
+    //Bruges til at checke om brugeren er logged ind så de kan se knappen
+    }
     @if (User.IsInRole("Adminstrators"))
     {
         <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@Model?.BoardId">Ændr</a>
