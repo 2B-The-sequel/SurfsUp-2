@@ -6,17 +6,16 @@
 
 <h1>Boards</h1>
 
-<p>
-    <a asp-action="Create">Tilføj ny</a>
-</p>
+@if (User.IsInRole("Adminstrators"))
+{
+    <a asp-action="Create" class="btn btn-outline-success">Tilføj ny</a>
+}
 
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
-        <p>
-            Find by name & Type: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-default" /> |
-            <a asp-action="Index">Back to Full List</a>
-        </p>
+        Find ved navn & type: <input type="text" style="display: inline-block; width: 200px; vertical-align: middle" class="form-control" name="SearchString" value="@ViewData["CurrentFilter"]" />
+        <input type="submit" value="Søg" style="vertical-align: middle" class="btn btn-outline-primary" />
+        <a asp-action="Index">Se fulde liste</a>
     </div>
 </form>
 
@@ -24,39 +23,37 @@
     <thead>
         <tr>
             <th> 
-                Image
-            </th>
-          
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
-            </th>
-               @*@Html.DisplayNameFor(model => model.Name)*@
-            
-            <th>
-               @* @Html.DisplayNameFor(model => model.Length)*@
-               Length
+                @Html.DisplayNameFor(model => model[0].Image)
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.Width)*@
-                Width
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]"> 
+                    @Html.DisplayNameFor(model => model[0].Name)
+                </a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.Thickness)*@
-                Thickness
+                @Html.DisplayNameFor(model => model[0].Length)
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.Volume)*@
-                Volume
+                @Html.DisplayNameFor(model => model[0].Width)
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Price</a>
+                @Html.DisplayNameFor(model => model[0].Thickness)
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]"asp-route-currentFilter="@ViewData["CurrentFilter"]">Type</a>
+                @Html.DisplayNameFor(model => model[0].Volume)
             </th>
             <th>
-                @*Html.DisplayNameFor(model => model.Equipment)*@
-                Udstyr
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                    @Html.DisplayNameFor(model => model[0].Price)
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]"asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                    @Html.DisplayNameFor(model => model[0].Type)
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Equipment)
             </th>
             <th></th>
         </tr>
@@ -105,22 +102,20 @@
             <td>
                 @if (User.IsInRole("Adminstrators"))
                 {
-                    <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.BoardId">Ændr </a>
+                    <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.BoardId">Ændr</a>
                 }
                 
                 @if (User.IsInRole("Adminstrators"))
                 { 
-                    <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.BoardId">Slet </a>
+                    <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.BoardId">Slet</a>
                     
                 }
                 <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.BoardId">Detaljer</a>
-                
             </td>
         </tr>
 }
     </tbody>
 </table>
-
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
@@ -131,14 +126,14 @@
    asp-route-sortOrder="@ViewData["CurrentSort"]"
    asp-route-pageNumber="@(Model.PageIndex - 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
+   class="btn btn-outline-primary @prevDisabled">
+   Tilbage
 </a>
+<label style="margin-left:5px; margin-right:5px; vertical-align: middle">@Model.PageNumInfo</label>
 <a asp-action="Index"
    asp-route-sortOrder="@ViewData["CurrentSort"]"
    asp-route-pageNumber="@(Model.PageIndex + 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @nextDisabled">
-    Next
+   class="btn btn-outline-primary @nextDisabled">
+   Næste
 </a>
-<label style="margin-left:3px">@Model.PageNumInfo</label>
