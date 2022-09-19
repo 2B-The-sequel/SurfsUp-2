@@ -10,7 +10,6 @@ namespace SurfsUp.Models
         [Key]
         public int RentalID { get; set; }
 
-        [Required]
         [ForeignKey("UsersId")]
         public string UsersId { get; set; }
         [Required]
@@ -32,7 +31,7 @@ namespace SurfsUp.Models
 
         public IdentityUser User { get; set; }
         
-        public Board? Board { get; set; }
+        public Board Board { get; set; }
 
     }
 }
