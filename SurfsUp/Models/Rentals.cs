@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
+using SurfsUp.Models.Validation;
 
 namespace SurfsUp.Models
 {
@@ -20,12 +21,14 @@ namespace SurfsUp.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Startdato")]
+        [ValidStartDate(ErrorMessage = "Start rentaldate must be greater than current date.") ]
         public DateTime StartRental { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Slutdato")]
+        [ValidEndDate(ErrorMessage = "Start rentaldate must be greater than current date.")]
         public DateTime EndRental { get; set; }
       
 
