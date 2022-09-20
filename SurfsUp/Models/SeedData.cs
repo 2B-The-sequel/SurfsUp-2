@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using SurfsUp.Data;
 
 namespace SurfsUp.Models

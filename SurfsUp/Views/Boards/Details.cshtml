@@ -55,10 +55,5 @@
     </dl>
 </div>
 <div>
-    @if (User.IsInRole("Adminstrators"))
-    {
-        <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@Model?.BoardId">Ændr</a>
-    }
-    |
-    <a asp-action="Index" class="btn btn-outline-danger">Tilbage til listen</a>
+    <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
 </div>

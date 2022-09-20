@@ -6,16 +6,14 @@
 
 <h1>Boards</h1>
 
-@if (User.IsInRole("Adminstrators"))
-{
-    <a asp-action="Create" class="btn btn-outline-success">Tilføj ny</a>
-}
-
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
-        Find ved navn & type: <input type="text" style="display: inline-block; width: 200px; vertical-align: middle" class="form-control" name="SearchString" value="@ViewData["CurrentFilter"]" />
+        Find ved navn & type  <input type="text" style="margin-left: 10px; display: inline-block; width: 200px; vertical-align: middle" class="form-control" name="SearchString" value="@ViewData["CurrentFilter"]" />
         <input type="submit" value="Søg" style="vertical-align: middle" class="btn btn-outline-primary" />
-        <a asp-action="Index">Se fulde liste</a>
+        @if (User.IsInRole("Adminstrators"))
+        {
+            <a asp-action="Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
+        }
     </div>
 </form>
 
@@ -99,7 +97,7 @@
                  
                 }
             </td>
-            <td>
+            <td style="text-align: right">
                 @if (User.IsInRole("Adminstrators"))
                 {
                     <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.BoardId">Ændr</a>

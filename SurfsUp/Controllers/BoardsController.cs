@@ -1,18 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 
-
 namespace SurfsUp.Controllers
 {
-    
     public class BoardsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -112,7 +105,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Details/5
-        
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -136,10 +128,20 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
-            var BoardEquipment = from s in _context.Equipment select s;
-            ViewBag.TotalEquipment = BoardEquipment.ToList().AsEnumerable();
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new();
+            bvm.Equipment = new List<EquipmentViewModel>();
 
-            return View();
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new();
+                evm.Id = equipment.EquipmentId;
+                evm.Name = equipment.Name;
+                evm.Checked = false;
+                bvm.Equipment.Add(evm);
+            }
+
+            return View(bvm);
         }
 
         // POST: Boards/Create
@@ -149,8 +151,28 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Create(BoardViewModel bvm)
         {
+            Board board = new();
+
+            board.Name = bvm.Name;
+            board.Image = bvm.Image;
+            board.Length = bvm.Length;
+            board.Width = bvm.Width;
+            board.Thickness = bvm.Thickness;
+            board.Price = bvm.Price;
+            board.Type = bvm.Type;
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(board);

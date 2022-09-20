@@ -1,4 +1,4 @@
-﻿@model SurfsUp.Models.Board
+﻿@model SurfsUp.Models.BoardViewModel
 
 @{
     ViewData["Title"] = "Tilføj";
@@ -51,26 +51,26 @@
                 <label asp-for="Type" class="control-label"></label>
                 <select asp-for="Type" asp-items="Html.GetEnumSelectList<BoardType>()" class="form-control"></select>
                 <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
+            </div><br />
             <div class="form-group">
-                <label asp-for="Equipment" class="control-label">Check Multiple</label>
-                @for(int i=0; i<ViewBag.EquipmentList.Count;i++)
+                <label asp-for="Equipment" class="control-label"></label><br/>
+                @for (int i = 0; i < Model.Equipment.Count; i++)
                 {
-                    //@Html.CheckBoxFor(m => ViewBag.EquipmentList[i].IsCheck) 
-
+                    <input class="form-check-input" type="checkbox" asp-for="@Model.Equipment[i].Checked"/>
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Equipment[i].Name" />
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Equipment[i].Id" />
+                    <label class="form-check-label" asp-for="@Model.Equipment[i].Checked">@Model.Equipment[i].Name</label><br/>
                 }
-                <select asp-for="Type" asp-items="Html.ViewBag.EquipmentList.Name" class="form-control" multiple></select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
+            </div><br />
             <div class="form-group">
-                <input type="submit" value="Tilføj" class="btn btn-primary" />
+                @if (User.IsInRole("Adminstrators"))
+                {
+                    <input type="submit" value="Tilføj" class="btn btn-primary" />
+                }
+                <a asp-action="Index" class="btn btn-danger">Tilbage til listen</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Tilbage til listen</a>
 </div>
 
 @section Scripts {
