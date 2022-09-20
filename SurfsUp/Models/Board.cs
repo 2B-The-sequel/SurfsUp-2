@@ -35,5 +35,7 @@ namespace SurfsUp.Models
         [JsonConverter(typeof(StringEnumConverter))]
         [DisplayName("Type")]
         public BoardType Type { get; set; }
+
+        public Rental Rental { get; set; }
     }
 }
