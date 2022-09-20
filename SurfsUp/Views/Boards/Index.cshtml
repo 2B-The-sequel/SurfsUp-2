@@ -86,15 +86,14 @@
             <td>
                 @foreach (BoardEquipment eq in item.BoardEquipments)
                 {
-                        if (item.BoardEquipments.IndexOf(eq) == item.BoardEquipments.Count-1)
-                        {
-                            <a>@eq.Equipment.Name</a>
-                        }
-                        else
-                        {
-                            <a>@eq.Equipment.Name,</a>
-                        }
-                 
+                    if (item.BoardEquipments.IndexOf(eq) == item.BoardEquipments.Count-1)
+                    {
+                        <a>@eq.Equipment.Name</a>
+                    }
+                    else
+                    {
+                        <a>@eq.Equipment.Name,</a>
+                    }
                 }
             </td>
             <td style="text-align: right">

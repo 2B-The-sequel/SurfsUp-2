@@ -1,4 +1,4 @@
-﻿@model SurfsUp.Models.Board
+﻿@model SurfsUp.Models.BoardViewModel
 
 @{
     ViewData["Title"] = "Ændr";
@@ -52,7 +52,17 @@
                 <label asp-for="Type" class="control-label"></label>
                 <select asp-for="Type" asp-items="Html.GetEnumSelectList<BoardType>()" class="form-control"></select>
                 <span asp-validation-for="Type" class="text-danger"></span>
-            </div><br/>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="Equipment" class="control-label"></label><br/>
+                @for (int i = 0; i < Model.Equipment.Count; i++)
+                {
+                    <input class="form-check-input" type="checkbox" asp-for="@Model.Equipment[i].Checked"/>
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Equipment[i].Name" />
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Equipment[i].Id" />
+                    <label class="form-check-label" asp-for="@Model.Equipment[i].Checked">@Model.Equipment[i].Name</label><br/>
+                }
+            </div><br />
             <div class="form-group">
                 @if (User.IsInRole("Adminstrators"))
                 {

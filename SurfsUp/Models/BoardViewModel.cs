@@ -7,6 +7,7 @@ namespace SurfsUp.Models
 {
     public class BoardViewModel
     {
+        public int BoardId { get; set; }
         [DisplayName("Navn")]
         public string Name { get; set; }
         [DisplayName("Billede")]

@@ -192,12 +192,49 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
-            var board = await _context.Board.FindAsync(id);
+            var boards = _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment);
+            Board board = null;
+            foreach (Board bd in boards)
+            {
+                if (bd.BoardId == id)
+                    board = bd;
+            }
+
             if (board == null)
             {
                 return NotFound();
             }
-            return View(board);
+
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new();
+            bvm.BoardId = board.BoardId;
+            bvm.Name = board.Name;
+            bvm.Image = board.Image;
+            bvm.Length = board.Length;
+            bvm.Width = board.Width;
+            bvm.Thickness = board.Thickness;
+            bvm.Price = board.Price;
+            bvm.Type = board.Type;
+            bvm.Equipment = new List<EquipmentViewModel>();
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new();
+                evm.Id = equipment.EquipmentId;
+                evm.Name = equipment.Name;
+                evm.Checked = false;
+                foreach (Equipment eq in board.Equipment)
+                {
+                    if (evm.Id == eq.EquipmentId)
+                    {
+                        evm.Checked = true;
+                    }
+                }
+                bvm.Equipment.Add(evm);
+            }
+            return View(bvm);
         }
 
         // POST: Boards/Edit/5
@@ -207,11 +244,32 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Edit(int id, BoardViewModel bvm)
         {
-            if (id != board.BoardId)
+            if (id != bvm.BoardId)
             {
                 return NotFound();
+            }
+
+            Board board = new();
+
+            board.BoardId = bvm.BoardId;
+            board.Name = bvm.Name;
+            board.Image = bvm.Image;
+            board.Length = bvm.Length;
+            board.Width = bvm.Width;
+            board.Thickness = bvm.Thickness;
+            board.Price = bvm.Price;
+            board.Type = bvm.Type;
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
             }
 
             if (ModelState.IsValid)
