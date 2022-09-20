@@ -18,7 +18,7 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="0" class="btn btn-primary" id="Create"/>
             </div>
         </form>
     </div>
@@ -28,6 +28,27 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<div class="toast">
+    <div class="toast-header">
+        <strong class="me-auto">Toast Header</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body">
+        <p>Some text inside the toast body</p>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+    <!-- pop up besked script. getElementById er hvilken knap den skakl reagere på, og div classen der hedder toast er den besked der kommer frem under knappen -->
+    <script>
+        document.getElementById("Create").onclick = function () {
+          var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+          var toastList = toastElList.map(function(toastEl) {
+            return new bootstrap.Toast(toastEl)
+          })
+          toastList.forEach(toast => toast.show())
+        }
+    </script>
