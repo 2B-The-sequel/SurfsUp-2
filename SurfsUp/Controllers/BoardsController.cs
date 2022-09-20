@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Reflection;
 
-
 namespace SurfsUp.Controllers
 {
-    
     public class BoardsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -117,7 +111,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Details/5
-        
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -141,7 +134,20 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
-            return View();
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new();
+            bvm.Equipment = new List<EquipmentViewModel>();
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new();
+                evm.Id = equipment.EquipmentId;
+                evm.Name = equipment.Name;
+                evm.Checked = false;
+                bvm.Equipment.Add(evm);
+            }
+
+            return View(bvm);
         }
 
         // POST: Boards/Create
@@ -151,8 +157,28 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Create(BoardViewModel bvm)
         {
+            Board board = new();
+
+            board.Name = bvm.Name;
+            board.Image = bvm.Image;
+            board.Length = bvm.Length;
+            board.Width = bvm.Width;
+            board.Thickness = bvm.Thickness;
+            board.Price = bvm.Price;
+            board.Type = bvm.Type;
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(board);
@@ -172,12 +198,49 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
-            var board = await _context.Board.FindAsync(id);
+            var boards = _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment);
+            Board board = null;
+            foreach (Board bd in boards)
+            {
+                if (bd.BoardId == id)
+                    board = bd;
+            }
+
             if (board == null)
             {
                 return NotFound();
             }
-            return View(board);
+
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new();
+            bvm.BoardId = board.BoardId;
+            bvm.Name = board.Name;
+            bvm.Image = board.Image;
+            bvm.Length = board.Length;
+            bvm.Width = board.Width;
+            bvm.Thickness = board.Thickness;
+            bvm.Price = board.Price;
+            bvm.Type = board.Type;
+            bvm.Equipment = new List<EquipmentViewModel>();
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new();
+                evm.Id = equipment.EquipmentId;
+                evm.Name = equipment.Name;
+                evm.Checked = false;
+                foreach (Equipment eq in board.Equipment)
+                {
+                    if (evm.Id == eq.EquipmentId)
+                    {
+                        evm.Checked = true;
+                    }
+                }
+                bvm.Equipment.Add(evm);
+            }
+            return View(bvm);
         }
 
         // POST: Boards/Edit/5
@@ -187,11 +250,32 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Edit(int id, BoardViewModel bvm)
         {
-            if (id != board.BoardId)
+            if (id != bvm.BoardId)
             {
                 return NotFound();
+            }
+
+            Board board = new();
+
+            board.BoardId = bvm.BoardId;
+            board.Name = bvm.Name;
+            board.Image = bvm.Image;
+            board.Length = bvm.Length;
+            board.Width = bvm.Width;
+            board.Thickness = bvm.Thickness;
+            board.Price = bvm.Price;
+            board.Type = bvm.Type;
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
             }
 
             if (ModelState.IsValid)
