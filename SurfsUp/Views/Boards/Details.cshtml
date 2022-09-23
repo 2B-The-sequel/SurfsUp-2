@@ -56,12 +56,21 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Type)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Equipment)
+        </dt>
+        <dd class = "col-sm-10">
+            @for (int i = 0; i < Model.Equipment.Count; i++)
+            {
+                @(Model.Equipment[i].Name + ((i != Model.Equipment.Count - 1) ? ", " : string.Empty))
+            }
+        </dd>
     </dl>
 </div>
 <div>
     @if (User.IsInRole("Adminstrators"))
     {
-        <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@Model?.BoardId">Ændr</a>
+        <a asp-action="Edit" class="btn btn-success" asp-route-id="@Model?.BoardId">Ændr</a>
     }
     <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
 </div>

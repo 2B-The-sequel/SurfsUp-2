@@ -106,6 +106,8 @@ namespace SurfsUp.Controllers
             }
 
             var board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
                 .FirstOrDefaultAsync(m => m.BoardId == id);
             if (board == null)
             {

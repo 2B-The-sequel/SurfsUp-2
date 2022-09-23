@@ -29,7 +29,7 @@ namespace SurfsUp.Models
         public float Price { get; set; }
 
         [DisplayName("Udstyr")]
-        public ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
+        public List<Equipment> Equipment { get; set; } = new List<Equipment>();
         public List<BoardEquipment> BoardEquipments { get; set; } = new List<BoardEquipment>();
 
         [JsonConverter(typeof(StringEnumConverter))]
