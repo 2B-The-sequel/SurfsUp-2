@@ -189,15 +189,10 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
-            var boards = _context.Board
+            Board board = await _context.Board
                 .Include(e => e.BoardEquipments)
-                .ThenInclude(be => be.Equipment);
-            Board board = null;
-            foreach (Board bd in boards)
-            {
-                if (bd.BoardId == id)
-                    board = bd;
-            }
+                .ThenInclude(be => be.Equipment)
+                .FirstOrDefaultAsync(m => m.BoardId == id);
 
             if (board == null)
             {
@@ -252,19 +247,13 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
-            Board board = new()
-            {
-                BoardId = bvm.BoardId,
-                Name = bvm.Name,
-                Image = bvm.Image,
-                Length = bvm.Length,
-                Width = bvm.Width,
-                Thickness = bvm.Thickness,
-                Price = bvm.Price,
-                Type = bvm.Type
-            };
+            Board board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
+                .FirstOrDefaultAsync(m => m.BoardId == id);
 
             List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            board.Equipment.Clear();
             foreach (Equipment equipment in DatabaseEquipment)
             {
                 foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
