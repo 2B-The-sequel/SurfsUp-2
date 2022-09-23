@@ -4,12 +4,9 @@ using SurfsUp.Models;
 
 namespace SurfsUp.Models.Validation
 {
-   
         public class ValidEndDate : ValidationAttribute
         {
-            
-            protected override ValidationResult
-                    IsValid(object value, ValidationContext validationContext)
+            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
             {
                 var model = (Models.Rental)validationContext.ObjectInstance;
                 DateTime _endRental = Convert.ToDateTime(value);

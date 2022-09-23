@@ -31,7 +31,6 @@ namespace SurfsUp.Models
         [ValidEndDate(ErrorMessage = "Start rentaldate must be greater than current date.")]
         public DateTime EndRental { get; set; }
       
-
         public IdentityUser User { get; set; }
         
         public Board Board { get; set; }

@@ -351,11 +351,10 @@ namespace SurfsUp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmRental( Rental rental, int id)
+        public async Task<IActionResult> CreateRental( Rental rental, int id)
         {
-            
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+            Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             rental.UsersId = claims.Value;
             rental.BoardId = id;
             ViewData["SelectedBoardId"] = rental.StartRental;
@@ -376,7 +375,7 @@ namespace SurfsUp.Controllers
                 .Where(y => y.Count > 0)
                 .ToList();
             }
-            return RedirectToAction(nameof(Index));
+            return View(rental.Board);
         }
     }
 }
