@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using System.Reflection;
 
 namespace SurfsUp.Controllers
 {
@@ -83,27 +81,15 @@ namespace SurfsUp.Controllers
                 }
             }
 
-            switch (sortOrder)
+            Board = sortOrder switch
             {
-                case "name_desc":
-                    Board = Board.OrderByDescending(s => s.Name);
-                    break;
-                case "Price":
-                    Board = Board.OrderBy(s => s.Price);
-                    break;
-                case "price_desc":
-                    Board = Board.OrderByDescending(s => s.Price);
-                    break;
-                case "Type":
-                    Board = Board.OrderBy(s => s.Type);
-                    break;
-                case "type_desc":
-                    Board = Board.OrderByDescending(s => s.Type);
-                    break;
-                default:
-                    Board = Board.OrderBy(s => s.Name);
-                    break;
-            }
+                "name_desc" => Board.OrderByDescending(s => s.Name),
+                "Price" => Board.OrderBy(s => s.Price),
+                "price_desc" => Board.OrderByDescending(s => s.Price),
+                "Type" => Board.OrderBy(s => s.Type),
+                "type_desc" => Board.OrderByDescending(s => s.Type),
+                _ => Board.OrderBy(s => s.Name),
+            };
             int pageSize = 5;
             return View(await PaginatedList<Board>.CreateAsync(Board
                             .Include(e => e.BoardEquipments)
@@ -135,15 +121,19 @@ namespace SurfsUp.Controllers
         public IActionResult Create()
         {
             List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
-            BoardViewModel bvm = new();
-            bvm.Equipment = new List<EquipmentViewModel>();
+            BoardViewModel bvm = new()
+            {
+                Equipment = new List<EquipmentViewModel>()
+            };
 
             foreach (Equipment equipment in BoardEquipment)
             {
-                EquipmentViewModel evm = new();
-                evm.Id = equipment.EquipmentId;
-                evm.Name = equipment.Name;
-                evm.Checked = false;
+                EquipmentViewModel evm = new()
+                {
+                    Id = equipment.EquipmentId,
+                    Name = equipment.Name,
+                    Checked = false
+                };
                 bvm.Equipment.Add(evm);
             }
 
@@ -159,15 +149,16 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(BoardViewModel bvm)
         {
-            Board board = new();
-
-            board.Name = bvm.Name;
-            board.Image = bvm.Image;
-            board.Length = bvm.Length;
-            board.Width = bvm.Width;
-            board.Thickness = bvm.Thickness;
-            board.Price = bvm.Price;
-            board.Type = bvm.Type;
+            Board board = new()
+            {
+                Name = bvm.Name,
+                Image = bvm.Image,
+                Length = bvm.Length,
+                Width = bvm.Width,
+                Thickness = bvm.Thickness,
+                Price = bvm.Price,
+                Type = bvm.Type
+            };
 
             List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
             foreach (Equipment equipment in DatabaseEquipment)
@@ -214,23 +205,27 @@ namespace SurfsUp.Controllers
             }
 
             List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
-            BoardViewModel bvm = new();
-            bvm.BoardId = board.BoardId;
-            bvm.Name = board.Name;
-            bvm.Image = board.Image;
-            bvm.Length = board.Length;
-            bvm.Width = board.Width;
-            bvm.Thickness = board.Thickness;
-            bvm.Price = board.Price;
-            bvm.Type = board.Type;
-            bvm.Equipment = new List<EquipmentViewModel>();
+            BoardViewModel bvm = new()
+            {
+                BoardId = board.BoardId,
+                Name = board.Name,
+                Image = board.Image,
+                Length = board.Length,
+                Width = board.Width,
+                Thickness = board.Thickness,
+                Price = board.Price,
+                Type = board.Type,
+                Equipment = new List<EquipmentViewModel>()
+            };
 
             foreach (Equipment equipment in BoardEquipment)
             {
-                EquipmentViewModel evm = new();
-                evm.Id = equipment.EquipmentId;
-                evm.Name = equipment.Name;
-                evm.Checked = false;
+                EquipmentViewModel evm = new()
+                {
+                    Id = equipment.EquipmentId,
+                    Name = equipment.Name,
+                    Checked = false
+                };
                 foreach (Equipment eq in board.Equipment)
                 {
                     if (evm.Id == eq.EquipmentId)
@@ -257,16 +252,17 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
-            Board board = new();
-
-            board.BoardId = bvm.BoardId;
-            board.Name = bvm.Name;
-            board.Image = bvm.Image;
-            board.Length = bvm.Length;
-            board.Width = bvm.Width;
-            board.Thickness = bvm.Thickness;
-            board.Price = bvm.Price;
-            board.Type = bvm.Type;
+            Board board = new()
+            {
+                BoardId = bvm.BoardId,
+                Name = bvm.Name,
+                Image = bvm.Image,
+                Length = bvm.Length,
+                Width = bvm.Width,
+                Thickness = bvm.Thickness,
+                Price = bvm.Price,
+                Type = bvm.Type
+            };
 
             List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
             foreach (Equipment equipment in DatabaseEquipment)
@@ -347,7 +343,7 @@ namespace SurfsUp.Controllers
 
         public async Task<IActionResult> CreateRental(int id)
         {
-            if (id == null || _context.Board == null)
+            if (_context.Board == null)
             {
                 return NotFound();
             }
