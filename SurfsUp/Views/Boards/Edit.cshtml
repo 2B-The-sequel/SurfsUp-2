@@ -54,13 +54,13 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <label asp-for="Equipment" class="control-label"></label><br/>
-                @for (int i = 0; i < Model.Equipment.Count; i++)
+                <label asp-for="EquipmentVM" class="control-label"></label><br/>
+                @for (int i = 0; i < Model.EquipmentVM.Count; i++)
                 {
-                    <input class="form-check-input" type="checkbox" asp-for="@Model.Equipment[i].Checked"/>
-                    <input class="form-check-input" type="hidden" asp-for="@Model.Equipment[i].Name" />
-                    <input class="form-check-input" type="hidden" asp-for="@Model.Equipment[i].Id" />
-                    <label class="form-check-label" asp-for="@Model.Equipment[i].Checked">@Model.Equipment[i].Name</label><br/>
+                    <input class="form-check-input" type="checkbox" asp-for="@Model.EquipmentVM[i].Checked"/>
+                    <input class="form-check-input" type="hidden" asp-for="@Model.EquipmentVM[i].Name" />
+                    <input class="form-check-input" type="hidden" asp-for="@Model.EquipmentVM[i].Id" />
+                    <label class="form-check-label" asp-for="@Model.EquipmentVM[i].Checked">@Model.EquipmentVM[i].Name</label><br/>
                 }
             </div><br />
             <div class="form-group">

@@ -125,7 +125,7 @@ namespace SurfsUp.Controllers
             List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
             BoardViewModel bvm = new()
             {
-                Equipment = new List<EquipmentViewModel>()
+                EquipmentVM = new List<EquipmentViewModel>()
             };
 
             foreach (Equipment equipment in BoardEquipment)
@@ -136,7 +136,7 @@ namespace SurfsUp.Controllers
                     Name = equipment.Name,
                     Checked = false
                 };
-                bvm.Equipment.Add(evm);
+                bvm.EquipmentVM.Add(evm);
             }
 
             return View(bvm);
@@ -165,7 +165,7 @@ namespace SurfsUp.Controllers
             List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
             foreach (Equipment equipment in DatabaseEquipment)
             {
-                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                foreach (EquipmentViewModel equipmentViewModel in bvm.EquipmentVM)
                 {
                     if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
                         board.Equipment.Add(equipment);
@@ -178,7 +178,7 @@ namespace SurfsUp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(board);
+            return View(bvm);
         }
 
         // GET: Boards/Edit/5
@@ -212,7 +212,7 @@ namespace SurfsUp.Controllers
                 Thickness = board.Thickness,
                 Price = board.Price,
                 Type = board.Type,
-                Equipment = new List<EquipmentViewModel>()
+                EquipmentVM = new List<EquipmentViewModel>()
             };
 
             foreach (Equipment equipment in BoardEquipment)
@@ -230,7 +230,7 @@ namespace SurfsUp.Controllers
                         evm.Checked = true;
                     }
                 }
-                bvm.Equipment.Add(evm);
+                bvm.EquipmentVM.Add(evm);
             }
             return View(bvm);
         }
@@ -258,7 +258,7 @@ namespace SurfsUp.Controllers
             board.Equipment.Clear();
             foreach (Equipment equipment in DatabaseEquipment)
             {
-                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                foreach (EquipmentViewModel equipmentViewModel in bvm.EquipmentVM)
                 {
                     if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
                         board.Equipment.Add(equipment);
