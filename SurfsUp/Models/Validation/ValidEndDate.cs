@@ -23,7 +23,7 @@ namespace SurfsUp.Models.Validation
                     return new ValidationResult
                         ("End rentaldate must be greater than current date.");
                 }
-                else if (span.Hours > 168)
+                else if (span.TotalHours > 168)
                 {
                     return new ValidationResult
                         ("A board cannot be rented for more than 7 days");

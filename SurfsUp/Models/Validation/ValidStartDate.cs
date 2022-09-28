@@ -4,10 +4,20 @@ namespace SurfsUp.Models.Validation
 {
     public class ValidStartDate : ValidationAttribute
     {
-        public override bool IsValid(object value)
+
+        protected override ValidationResult
+               IsValid(object value, ValidationContext validationContext)
         {
             DateTime _dateJoin = Convert.ToDateTime(value);
-            return _dateJoin < DateTime.Now;
+            if (_dateJoin > DateTime.Now)
+            {
+                return ValidationResult.Success;
+            }
+            else
+            {
+                return new ValidationResult
+                    ("Start rentaldate must be greater than current date.");
+            }
         }
     }
 }
