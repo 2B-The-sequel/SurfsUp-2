@@ -37,5 +37,17 @@ namespace SurfsUp.Models
         public BoardType Type { get; set; }
 
         public Rental Rental { get; set; }
+
+        public bool IsRented()
+        {
+            if (Rental == null)
+            { return false; }
+            else if (Rental.EndRental > DateTime.Now && Rental.StartRental <= DateTime.Now)
+            { return true; }
+
+            return false;
+        }
+
+
     }
 }

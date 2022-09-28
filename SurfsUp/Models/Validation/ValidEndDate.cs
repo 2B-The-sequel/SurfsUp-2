@@ -16,17 +16,17 @@ namespace SurfsUp.Models.Validation
                 if (_startRental > _endRental)
                 {
                     return new ValidationResult
-                        ("End rentaldate must be greater than start rentaldate.");
+                        ("Slutdato for lejen skal være større end startdato");
                 }
                 else if (_endRental < DateTime.Now)
                 {
                     return new ValidationResult
-                        ("End rentaldate must be greater than current date.");
+                        ("Slutdato for lejen skal være større end den nuværende dato");
                 }
                 else if (span.TotalHours > 168)
                 {
                     return new ValidationResult
-                        ("A board cannot be rented for more than 7 days");
+                        ("Et board kan ikke udlejes i mere end 7 dage");
                 }
                 else
                 {
