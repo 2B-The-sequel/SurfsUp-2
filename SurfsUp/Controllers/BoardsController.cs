@@ -351,6 +351,7 @@ namespace SurfsUp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> CreateRental( Rental rental, int id)
         {
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
