@@ -332,6 +332,7 @@ namespace SurfsUp.Controllers
           return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
         }
 
+        [Authorize]
         public async Task<IActionResult> CreateRental(int id)
         {
             if (_context.Board == null)
