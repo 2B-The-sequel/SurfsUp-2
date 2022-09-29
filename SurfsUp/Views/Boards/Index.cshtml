@@ -59,7 +59,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-            @if (User.IsInRole("Adminstrators") || !item.IsRented() )
+            @if (User.IsInRole("Adminstrators")|| !item.IsRented() )
             {
         <tr>
             <td>

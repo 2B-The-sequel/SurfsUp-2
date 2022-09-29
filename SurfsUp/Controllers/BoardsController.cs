@@ -346,8 +346,13 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            Rental rental = new Rental();
+            rental.Board = board;
+            rental.BoardId = board.BoardId;
+            rental.StartRental = DateTime.Now;
+            rental.EndRental = DateTime.Now;
 
-            return View(board);
+            return View(rental);
         }
 
         [HttpPost]
@@ -362,7 +367,7 @@ namespace SurfsUp.Controllers
             ViewData["SelectedBoardId"] = rental.StartRental;
             rental.Board = await _context.Board
                 .FirstOrDefaultAsync(m => m.BoardId == id);
-            rental.User = await _context.Users
+            rental.User = (ApplicationUser)await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
 
             if (ModelState.IsValid)

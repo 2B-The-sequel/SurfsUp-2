@@ -9,14 +9,14 @@ namespace SurfsUp.Models.Validation
                IsValid(object value, ValidationContext validationContext)
         {
             DateTime _dateJoin = Convert.ToDateTime(value);
-            if (_dateJoin > DateTime.Now)
+            if (_dateJoin.Day == DateTime.Now.Day || _dateJoin >= DateTime.Now)
             {
                 return ValidationResult.Success;
             }
             else
             {
                 return new ValidationResult
-                    ("Start rentaldate must be greater than current date.");
+                    ("Start Lejedato skal være senere end nuværende dato");
             }
         }
     }
