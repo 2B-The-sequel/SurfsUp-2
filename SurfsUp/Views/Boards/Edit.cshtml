@@ -68,7 +68,7 @@
                 {
                     <input type="submit" value="Gem" class="btn btn-success" />
                 }
-                <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
+                <a asp-action="Index" asp-route-delock="@Model.BoardId" class="btn btn-primary">Tilbage til listen</a>
             </div>
         </form>
     </div>
