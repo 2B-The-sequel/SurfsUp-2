@@ -18,6 +18,23 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+// Add Authentication for Google and Facebook
+builder.Services.AddAuthentication()
+
+#region
+
+    .AddFacebook(options =>
+    {
+        options.AppId = "1203296136901337";
+        options.AppSecret = "4be94c9eb71e300988d1bb290b95839d";
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = "1034330825638-64q8pmvuu6iegb7cokmkhhs3nlvckju8.apps.googleusercontent.com";
+        options.ClientSecret = "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";
+    });
+
+#endregion //  <--- Secret manager
 
 var app = builder.Build();
 
