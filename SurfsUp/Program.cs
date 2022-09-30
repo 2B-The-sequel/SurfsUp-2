@@ -7,7 +7,10 @@ using System.Globalization;
 using Microsoft.SqlServer.Management.Smo;
 using SurfsUp.Controllers;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -20,7 +23,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
-var backup = new BackUpController();
+
 
 var app = builder.Build();
 
@@ -67,6 +70,6 @@ app.MapControllerRoute(
     pattern: "{controller=Boards}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-backup.BtnBackup_Click();
+
 
 app.Run();
