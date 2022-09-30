@@ -7,12 +7,9 @@ using System.Security.Claims;
 
 namespace SurfsUp.Controllers
 {
-    public class BoardsController : Controller
+    public class BoardsController : LockableController
     {
         private readonly ApplicationDbContext _context;
-
-        private readonly static List<Lock> locks = new();
-        private readonly static object locksLock = new();
 
         public BoardsController(ApplicationDbContext context)
         {
@@ -20,25 +17,11 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards
-        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber, int? delock)
+        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber, int? unlock)
         {
-            if (delock != null)
+            if (unlock != null)
             {
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == delock)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(unlock);
             }
 
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -211,29 +194,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
             if (_context.Board == null)
             {
@@ -333,21 +295,7 @@ namespace SurfsUp.Controllers
                     }
                 }
 
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == id)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(id);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -358,29 +306,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
             if (_context.Board == null)
             {
@@ -413,21 +340,7 @@ namespace SurfsUp.Controllers
                 _context.Board.Remove(board);
             }
 
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        found = true;
-                        locks.Remove(locks[i]);
-                    }
-                    else
-                        i++;
-                }
-            }
+            Unlock(id);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -441,29 +354,8 @@ namespace SurfsUp.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRental(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at udleje dette board." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at leje dette board." });
 
             if (_context.Board == null)
             {
@@ -476,7 +368,7 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
-            Rental rental = new Rental();
+            Rental rental = new();
             rental.Board = board;
             rental.BoardId = board.BoardId;
             rental.StartRental = DateTime.Now;
@@ -504,21 +396,7 @@ namespace SurfsUp.Controllers
             {
                 _context.Add(rental);
 
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == id)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(id);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
