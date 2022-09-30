@@ -1,19 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using System.Reflection;
 
 namespace SurfsUp.Controllers
 {
-    
     public class BoardsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,7 +21,7 @@ namespace SurfsUp.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
-            ViewData["UserId"] = claims.Value;
+            
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
@@ -88,27 +81,15 @@ namespace SurfsUp.Controllers
                 }
             }
 
-            switch (sortOrder)
+            Board = sortOrder switch
             {
-                case "name_desc":
-                    Board = Board.OrderByDescending(s => s.Name);
-                    break;
-                case "Price":
-                    Board = Board.OrderBy(s => s.Price);
-                    break;
-                case "price_desc":
-                    Board = Board.OrderByDescending(s => s.Price);
-                    break;
-                case "Type":
-                    Board = Board.OrderBy(s => s.Type);
-                    break;
-                case "type_desc":
-                    Board = Board.OrderByDescending(s => s.Type);
-                    break;
-                default:
-                    Board = Board.OrderBy(s => s.Name);
-                    break;
-            }
+                "name_desc" => Board.OrderByDescending(s => s.Name),
+                "Price" => Board.OrderBy(s => s.Price),
+                "price_desc" => Board.OrderByDescending(s => s.Price),
+                "Type" => Board.OrderBy(s => s.Type),
+                "type_desc" => Board.OrderByDescending(s => s.Type),
+                _ => Board.OrderBy(s => s.Name),
+            };
             int pageSize = 5;
             return View(await PaginatedList<Board>.CreateAsync(Board
                             .Include(e => e.BoardEquipments)
@@ -116,7 +97,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Details/5
-        
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -126,6 +106,8 @@ namespace SurfsUp.Controllers
             }
 
             var board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
                 .FirstOrDefaultAsync(m => m.BoardId == id);
             if (board == null)
             {
@@ -140,7 +122,24 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
-            return View();
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new()
+            {
+                Equipment = new List<EquipmentViewModel>()
+            };
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new()
+                {
+                    Id = equipment.EquipmentId,
+                    Name = equipment.Name,
+                    Checked = false
+                };
+                bvm.Equipment.Add(evm);
+            }
+
+            return View(bvm);
         }
 
         // POST: Boards/Create
@@ -150,8 +149,29 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Create(BoardViewModel bvm)
         {
+            Board board = new()
+            {
+                Name = bvm.Name,
+                Image = bvm.Image,
+                Length = bvm.Length,
+                Width = bvm.Width,
+                Thickness = bvm.Thickness,
+                Price = bvm.Price,
+                Type = bvm.Type
+            };
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(board);
@@ -171,12 +191,48 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
-            var board = await _context.Board.FindAsync(id);
+            Board board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+
             if (board == null)
             {
                 return NotFound();
             }
-            return View(board);
+
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new()
+            {
+                BoardId = board.BoardId,
+                Name = board.Name,
+                Image = board.Image,
+                Length = board.Length,
+                Width = board.Width,
+                Thickness = board.Thickness,
+                Price = board.Price,
+                Type = board.Type,
+                Equipment = new List<EquipmentViewModel>()
+            };
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new()
+                {
+                    Id = equipment.EquipmentId,
+                    Name = equipment.Name,
+                    Checked = false
+                };
+                foreach (Equipment eq in board.Equipment)
+                {
+                    if (evm.Id == eq.EquipmentId)
+                    {
+                        evm.Checked = true;
+                    }
+                }
+                bvm.Equipment.Add(evm);
+            }
+            return View(bvm);
         }
 
         // POST: Boards/Edit/5
@@ -186,11 +242,27 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Edit(int id, BoardViewModel bvm)
         {
-            if (id != board.BoardId)
+            if (id != bvm.BoardId)
             {
                 return NotFound();
+            }
+
+            Board board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            board.Equipment.Clear();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.Equipment)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
             }
 
             if (ModelState.IsValid)
@@ -262,7 +334,7 @@ namespace SurfsUp.Controllers
 
         public async Task<IActionResult> CreateRental(int id)
         {
-            if (id == null || _context.Board == null)
+            if (_context.Board == null)
             {
                 return NotFound();
             }
@@ -279,20 +351,30 @@ namespace SurfsUp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmRental( Rental rental, int id, DateTime start, DateTime end)
+        public async Task<IActionResult> ConfirmRental( Rental rental, int id)
         {
+            
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
             rental.UsersId = claims.Value;
             rental.BoardId = id;
-            rental.StartRental = start;
-            rental.EndRental = end;
+            ViewData["SelectedBoardId"] = rental.StartRental;
+            rental.Board = await _context.Board
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+            rental.User = await _context.Users
+                .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
 
             if (ModelState.IsValid)
             {
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0)
+                .ToList();
             }
             return RedirectToAction(nameof(Index));
         }

@@ -5,9 +5,8 @@ using Newtonsoft.Json.Converters;
 
 namespace SurfsUp.Models
 {
-    public class Board
+    public class BoardViewModel
     {
-        [Key]
         public int BoardId { get; set; }
         [DisplayName("Navn")]
         public string Name { get; set; }
@@ -28,14 +27,11 @@ namespace SurfsUp.Models
         [DisplayName("Pris")]
         public float Price { get; set; }
 
-        [DisplayName("Udstyr")]
-        public List<Equipment> Equipment { get; set; } = new List<Equipment>();
-        public List<BoardEquipment> BoardEquipments { get; set; } = new List<BoardEquipment>();
-
         [JsonConverter(typeof(StringEnumConverter))]
         [DisplayName("Type")]
         public BoardType Type { get; set; }
 
-        public Rental Rental { get; set; }
+        [DisplayName("Udstyr")]
+        public List<EquipmentViewModel> Equipment { get; set; }
     }
 }
