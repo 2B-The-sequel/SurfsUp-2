@@ -35,16 +35,13 @@
                 <label asp-for="EndRental" class="control-label"></label>
                 <input asp-for="EndRental" class="form-control" type="date"/>
                 <span asp-validation-for="EndRental" class="text-danger"></span>
-            </div>
+            </div><br />
             <div class="form-group">
-                <input type="submit" value="Tilføj" class="btn btn-primary" asp-action="CreateRental" asp-route-id=@Model.BoardId/>
+                <input type="submit" value="Tilføj" class="btn btn-success" asp-action="CreateRental" asp-route-id=@Model.BoardId/>
+                <a asp-action="Index" asp-route-delock="@Model.BoardId" class="btn btn-primary">Tilbage til listen</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Tilbage til listen</a>
 </div>
 
 @section Scripts {
@@ -52,3 +49,10 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     }
+
+    <script>
+    window.setTimeout(function()
+    {
+        window.location='@Url.Action("Index","Boards")';
+    }, 1000 * 60 * 5);
+</script>

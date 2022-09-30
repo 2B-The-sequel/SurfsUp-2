@@ -441,6 +441,30 @@ namespace SurfsUp.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRental(int id)
         {
+            lock (locksLock)
+            {
+                int i = 0;
+                bool found = false;
+
+                while (i < locks.Count && !found)
+                {
+                    if (locks[i].Id == id)
+                    {
+                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
+                            locks.Remove(locks[i]);
+                        else
+                            found = true;
+                    }
+                    else
+                        i++;
+                }
+
+                if (found)
+                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at udleje dette board." });
+                else
+                    locks.Add(new Lock(id, DateTime.Now));
+            }
+
             if (_context.Board == null)
             {
                 return NotFound();
@@ -479,6 +503,23 @@ namespace SurfsUp.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(rental);
+
+                lock (locksLock)
+                {
+                    int i = 0;
+                    bool found = false;
+                    while (i < locks.Count && !found)
+                    {
+                        if (locks[i].Id == id)
+                        {
+                            found = true;
+                            locks.Remove(locks[i]);
+                        }
+                        else
+                            i++;
+                    }
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
