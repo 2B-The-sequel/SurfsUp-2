@@ -77,3 +77,10 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    window.setTimeout(function()
+    {
+        window.location='@Url.Action("Index","Boards")';
+    }, 1000 * 60 * 5);
+</script>
