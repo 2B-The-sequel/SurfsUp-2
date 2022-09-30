@@ -1,20 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
-
+using System.Security.Claims;
 
 namespace SurfsUp.Controllers
 {
-    
     public class BoardsController : Controller
     {
         private readonly ApplicationDbContext _context;
+
+        private readonly static List<Lock> locks = new();
+        private readonly static object locksLock = new();
 
         public BoardsController(ApplicationDbContext context)
         {
@@ -22,8 +20,30 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards
-        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber)
+        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber, int? delock)
         {
+            if (delock != null)
+            {
+                lock (locksLock)
+                {
+                    int i = 0;
+                    bool found = false;
+                    while (i < locks.Count && !found)
+                    {
+                        if (locks[i].Id == delock)
+                        {
+                            found = true;
+                            locks.Remove(locks[i]);
+                        }
+                        else
+                            i++;
+                    }
+                }
+            }
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+            
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
@@ -83,27 +103,15 @@ namespace SurfsUp.Controllers
                 }
             }
 
-            switch (sortOrder)
+            Board = sortOrder switch
             {
-                case "name_desc":
-                    Board = Board.OrderByDescending(s => s.Name);
-                    break;
-                case "Price":
-                    Board = Board.OrderBy(s => s.Price);
-                    break;
-                case "price_desc":
-                    Board = Board.OrderByDescending(s => s.Price);
-                    break;
-                case "Type":
-                    Board = Board.OrderBy(s => s.Type);
-                    break;
-                case "type_desc":
-                    Board = Board.OrderByDescending(s => s.Type);
-                    break;
-                default:
-                    Board = Board.OrderBy(s => s.Name);
-                    break;
-            }
+                "name_desc" => Board.OrderByDescending(s => s.Name),
+                "Price" => Board.OrderBy(s => s.Price),
+                "price_desc" => Board.OrderByDescending(s => s.Price),
+                "Type" => Board.OrderBy(s => s.Type),
+                "type_desc" => Board.OrderByDescending(s => s.Type),
+                _ => Board.OrderBy(s => s.Name),
+            };
             int pageSize = 5;
             return View(await PaginatedList<Board>.CreateAsync(Board
                             .Include(e => e.BoardEquipments)
@@ -111,7 +119,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Details/5
-        
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -121,6 +128,8 @@ namespace SurfsUp.Controllers
             }
 
             var board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
                 .FirstOrDefaultAsync(m => m.BoardId == id);
             if (board == null)
             {
@@ -135,7 +144,24 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
-            return View();
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new()
+            {
+                EquipmentVM = new List<EquipmentViewModel>()
+            };
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new()
+                {
+                    Id = equipment.EquipmentId,
+                    Name = equipment.Name,
+                    Checked = false
+                };
+                bvm.EquipmentVM.Add(evm);
+            }
+
+            return View(bvm);
         }
 
         // POST: Boards/Create
@@ -145,33 +171,114 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Create(BoardViewModel bvm)
         {
+            Board board = new()
+            {
+                Name = bvm.Name,
+                Image = bvm.Image,
+                Length = bvm.Length,
+                Width = bvm.Width,
+                Thickness = bvm.Thickness,
+                Price = bvm.Price,
+                Type = bvm.Type
+            };
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.EquipmentVM)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(board);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(board);
+            return View(bvm);
         }
 
         // GET: Boards/Edit/5
         // Husk og ændre ting i databasen så rollen er Admin
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Board == null)
+            lock (locksLock)
+            {
+                int i = 0;
+                bool found = false;
+
+                while (i < locks.Count && !found)
+                {
+                    if (locks[i].Id == id)
+                    {
+                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
+                            locks.Remove(locks[i]);
+                        else
+                            found = true;
+                    }
+                    else
+                        i++;
+                }
+
+                if (found)
+                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
+                else
+                    locks.Add(new Lock(id, DateTime.Now));
+            }
+
+            if (_context.Board == null)
             {
                 return NotFound();
             }
 
-            var board = await _context.Board.FindAsync(id);
+            Board board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+
             if (board == null)
             {
                 return NotFound();
             }
-            return View(board);
+
+            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            BoardViewModel bvm = new()
+            {
+                BoardId = board.BoardId,
+                Name = board.Name,
+                Image = board.Image,
+                Length = board.Length,
+                Width = board.Width,
+                Thickness = board.Thickness,
+                Price = board.Price,
+                Type = board.Type,
+                EquipmentVM = new List<EquipmentViewModel>()
+            };
+
+            foreach (Equipment equipment in BoardEquipment)
+            {
+                EquipmentViewModel evm = new()
+                {
+                    Id = equipment.EquipmentId,
+                    Name = equipment.Name,
+                    Checked = false
+                };
+                foreach (Equipment eq in board.Equipment)
+                {
+                    if (evm.Id == eq.EquipmentId)
+                    {
+                        evm.Checked = true;
+                    }
+                }
+                bvm.EquipmentVM.Add(evm);
+            }
+            return View(bvm);
         }
 
         // POST: Boards/Edit/5
@@ -181,11 +288,27 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Edit(int id, [Bind("BoardId,Name,Image,Length,Width,Thickness,Volume,Price,Type")] Board board)
+        public async Task<IActionResult> Edit(int id, BoardViewModel bvm)
         {
-            if (id != board.BoardId)
+            if (id != bvm.BoardId)
             {
                 return NotFound();
+            }
+
+            Board board = await _context.Board
+                .Include(e => e.BoardEquipments)
+                .ThenInclude(be => be.Equipment)
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+
+            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
+            board.Equipment.Clear();
+            foreach (Equipment equipment in DatabaseEquipment)
+            {
+                foreach (EquipmentViewModel equipmentViewModel in bvm.EquipmentVM)
+                {
+                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        board.Equipment.Add(equipment);
+                }
             }
 
             if (ModelState.IsValid)
@@ -206,6 +329,23 @@ namespace SurfsUp.Controllers
                         throw;
                     }
                 }
+
+                lock (locksLock)
+                {
+                    int i = 0;
+                    bool found = false;
+                    while (i < locks.Count && !found)
+                    {
+                        if (locks[i].Id == id)
+                        {
+                            found = true;
+                            locks.Remove(locks[i]);
+                        }
+                        else
+                            i++;
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(board);
@@ -213,9 +353,33 @@ namespace SurfsUp.Controllers
 
         // GET: Boards/Delete/5
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Board == null)
+            lock (locksLock)
+            {
+                int i = 0;
+                bool found = false;
+
+                while (i < locks.Count && !found)
+                {
+                    if (locks[i].Id == id)
+                    {
+                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
+                            locks.Remove(locks[i]);
+                        else
+                            found = true;
+                    }
+                    else
+                        i++;
+                }
+
+                if (found)
+                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
+                else
+                    locks.Add(new Lock(id, DateTime.Now));
+            }
+
+            if (_context.Board == null)
             {
                 return NotFound();
             }
@@ -245,7 +409,23 @@ namespace SurfsUp.Controllers
             {
                 _context.Board.Remove(board);
             }
-            
+
+            lock (locksLock)
+            {
+                int i = 0;
+                bool found = false;
+                while (i < locks.Count && !found)
+                {
+                    if (locks[i].Id == id)
+                    {
+                        found = true;
+                        locks.Remove(locks[i]);
+                    }
+                    else
+                        i++;
+                }
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -253,6 +433,52 @@ namespace SurfsUp.Controllers
         private bool BoardExists(int id)
         {
           return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> CreateRental(int id)
+        {
+            if (_context.Board == null)
+            {
+                return NotFound();
+            }
+
+            var board = await _context.Board
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+            if (board == null)
+            {
+                return NotFound();
+            }
+
+            return View(board);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmRental( Rental rental, int id)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+            rental.UsersId = claims.Value;
+            rental.BoardId = id;
+            ViewData["SelectedBoardId"] = rental.StartRental;
+            rental.Board = await _context.Board
+                .FirstOrDefaultAsync(m => m.BoardId == id);
+            rental.User = await _context.Users
+                .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(rental);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0)
+                .ToList();
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

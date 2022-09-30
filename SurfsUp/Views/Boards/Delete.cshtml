@@ -57,7 +57,14 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="BoardId" />
-        <input type="submit" value="Slet" class="btn btn-danger" /> |
-        <a asp-action="Index">Tilbage til liste</a>
+        <input type="submit" value="Slet" class="btn btn-danger" />
+        <a class="btn btn-primary" asp-route-delock="@Model.BoardId" asp-action="Index">Tilbage til liste</a>
     </form>
 </div>
+
+<script>
+    window.setTimeout(function()
+    {
+        window.location='@Url.Action("Index","Boards")';
+    }, 1000 * 60 * 5);
+</script>

@@ -13,7 +13,7 @@ namespace SurfsUp.Data
 
         public DbSet<Board> Board { get; set; } = default!;
         public DbSet<Equipment> Equipment { get; set; } = default!;
-
+     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Board>()
@@ -23,11 +23,13 @@ namespace SurfsUp.Data
                 j => j
                     .HasOne(pt => pt.Equipment)
                     .WithMany(t => t.BoardEquipments)
-                    .HasForeignKey(pt => pt.EquipmentId),
+                    .HasForeignKey(pt => pt.EquipmentId)
+                    .OnDelete(DeleteBehavior.Cascade),
                 j => j
                     .HasOne(pt => pt.Board)
                     .WithMany(p => p.BoardEquipments)
-                    .HasForeignKey(pt => pt.BoardId),
+                    .HasForeignKey(pt => pt.BoardId)
+                    .OnDelete(DeleteBehavior.Cascade),
                 j =>
                 {
                     j.HasKey(t => new { t.EquipmentId, t.BoardId });

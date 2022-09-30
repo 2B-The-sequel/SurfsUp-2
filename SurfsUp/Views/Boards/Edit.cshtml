@@ -1,4 +1,4 @@
-﻿@model SurfsUp.Models.Board
+﻿@model SurfsUp.Models.BoardViewModel
 
 @{
     ViewData["Title"] = "Ændr";
@@ -52,18 +52,35 @@
                 <label asp-for="Type" class="control-label"></label>
                 <select asp-for="Type" asp-items="Html.GetEnumSelectList<BoardType>()" class="form-control"></select>
                 <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
+            </div><br />
             <div class="form-group">
-                <input type="submit" value="Gem" class="btn btn-primary" />
+                <label asp-for="EquipmentVM" class="control-label"></label><br/>
+                @for (int i = 0; i < Model.EquipmentVM.Count; i++)
+                {
+                    <input class="form-check-input" type="checkbox" asp-for="@Model.EquipmentVM[i].Checked"/>
+                    <input class="form-check-input" type="hidden" asp-for="@Model.EquipmentVM[i].Name" />
+                    <input class="form-check-input" type="hidden" asp-for="@Model.EquipmentVM[i].Id" />
+                    <label class="form-check-label" asp-for="@Model.EquipmentVM[i].Checked">@Model.EquipmentVM[i].Name</label><br/>
+                }
+            </div><br />
+            <div class="form-group">
+                @if (User.IsInRole("Adminstrators"))
+                {
+                    <input type="submit" value="Gem" class="btn btn-success" />
+                }
+                <a asp-action="Index" asp-route-delock="@Model.BoardId" class="btn btn-primary">Tilbage til listen</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Tilbage til listen</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    window.setTimeout(function()
+    {
+        window.location='@Url.Action("Index","Boards")';
+    }, 1000 * 60 * 5);
+</script>

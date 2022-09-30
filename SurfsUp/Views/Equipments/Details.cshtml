@@ -1,13 +1,13 @@
 ﻿@model SurfsUp.Models.Equipment
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detaljer";
 }
 
-<h1>Details</h1>
+<h1>Detaljer</h1>
 
 <div>
-    <h4>Equipment</h4>
+    <h4>Udstyr</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -21,9 +21,7 @@
 <div>
     @if (User.IsInRole("Adminstrators"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.EquipmentId" class="btn btn-outline-success">Edit</a> <p>|</p>
+        <a asp-action="Edit" asp-route-id="@Model?.EquipmentId" class="btn btn-success">Ændr</a>
     }
-
-    
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
 </div>

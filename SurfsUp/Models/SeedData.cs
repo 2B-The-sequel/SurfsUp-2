@@ -20,7 +20,7 @@ namespace SurfsUp.Models
                     Thickness = 2.75f,
                     Volume = 38.8f,
                     Type = BoardType.Shortboard,
-                    Price = 565.0f
+                    Price = 565
                 };
                 Board TheWideGlider = new()
                 {
@@ -31,7 +31,7 @@ namespace SurfsUp.Models
                     Thickness = 2.75f,
                     Volume = 44.16f,
                     Type = BoardType.Funboard,
-                    Price = 685.0f
+                    Price = 685
                 };
                 Board TheGoldenRatio = new()
                 {
@@ -42,7 +42,7 @@ namespace SurfsUp.Models
                     Thickness = 2.9f,
                     Volume = 43.22f,
                     Type = BoardType.Funboard,
-                    Price = 695.0f
+                    Price = 695
                 };
                 Board MahiMahi = new()
                 {
@@ -53,7 +53,7 @@ namespace SurfsUp.Models
                     Thickness = 2.3f,
                     Volume = 29.39f,
                     Type = BoardType.Fish,
-                    Price = 645.0f
+                    Price = 645
                 };
                 Board TheEmeraldGrinder = new()
                 {
@@ -64,7 +64,7 @@ namespace SurfsUp.Models
                     Thickness = 2.8f,
                     Volume = 65.4f,
                     Type = BoardType.Longboard,
-                    Price = 895.0f
+                    Price = 895
                 };
                 Board TheBomb = new()
                 {
@@ -75,7 +75,7 @@ namespace SurfsUp.Models
                     Thickness = 2.5f,
                     Volume = 33.7f,
                     Type = BoardType.Shortboard,
-                    Price = 645.0f
+                    Price = 645
                 };
                 Board WaldenMagic = new()
                 {
@@ -86,7 +86,7 @@ namespace SurfsUp.Models
                     Thickness = 3.0f,
                     Volume = 80.0f,
                     Type = BoardType.Longboard,
-                    Price = 1025.0f
+                    Price = 1025
                 };
                 Board NaishOne = new()
                 {
@@ -97,7 +97,7 @@ namespace SurfsUp.Models
                     Thickness = 6.0f,
                     Volume = 301.0f,
                     Type = BoardType.SUP,
-                    Price = 854.0f
+                    Price = 854
                 };
                 Board SexTourer = new()
                 {
@@ -108,7 +108,7 @@ namespace SurfsUp.Models
                     Thickness = 6.0f,
                     Volume = 270.0f,
                     Type = BoardType.SUP,
-                    Price = 611.0f
+                    Price = 611
                 };
                 Board NaishMaliko = new()
                 {
@@ -119,7 +119,7 @@ namespace SurfsUp.Models
                     Thickness = 6.0f,
                     Volume = 330.0f,
                     Type = BoardType.SUP,
-                    Price = 1304.0f
+                    Price = 1304
                 };
 
                 Equipment Paddle = new()
