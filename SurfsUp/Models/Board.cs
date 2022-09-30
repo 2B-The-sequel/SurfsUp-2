@@ -39,10 +39,11 @@ namespace SurfsUp.Models
 
         public ApplicationUser applicationUser { get; set; }
 
-        public ICollection<Rental> rentals { get; set; }
+        public ICollection<Rental> rentals { get ; set; }
 
         public bool IsRented()
         {
+
             if (rentals == null)
             {
                 return false;

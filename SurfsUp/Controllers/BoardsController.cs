@@ -93,7 +93,10 @@ namespace SurfsUp.Controllers
             int pageSize = 5;
             return View(await PaginatedList<Board>.CreateAsync(Board
                             .Include(e => e.BoardEquipments)
-                            .ThenInclude(be => be.Equipment).AsNoTracking(), pageNumber ?? 1, pageSize));
+                            .ThenInclude(be => be.Equipment)
+                            .Include(r => r.rentals)
+                            .AsNoTracking(), pageNumber ?? 1, pageSize));
+
         }
 
         // GET: Boards/Details/5

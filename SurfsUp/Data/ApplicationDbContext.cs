@@ -39,12 +39,14 @@ namespace SurfsUp.Data
             modelBuilder.Entity<Rental>()
             .HasOne(p => p.Board)
             .WithMany(p => p.rentals)
-            .HasForeignKey(p => p.BoardId);
+            .HasForeignKey(p => p.BoardId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Rental>()
                 .HasOne(p => p.User)
                 .WithMany(p => p.rentals)
-                .HasForeignKey(p => p.UsersId);
+                .HasForeignKey(p => p.UsersId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
 
