@@ -46,3 +46,13 @@
 }
     </tbody>
 </table>
+
+<script>
+    window.onload = function() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const message = urlParams.get('Error');
+        if (message != null)
+            window.alert(message);
+    }
+</script>
