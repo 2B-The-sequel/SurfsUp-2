@@ -385,7 +385,7 @@ namespace SurfsUp.Controllers
                 .Where(y => y.Count > 0)
                 .ToList();
             }
-            return View(rental.Board);
+            return View(rental);
         }
     }
 }
