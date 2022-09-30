@@ -59,6 +59,8 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+            @if (User.IsInRole("Adminstrators")|| !item.IsRented() )
+            {
         <tr>
             <td>
                 <image width="150px" src="@item.Image"></image>
@@ -112,6 +114,7 @@
                 <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.BoardId">Lej</a>
             </td>
         </tr>
+        }
 }
     </tbody>
 </table>

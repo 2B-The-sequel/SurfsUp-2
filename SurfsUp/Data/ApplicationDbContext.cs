@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Models;
+using SurfsUp.Models.Validation;
 
 namespace SurfsUp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -35,7 +36,21 @@ namespace SurfsUp.Data
                     j.HasKey(t => new { t.EquipmentId, t.BoardId });
                 });
 
+            modelBuilder.Entity<Rental>()
+            .HasOne(p => p.Board)
+            .WithMany(p => p.rentals)
+            .HasForeignKey(p => p.BoardId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Rental>()
+                .HasOne(p => p.User)
+                .WithMany(p => p.rentals)
+                .HasForeignKey(p => p.UsersId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(modelBuilder);
+
+
         }
     }
 }

@@ -115,7 +115,10 @@ namespace SurfsUp.Controllers
             int pageSize = 5;
             return View(await PaginatedList<Board>.CreateAsync(Board
                             .Include(e => e.BoardEquipments)
-                            .ThenInclude(be => be.Equipment).AsNoTracking(), pageNumber ?? 1, pageSize));
+                            .ThenInclude(be => be.Equipment)
+                            .Include(r => r.rentals)
+                            .AsNoTracking(), pageNumber ?? 1, pageSize));
+
         }
 
         // GET: Boards/Details/5
@@ -435,6 +438,7 @@ namespace SurfsUp.Controllers
           return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
         }
 
+        [Authorize]
         public async Task<IActionResult> CreateRental(int id)
         {
             if (_context.Board == null)
@@ -448,22 +452,28 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            Rental rental = new Rental();
+            rental.Board = board;
+            rental.BoardId = board.BoardId;
+            rental.StartRental = DateTime.Now;
+            rental.EndRental = DateTime.Now;
 
-            return View(board);
+            return View(rental);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmRental( Rental rental, int id)
+        [Authorize]
+        public async Task<IActionResult> CreateRental( Rental rental, int id)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+            Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             rental.UsersId = claims.Value;
             rental.BoardId = id;
             ViewData["SelectedBoardId"] = rental.StartRental;
             rental.Board = await _context.Board
                 .FirstOrDefaultAsync(m => m.BoardId == id);
-            rental.User = await _context.Users
+            rental.User = (ApplicationUser)await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
 
             if (ModelState.IsValid)
@@ -478,7 +488,7 @@ namespace SurfsUp.Controllers
                 .Where(y => y.Count > 0)
                 .ToList();
             }
-            return RedirectToAction(nameof(Index));
+            return View(rental);
         }
     }
 }

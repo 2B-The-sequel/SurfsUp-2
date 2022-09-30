@@ -19,20 +19,19 @@ namespace SurfsUp.Models
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Startdato")]
-        [ValidStartDate(ErrorMessage = "Start rentaldate must be greater than current date.") ]
+        [ValidStartDate]
         public DateTime StartRental { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Slutdato")]
-        [ValidEndDate(ErrorMessage = "Start rentaldate must be greater than current date.")]
+        [ValidEndDate]
         public DateTime EndRental { get; set; }
       
-
-        public IdentityUser User { get; set; }
+        public ApplicationUser User { get; set; }
         
         public Board Board { get; set; }
 

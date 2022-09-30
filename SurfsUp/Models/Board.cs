@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using SurfsUp.Models.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SurfsUp.Models.Validation;
 
 namespace SurfsUp.Models
 {
@@ -48,6 +49,28 @@ namespace SurfsUp.Models
         [DisplayName("Type")]
         public BoardType Type { get; set; }
 
-        public Rental Rental { get; set; }
+        public ApplicationUser applicationUser { get; set; }
+
+        public ICollection<Rental> rentals { get ; set; }
+
+        public bool IsRented()
+        {
+
+            if (rentals == null)
+            {
+                return false;
+            }
+            foreach (Rental rental in rentals)
+            {
+                if (rental.EndRental > DateTime.Now && rental.StartRental <= DateTime.Now || rental.StartRental.Day == DateTime.Now.Day)
+                { return true; }
+
+               
+            }
+            return false;
+
+        }
+
+
     }
 }
