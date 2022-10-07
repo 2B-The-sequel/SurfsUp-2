@@ -4,15 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace SurfsUp.Controllers
 {
-    public class BoardsController : Controller
+    public class BoardsController : LockableController
     {
         private readonly ApplicationDbContext _context;
-
-        private readonly static List<Lock> locks = new();
-        private readonly static object locksLock = new();
 
         public BoardsController(ApplicationDbContext context)
         {
@@ -20,37 +18,22 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards
-        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber, int? delock)
+        public async Task<IActionResult> Index(string sortOrder,string searchString, string currentFilter, int? pageNumber, int? unlock)
         {
-            if (delock != null)
-            {
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == delock)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
-            }
+            if (unlock != null)
+                Unlock(unlock);
 
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
-            
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+            Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            List<Board> boards = await GetBoardsFromAPI();
+
+            // Få fat i sorteringsparametre
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["CurrentFilter"] = searchString;
-            var Board = from s in _context.Board
-                           select s;
 
             //Metode der tjekker både navn og type for match med searchString.
             //Tjek om den første char samt resten af alle chars i searchstring kronologisk passer med Type i hvert board.
@@ -92,33 +75,28 @@ namespace SurfsUp.Controllers
                 }
                 string l = Found.ToString();
                 if (hasChanged && Found == BoardType.Shortboard)
-                { Board = Board.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString)); }
+                { boards = boards.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString)).ToList(); }
                 else if (!hasChanged && Found == BoardType.Shortboard)
-                { 
-                    Board = Board.Where(s => s.Name.ToLower().Contains(searchString)); 
+                {
+                    boards = boards.Where(s => s.Name.ToLower().Contains(searchString)).ToList(); 
                 }
                 else
                 {
-                    Board = Board.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString));
+                    boards = boards.Where(s => s.Type == Found || s.Name.ToLower().Contains(searchString)).ToList();
                 }
             }
 
-            Board = sortOrder switch
+            boards = sortOrder switch
             {
-                "name_desc" => Board.OrderByDescending(s => s.Name),
-                "Price" => Board.OrderBy(s => s.Price),
-                "price_desc" => Board.OrderByDescending(s => s.Price),
-                "Type" => Board.OrderBy(s => s.Type),
-                "type_desc" => Board.OrderByDescending(s => s.Type),
-                _ => Board.OrderBy(s => s.Name),
+                "name_desc" => boards.OrderByDescending(s => s.Name).ToList(),
+                "Price" => boards.OrderBy(s => s.Price).ToList(),
+                "price_desc" => boards.OrderByDescending(s => s.Price).ToList(),
+                "Type" => boards.OrderBy(s => s.Type).ToList(),
+                "type_desc" => boards.OrderByDescending(s => s.Type).ToList(),
+                _ => boards.OrderBy(s => s.Name).ToList(),
             };
             int pageSize = 5;
-            return View(await PaginatedList<Board>.CreateAsync(Board
-                            .Include(e => e.BoardEquipments)
-                            .ThenInclude(be => be.Equipment)
-                            .Include(r => r.rentals)
-                            .AsNoTracking(), pageNumber ?? 1, pageSize));
-
+            return View(PaginatedList<Board>.Create(boards, pageNumber ?? 1, pageSize));
         }
 
         // GET: Boards/Details/5
@@ -211,29 +189,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
             if (_context.Board == null)
             {
@@ -333,21 +290,7 @@ namespace SurfsUp.Controllers
                     }
                 }
 
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == id)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(id);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -358,29 +301,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
             if (_context.Board == null)
             {
@@ -413,21 +335,7 @@ namespace SurfsUp.Controllers
                 _context.Board.Remove(board);
             }
 
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        found = true;
-                        locks.Remove(locks[i]);
-                    }
-                    else
-                        i++;
-                }
-            }
+            Unlock(id);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -441,29 +349,8 @@ namespace SurfsUp.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRental(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at udleje dette board." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at leje dette board." });
 
             if (_context.Board == null)
             {
@@ -476,7 +363,7 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
-            Rental rental = new Rental();
+            Rental rental = new();
             rental.Board = board;
             rental.BoardId = board.BoardId;
             rental.StartRental = DateTime.Now;
@@ -504,21 +391,7 @@ namespace SurfsUp.Controllers
             {
                 _context.Add(rental);
 
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == id)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(id);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -530,6 +403,88 @@ namespace SurfsUp.Controllers
                 .ToList();
             }
             return View(rental);
+        }
+
+        private async static Task<List<Board>> GetBoardsFromAPI()
+        {
+            // BIG CREDIT TO THE OG KC
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            List<Board> boards;
+            List<BoardEquipment> boardEquipment;
+            List<Equipment> equipment;
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            // Hent Boards fra API
+            using (HttpResponseMessage response = await client.GetAsync("api/Boards"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boards = JsonSerializer.Deserialize<List<Board>>(jsonResponse, options)!;
+            }
+
+            // Hent BoardEquipment fra API
+            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
+            }
+
+            // Hent BoardEquipment fra API
+            using (HttpResponseMessage response = await client.GetAsync("api/Equipment"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!;
+            }
+
+            // Kombinér boards, boardEquipment og equipment
+            foreach (BoardEquipment be in boardEquipment)
+            {
+                Board b = null;
+                Equipment eq = null;
+
+                // FIND BOARD
+                int i = 0;
+                while (i < boards.Count && b == null)
+                {
+                    if (boards[i].BoardId == be.BoardId)
+                    {
+                        b = boards[i];
+                        be.Board = b;
+                        b.BoardEquipments.Add(be);
+                    }
+                    else
+                        i++;
+                }
+                if (b == null)
+                    throw new Exception($"Hov det board ({be.BoardId}) findes vist ikke...");
+
+                // FIND EQUIPMENT
+                i = 0;
+                while (i < equipment.Count && eq == null)
+                {
+                    if (equipment[i].EquipmentId == be.EquipmentId)
+                    {
+                        eq = equipment[i];
+                        be.Equipment = eq;
+                        eq.BoardEquipments.Add(be);
+                    }
+                    else
+                        i++;
+                }
+                if (eq == null)
+                    throw new Exception($"Hov det equipment ({be.EquipmentId}) findes vist ikke...");
+
+                // INDSÆT I BOARD OG EQUIPMENT NAVIGATION PROPERTIES
+                b.Equipment.Add(eq);
+                eq.Boards.Add(b);
+            }
+
+            return boards;
         }
     }
 }
