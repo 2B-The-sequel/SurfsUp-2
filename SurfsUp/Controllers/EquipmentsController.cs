@@ -6,12 +6,9 @@ using SurfsUp.Models;
 
 namespace SurfsUp.Controllers
 {
-    public class EquipmentsController : Controller
+    public class EquipmentsController : LockableController
     {
         private readonly ApplicationDbContext _context;
-
-        private readonly static List<Lock> locks = new();
-        private readonly static object locksLock = new();
 
         public EquipmentsController(ApplicationDbContext context)
         {
@@ -19,25 +16,11 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Equipments
-        public async Task<IActionResult> Index(int? delock)
+        public async Task<IActionResult> Index(int? unlock)
         {
-            if (delock != null)
+            if (unlock != null)
             {
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == delock)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(unlock);
             }
 
             return _context.Equipment != null ? 
@@ -92,29 +75,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
 
             if (_context.Equipment == null)
             {
@@ -161,21 +123,7 @@ namespace SurfsUp.Controllers
                     }
                 }
 
-                lock (locksLock)
-                {
-                    int i = 0;
-                    bool found = false;
-                    while (i < locks.Count && !found)
-                    {
-                        if (locks[i].Id == id)
-                        {
-                            found = true;
-                            locks.Remove(locks[i]);
-                        }
-                        else
-                            i++;
-                    }
-                }
+                Unlock(id);
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -186,29 +134,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int id)
         {
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        if ((DateTime.Now - locks[i].Time).TotalSeconds >= 60 * 5)
-                            locks.Remove(locks[i]);
-                        else
-                            found = true;
-                    }
-                    else
-                        i++;
-                }
-
-                if (found)
-                    return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
-                else
-                    locks.Add(new Lock(id, DateTime.Now));
-            }
+            if (Lock(id))
+                return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
 
             if (_context.Equipment == null)
             {
@@ -241,21 +168,7 @@ namespace SurfsUp.Controllers
                 _context.Equipment.Remove(equipment);
             }
 
-            lock (locksLock)
-            {
-                int i = 0;
-                bool found = false;
-                while (i < locks.Count && !found)
-                {
-                    if (locks[i].Id == id)
-                    {
-                        found = true;
-                        locks.Remove(locks[i]);
-                    }
-                    else
-                        i++;
-                }
-            }
+            Unlock(id);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
