@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using SurfsUp.Models.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using SurfsUp.Models.Validation;
 
 namespace SurfsUp.Models
 {

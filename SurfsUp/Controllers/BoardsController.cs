@@ -24,9 +24,18 @@ namespace SurfsUp.Controllers
                 Unlock(unlock);
             }
 
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
-            
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+            Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            // BIG CREDIT TO THE OG KC
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+            using HttpResponseMessage respone = await client.GetAsync("api/Boards");
+            string jsonResponse = await respone.Content.ReadAsStringAsync();
+            List<Board> boards = System.Text.Json.JsonSerializer.Deserialize<List<Board>>(jsonResponse)!;
+
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";

@@ -36,7 +36,7 @@ namespace SurfsUp.Controllers
             return found;
         }
 
-        protected void Unlock (int? id)
+        protected void Unlock(int? id)
         {
             lock (locksLock)
             {
