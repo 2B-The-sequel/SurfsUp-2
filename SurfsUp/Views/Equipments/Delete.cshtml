@@ -20,13 +20,12 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="EquipmentId" />
         <input type="submit" value="Slet" class="btn btn-danger" />
-        <a asp-action="Index" asp-route-delock="@Model.EquipmentId" class="btn btn-primary">Tilbage til listen</a>
+        <a asp-action="Index" asp-route-unlock="@Model.EquipmentId" class="btn btn-primary">Tilbage til listen</a>
     </form>
 </div>
 
-<script>
-    window.setTimeout(function()
-    {
-        window.location='@Url.Action("Index","Equipments")';
-    }, 1000 * 60 * 5);
-</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("~/Views/Shared/_Timeout.cshtml");
+    }
+}
