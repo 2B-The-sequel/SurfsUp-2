@@ -2,10 +2,10 @@
 
 namespace SurfsUpAPI.Models
 {
-    public class Board
+    public class Board : IIdentifiable
     {
         [Key]
-        public int BoardId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
 

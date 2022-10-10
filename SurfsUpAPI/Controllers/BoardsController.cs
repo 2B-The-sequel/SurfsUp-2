@@ -1,28 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SurfsUpAPI.Data;
 using SurfsUpAPI.Models;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace SurfsUpAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BoardsController : ControllerBase
+    public class BoardsController : GenericAPIController<Board>
     {
-        private readonly ApplicationDbContext _context;
+        public BoardsController(ApplicationDbContext context) : base(context) { }
 
-        public BoardsController(ApplicationDbContext context)
+        protected override DbSet<Board> Set()
         {
-            _context = context;
-        }
-
-        [HttpGet]
-        public List<Board> Get()
-        {
-            IQueryable<Board> Board = from s in _context.Board select s;
-            List<Board> boards = Board.ToList();
-            return boards;
+            return _context.Board;
         }
     }
 }

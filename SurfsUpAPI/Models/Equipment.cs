@@ -2,10 +2,10 @@
 
 namespace SurfsUpAPI.Models
 {
-    public class Equipment
+    public class Equipment : IIdentifiable
     {
         [Key]
-        public int EquipmentId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }
