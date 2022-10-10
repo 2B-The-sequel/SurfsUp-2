@@ -3,10 +3,9 @@ using SurfsUpAPI.Data;
 using SurfsUpAPI.Models;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace SurfsUpAPI.Controllers
 {
@@ -21,14 +20,31 @@ namespace SurfsUpAPI.Controllers
             _context = context;
         }
 
-        protected abstract DbSet<T> Set();
-
-        [HttpGet]
-        public ActionResult<List<T>> Get()
+        [HttpPost]
+        public async Task<ActionResult<T>> Create(T item)
         {
             try
             {
-                List<T> list = Set().ToList();
+                if (item == null)
+                {
+                    return BadRequest();
+                }
+                _context.Set<T>().Add(item);
+                await _context.SaveChangesAsync();
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<List<T>> Retrieve()
+        {
+            try
+            {
+                List<T> list = _context.Set<T>().ToList();
                 if (list == null)
                     return NotFound();
                 return Ok(list);
@@ -40,39 +56,20 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<T> Get(int id)
+        public ActionResult<T> Retrieve(int id)
         {
             try
             {
-                if (Set() == null)
+                if (_context.Set<T>() == null)
                 {
                     return NotFound();
                 }
 
-                T item = Set().FirstOrDefault(t => t.Id == id);
+                T item = _context.Set<T>().FirstOrDefault(t => t.Id == id);
                 if (item == null)
                 {
                     return NotFound();
                 }
-                return Ok(item);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
-            }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> Create(T item)
-        {
-            try
-            {
-                if (item == null)
-                {
-                    return BadRequest();
-                }
-                Set().Add(item);
-                await _context.SaveChangesAsync();
                 return Ok(item);
             }
             catch (Exception ex)
@@ -86,13 +83,13 @@ namespace SurfsUpAPI.Controllers
         {
             try
             {
-                T findInDatabase = Set().FirstOrDefault(t => t.Id == item.Id);
+                T findInDatabase = _context.Set<T>().FirstOrDefault(t => t.Id == item.Id);
                 if (findInDatabase == null)
                 {
                     return NotFound($"{nameof(T)} with id = {item.Id} not found ");
                 }
-                
-                Set().Update(item);
+
+                _context.Set<T>().Update(item);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -103,16 +100,16 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult<T>> Delete(int id)
         {
             try
             {
-                T item = Set().FirstOrDefault(m => m.Id == id);
+                T item = _context.Set<T>().FirstOrDefault(m => m.Id == id);
                 if (item == null)
                 {
                     return NotFound($"{nameof(T)} with id:{id} could not be found.");
                 }
-                Set().Remove(item);
+                _context.Set<T>().Remove(item);
                 await _context.SaveChangesAsync();
                 return Ok(item);
             }
