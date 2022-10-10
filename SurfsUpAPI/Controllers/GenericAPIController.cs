@@ -21,7 +21,7 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<T>> Create(T item)
+        public virtual async Task<ActionResult<T>> Create(T item)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<T>> Retrieve()
+        public virtual ActionResult<List<T>> Retrieve()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<T> Retrieve(int id)
+        public virtual ActionResult<T> Retrieve(int id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<T>> Update(T item)
+        public virtual async Task<ActionResult<T>> Update(T item)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<T>> Delete(int id)
+        public virtual async Task<ActionResult<T>> Delete(int id)
         {
             try
             {
