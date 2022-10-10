@@ -141,6 +141,52 @@ namespace SurfsUpAPI.Models
                 Name = "Leash"
             };
 
+            BoardEquipment be1 = new()
+            {
+                BoardId = 8,
+                EquipmentId = 1
+            };
+            BoardEquipment be2 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 1
+            };
+            BoardEquipment be3 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 2
+            };
+            BoardEquipment be4 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 3
+            };
+            BoardEquipment be5 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 4
+            };
+            BoardEquipment be6 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 1
+            };
+            BoardEquipment be7 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 2
+            };
+            BoardEquipment be8 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 3
+            };
+            BoardEquipment be9 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 4
+            };
+
             if (!context.Board.Any())
             {
                 context.Board.AddRange(
@@ -166,6 +212,23 @@ namespace SurfsUpAPI.Models
                     Fin,
                     Pump,
                     Leash
+                );
+
+                changed = true;
+            }
+
+            if (!context.BoardEquipment.Any())
+            {
+                context.BoardEquipment.AddRange(
+                    be1,
+                    be2,
+                    be3,
+                    be4,
+                    be5,
+                    be6,
+                    be7,
+                    be8,
+                    be9
                 );
 
                 changed = true;

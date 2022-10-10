@@ -10,12 +10,5 @@ namespace SurfsUpAPI.Data
         public DbSet<Board> Board { get; set; } = default!;
         public DbSet<Equipment> Equipment { get; set; } = default!;
         public DbSet<BoardEquipment> BoardEquipment { get; set; } = default!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<BoardEquipment>().HasNoKey();
-
-            base.OnModelCreating(modelBuilder);
-        }
     }
 }

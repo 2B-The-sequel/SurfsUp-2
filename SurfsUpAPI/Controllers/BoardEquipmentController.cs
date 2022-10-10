@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace SurfsUpAPI.Controllers
 {
@@ -22,65 +23,79 @@ namespace SurfsUpAPI.Controllers
         [HttpGet]
         public ActionResult<List<BoardEquipment>> Get()
         {
-            IQueryable<BoardEquipment> BoardEquipment = from s in _context.BoardEquipment select s;
-            List<BoardEquipment> boardEquipment = BoardEquipment.ToList();
-            if (boardEquipment == null)
-                return NotFound();
-            return Ok(boardEquipment);
+            try
+            {
+                IQueryable<BoardEquipment> BoardEquipment = from s in _context.BoardEquipment select s;
+                List<BoardEquipment> boardEquipment = BoardEquipment.ToList();
+                if (boardEquipment == null)
+                    return NotFound();
+                return Ok(boardEquipment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
+            }
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult GetEquipment(int id)
+        public ActionResult<BoardEquipment> GetEquipment(int id)
         {
             try
             {
-                return Ok();
+                if (_context.BoardEquipment == null)
+                {
+                    return NotFound();
+                }
+
+                BoardEquipment be = _context.BoardEquipment.FirstOrDefault(m => m.BoardEquipmentId == id);
+                if (be == null)
+                {
+                    return NotFound();
+                }
+                return Ok(be);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                  "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
             }
         }
 
         [HttpPost]
-        public ActionResult Create(BoardEquipment equipment)
+        public async Task<ActionResult> Create(BoardEquipment be)
         {
             try
             {
-                return Ok();
+                if (be == null)
+                { 
+                    return BadRequest(); 
+                }
+                _context.BoardEquipment.Add(be);
+                await _context.SaveChangesAsync();
+                return Ok(be);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                  "Error retrieving data from the database");
-            }
-        }
-
-        [HttpPut("{id:int}")]
-        public ActionResult Update(BoardEquipment equipment)
-        {
-            try
-            {
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                  "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
             }
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteBoardEquipment(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                return Ok(id);
+                BoardEquipment be = _context.BoardEquipment.FirstOrDefault(m => m.BoardEquipmentId == id);
+                if (be == null)
+                {
+                    return NotFound($"BoardEquipment with id:{id} could not be found.");
+                }
+                _context.Remove(be);
+                await _context.SaveChangesAsync();
+                return Ok(be);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
             }
         }
     }

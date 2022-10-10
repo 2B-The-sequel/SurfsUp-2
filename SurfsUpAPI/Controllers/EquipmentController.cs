@@ -86,7 +86,7 @@ namespace SurfsUpAPI.Controllers
                 {
                     return BadRequest("Equipment ID mismatch");
                 }
-                var equipmentToUpdate = await _context.Equipment.FindAsync(id);
+                Equipment equipmentToUpdate = await _context.Equipment.FindAsync(id);
                 if (equipmentToUpdate == null)
                 { 
                     return NotFound($"Equipment with id = {id} not found "); 
@@ -110,14 +110,14 @@ namespace SurfsUpAPI.Controllers
         {
             try
             {
-                var equipmentToDelete = await _context.Equipment.FindAsync(id);
+                Equipment equipmentToDelete = await _context.Equipment.FindAsync(id);
                 if(equipmentToDelete == null)
                 {
                     return NotFound($"Equipment with id:{id} could not be found");
                 }
                 _context.Remove(equipmentToDelete);
-               await _context.SaveChangesAsync();
-                return Ok(id);
+                await _context.SaveChangesAsync();
+                return Ok(equipmentToDelete);
             }
             catch (Exception)
             {
