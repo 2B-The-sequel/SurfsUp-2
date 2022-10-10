@@ -24,7 +24,7 @@ namespace SurfsUpAPI.Controllers
         protected abstract DbSet<T> Set();
 
         [HttpGet]
-        public ActionResult<List<BoardEquipment>> Get()
+        public ActionResult<List<T>> Get()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<T>> UpdateEquipment(T item)
+        public async Task<ActionResult<T>> Update(T item)
         {
             try
             {
