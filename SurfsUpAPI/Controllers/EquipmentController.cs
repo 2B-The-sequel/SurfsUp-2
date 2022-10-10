@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SurfsUp.Data;
-using SurfsUp.Models;
-using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using SurfsUp.Data.Migrations;
-using Equipment = SurfsUp.Models.Equipment;
+using SurfsUpAPI.Data;
+using SurfsUpAPI.Models;
 
 namespace SurfsUpAPI.Controllers
 {
@@ -94,12 +90,10 @@ namespace SurfsUpAPI.Controllers
                 if (equipmentToUpdate == null)
                 { 
                     return NotFound($"Equipment with id = {id} not found "); 
-                 }
+                }
 
                 equipmentToUpdate.Name = equipment.Name;
-                equipmentToUpdate.Boards = equipment.Boards;
-                equipmentToUpdate.BoardEquipments = equipment.BoardEquipments;
-
+                
                 _context.Update(equipmentToUpdate);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -123,7 +117,7 @@ namespace SurfsUpAPI.Controllers
                 }
                 _context.Remove(equipmentToDelete);
                await _context.SaveChangesAsync();
-                return Ok();
+                return Ok(id);
             }
             catch (Exception)
             {

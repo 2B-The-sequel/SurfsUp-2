@@ -9,7 +9,7 @@ namespace SurfsUp.Models
         [DisplayName("Navn")]
         [Required(ErrorMessage = "Udstyret skal have et navn")]
         public string Name { get; set; }
-        public ICollection<Board> Boards { get; set; } = new List<Board>();
+        public List<Board> Boards { get; set; } = new List<Board>();
         public List<BoardEquipment> BoardEquipments { get; set; } = new List<BoardEquipment>();
     }
 }

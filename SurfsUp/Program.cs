@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SurfsUp.Data;
 using Microsoft.AspNetCore.Localization;
+using SurfsUp.Data;
 using SurfsUp.Models;
 using System.Globalization;
 
@@ -40,13 +40,6 @@ builder.Services.AddAuthentication()
 #endregion //  <--- Secret manager
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    SeedData.Initialize(services);
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

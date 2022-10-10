@@ -102,7 +102,8 @@ namespace SurfsUp.Controllers
         // GET: Boards/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
+            // LAV FRA DATABASE TIL API
+            /*
             if (id == null || _context.Board == null)
             {
                 return NotFound();
@@ -112,6 +113,8 @@ namespace SurfsUp.Controllers
                 .Include(e => e.BoardEquipments)
                 .ThenInclude(be => be.Equipment)
                 .FirstOrDefaultAsync(m => m.BoardId == id);
+            */
+            Board board = null;
             if (board == null)
             {
                 return NotFound();
@@ -125,7 +128,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
-            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            // LAV FRA DATABASE TIL API
+            /*List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
             BoardViewModel bvm = new()
             {
                 EquipmentVM = new List<EquipmentViewModel>()
@@ -140,8 +144,9 @@ namespace SurfsUp.Controllers
                     Checked = false
                 };
                 bvm.EquipmentVM.Add(evm);
-            }
+            }*/
 
+            BoardViewModel bvm = null;
             return View(bvm);
         }
 
@@ -154,6 +159,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(BoardViewModel bvm)
         {
+            /*
             Board board = new()
             {
                 Name = bvm.Name,
@@ -181,6 +187,8 @@ namespace SurfsUp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            */
+            
             return View(bvm);
         }
 
@@ -192,6 +200,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
+            /*
             if (_context.Board == null)
             {
                 return NotFound();
@@ -238,6 +247,9 @@ namespace SurfsUp.Controllers
                 }
                 bvm.EquipmentVM.Add(evm);
             }
+            */
+            BoardViewModel bvm = null;
+
             return View(bvm);
         }
 
@@ -255,6 +267,7 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
+            /*
             Board board = await _context.Board
                 .Include(e => e.BoardEquipments)
                 .ThenInclude(be => be.Equipment)
@@ -294,6 +307,9 @@ namespace SurfsUp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+            */
+            Board board = null;
+
             return View(board);
         }
 
@@ -304,6 +320,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
+            /*
             if (_context.Board == null)
             {
                 return NotFound();
@@ -315,6 +332,8 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            */
+            Board board = null;
 
             return View(board);
         }
@@ -325,6 +344,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            /*
             if (_context.Board == null)
             {
                 return Problem("Entity set 'SurfsUpContext.Board'  is null.");
@@ -334,6 +354,7 @@ namespace SurfsUp.Controllers
             {
                 _context.Board.Remove(board);
             }
+            */
 
             Unlock(id);
 
@@ -343,7 +364,8 @@ namespace SurfsUp.Controllers
 
         private bool BoardExists(int id)
         {
-          return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+            //return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+            return false;
         }
 
         [Authorize]
@@ -352,6 +374,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at leje dette board." });
 
+            /*
             if (_context.Board == null)
             {
                 return NotFound();
@@ -370,6 +393,8 @@ namespace SurfsUp.Controllers
                 StartRental = DateTime.Now,
                 EndRental = DateTime.Now
             };
+            */
+            Rental rental = null;
 
             return View(rental);
         }
@@ -379,6 +404,7 @@ namespace SurfsUp.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRental( Rental rental, int id)
         {
+            /*
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             rental.UsersId = claims.Value;
@@ -404,6 +430,8 @@ namespace SurfsUp.Controllers
                 .Where(y => y.Count > 0)
                 .ToList();
             }
+            */
+            
             return View(rental);
         }
 

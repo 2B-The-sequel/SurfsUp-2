@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurfsUp.Data;
+using Microsoft.Extensions.DependencyInjection;
+using SurfsUpAPI.Data;
+using System;
+using System.Linq;
 
-namespace SurfsUp.Models
+namespace SurfsUpAPI.Models
 {
     public class SeedData
     {
@@ -137,26 +140,6 @@ namespace SurfsUp.Models
             {
                 Name = "Leash"
             };
-
-            NaishOne.Equipment.Add(Paddle);
-            SexTourer.Equipment.Add(Fin);
-            SexTourer.Equipment.Add(Paddle);
-            SexTourer.Equipment.Add(Pump);
-            SexTourer.Equipment.Add(Leash);
-            NaishMaliko.Equipment.Add(Fin);
-            NaishMaliko.Equipment.Add(Paddle);
-            NaishMaliko.Equipment.Add(Pump);
-            NaishMaliko.Equipment.Add(Leash);
-
-            Paddle.Boards.Add(NaishOne);
-            Paddle.Boards.Add(SexTourer);
-            Paddle.Boards.Add(NaishMaliko);
-            Fin.Boards.Add(SexTourer);
-            Fin.Boards.Add(NaishMaliko);
-            Pump.Boards.Add(SexTourer);
-            Pump.Boards.Add(NaishMaliko);
-            Leash.Boards.Add(SexTourer);
-            Leash.Boards.Add(NaishMaliko);
 
             if (!context.Board.Any())
             {

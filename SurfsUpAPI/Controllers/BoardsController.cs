@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using SurfsUp.Data;
-using SurfsUp.Models;
+using SurfsUpAPI.Data;
+using SurfsUpAPI.Models;
 using System.Linq;
 using System.Collections.Generic;
 

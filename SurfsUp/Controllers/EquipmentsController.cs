@@ -23,14 +23,19 @@ namespace SurfsUp.Controllers
                 Unlock(unlock);
             }
 
+            /*
             return _context.Equipment != null ? 
                           View(await _context.Equipment.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Equipment'  is null.");
+            */
+
+            return View(); // SKAL FJERNES SENERE
         }
 
         // GET: Equipments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            /*
             if (id == null || _context.Equipment == null)
             {
                 return NotFound();
@@ -41,6 +46,9 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            */
+
+            Equipment equipment = null;
 
             return View(equipment);
         }
@@ -78,6 +86,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
 
+            /*
             if (_context.Equipment == null)
             {
                 return NotFound();
@@ -88,6 +97,9 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            */
+            Equipment equipment = null;
+
             return View(equipment);
         }
 
@@ -137,6 +149,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
 
+            /*
             if (_context.Equipment == null)
             {
                 return NotFound();
@@ -148,6 +161,8 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            */
+            Equipment equipment = null;
 
             return View(equipment);
         }
@@ -158,6 +173,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            /*
             if (_context.Equipment == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Equipment'  is null.");
@@ -167,6 +183,7 @@ namespace SurfsUp.Controllers
             {
                 _context.Equipment.Remove(equipment);
             }
+            */
 
             Unlock(id);
 
@@ -176,7 +193,8 @@ namespace SurfsUp.Controllers
 
         private bool EquipmentExists(int id)
         {
-          return (_context.Equipment?.Any(e => e.EquipmentId == id)).GetValueOrDefault();
+            //return (_context.Equipment?.Any(e => e.EquipmentId == id)).GetValueOrDefault();
+            return false;
         }
     }
 }
