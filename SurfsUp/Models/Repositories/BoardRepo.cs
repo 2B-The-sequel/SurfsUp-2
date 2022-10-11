@@ -5,7 +5,7 @@ namespace SurfsUp.Models.Repositories
     public class BoardRepo
     {
 
-        private async static Task<List<Board>> GetAllFromAPI()
+        public async static Task<List<Board>> GetAllFromAPI()
         {
             // BIG CREDIT TO THE OG KC
             using HttpClient client = new()
@@ -67,11 +67,10 @@ namespace SurfsUp.Models.Repositories
                 i = 0;
                 while (i < equipment.Count && eq == null)
                 {
-                    if (equipment[i].EquipmentId == be.EquipmentId)
+                    if (equipment[i].Id == be.EquipmentId)
                     {
                         eq = equipment[i];
                         be.Equipment = eq;
-                        eq.BoardEquipments.Add(be);
                     }
                     else
                         i++;
@@ -149,11 +148,10 @@ namespace SurfsUp.Models.Repositories
                 i = 0;
                 while (i < equipment.Count && eq == null)
                 {
-                    if (equipment[i].EquipmentId == be.EquipmentId)
+                    if (equipment[i].Id == be.EquipmentId)
                     {
                         eq = equipment[i];
                         be.Equipment = eq;
-                        eq.BoardEquipments.Add(be);
                     }
                     else
                         i++;

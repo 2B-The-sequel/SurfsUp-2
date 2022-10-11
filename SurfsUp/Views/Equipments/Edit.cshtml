@@ -12,7 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EquipmentId" />
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -20,7 +20,7 @@
             </div><br />
             <div class="form-group">
                 <input type="submit" value="Gem" class="btn btn-success" />
-                <a asp-action="Index" asp-route-unlock="@Model.EquipmentId" class="btn btn-primary">Tilbage til listen</a>
+                <a asp-action="Index" asp-route-unlock="@Model.Id" class="btn btn-primary">Tilbage til listen</a>
             </div>
         </form>
     </div>

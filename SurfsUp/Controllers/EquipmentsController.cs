@@ -111,7 +111,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, [Bind("EquipmentId,Name")] Equipment equipment)
         {
-            if (id != equipment.EquipmentId)
+            if (id != equipment.Id)
             {
                 return NotFound();
             }
@@ -125,7 +125,7 @@ namespace SurfsUp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EquipmentExists(equipment.EquipmentId))
+                    if (!EquipmentExists(equipment.Id))
                     {
                         return NotFound();
                     }
