@@ -40,16 +40,18 @@ namespace SurfsUp.Models
         [ValidOnlyPositive(ErrorMessage = "Prisen skal være over nul din taber")]
         public decimal Price { get; set; }
 
+        [JsonIgnore]
         [DisplayName("Udstyr")]
         public List<Equipment> Equipment { get; set; } = new List<Equipment>();
-        public List<BoardEquipment> BoardEquipments { get; set; } = new List<BoardEquipment>();
 
         [JsonConverter(typeof(StringEnumConverter))]
         [DisplayName("Type")]
         public BoardType Type { get; set; }
 
+        [JsonIgnore]
         public ApplicationUser applicationUser { get; set; }
 
+        [JsonIgnore]
         public ICollection<Rental> rentals { get ; set; }
 
         public bool IsRented()

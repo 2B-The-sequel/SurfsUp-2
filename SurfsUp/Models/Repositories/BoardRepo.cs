@@ -5,7 +5,7 @@ namespace SurfsUp.Models.Repositories
     public class BoardRepo
     {
 
-        private async static Task<List<Board>> GetAllFromAPI()
+        public async static Task<List<Board>> GetAllFromAPI()
         {
             // BIG CREDIT TO THE OG KC
             using HttpClient client = new()
@@ -55,7 +55,6 @@ namespace SurfsUp.Models.Repositories
                     {
                         b = boards[i];
                         be.Board = b;
-                        b.BoardEquipments.Add(be);
                     }
                     else
                         i++;
@@ -87,7 +86,7 @@ namespace SurfsUp.Models.Repositories
             return boards;
         }
 
-        private async static Task<List<Board>> GetFromAPI(int id)
+        public async static Task<Board> GetFromAPI(int id)
         {
             // BIG CREDIT TO THE OG KC
             using HttpClient client = new()
@@ -95,7 +94,7 @@ namespace SurfsUp.Models.Repositories
                 BaseAddress = new Uri("https://localhost:7122/")
             };
 
-            List<Board> boards;
+            Board board;
             List<BoardEquipment> boardEquipment;
             List<Equipment> equipment;
 
@@ -106,7 +105,7 @@ namespace SurfsUp.Models.Repositories
             using (HttpResponseMessage response = await client.GetAsync($"api/Board/{id}"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                boards = JsonSerializer.Deserialize<List<Board>>(jsonResponse, options)!;
+                board = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
             }
 
             // Hent BoardEquipment fra API
@@ -123,51 +122,124 @@ namespace SurfsUp.Models.Repositories
                 equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!;
             }
 
-            // Kombinér boards, boardEquipment og equipment
+            // Kombinér board med tilhørende equipment
             foreach (BoardEquipment be in boardEquipment)
             {
-                Board b = null;
                 Equipment eq = null;
 
                 // FIND BOARD
-                int i = 0;
-                while (i < boards.Count && b == null)
-                {
-                    if (boards[i].BoardId == be.BoardId)
+                
+                    if (board.BoardId == be.BoardId)
                     {
-                        b = boards[i];
-                        be.Board = b;
-                        b.BoardEquipments.Add(be);
-                    }
-                    else
-                        i++;
-                }
-                if (b == null)
-                    throw new Exception($"Hov det board ({be.BoardId}) findes vist ikke...");
-
-                // FIND EQUIPMENT
-                i = 0;
-                while (i < equipment.Count && eq == null)
-                {
-                    if (equipment[i].EquipmentId == be.EquipmentId)
-                    {
-                        eq = equipment[i];
                         be.Equipment = eq;
-                        eq.BoardEquipments.Add(be);
                     }
-                    else
-                        i++;
-                }
+
+                
                 if (eq == null)
                     throw new Exception($"Hov det equipment ({be.EquipmentId}) findes vist ikke...");
 
-                // INDSÆT I BOARD OG EQUIPMENT NAVIGATION PROPERTIES
-                b.Equipment.Add(eq);
-                eq.Boards.Add(b);
+                // INDSÆT EQUIPMENT I BOARD NAVIGATION PROPERTIES EQUIPMENTS
+                board.Equipment.Add(eq);
+                
             }
 
-            return boards;
+            return board;
         }
+
+        public async static Task<Board> PostToAPI(Board board)
+        {
+            Board boardToCheck = new Board();
+            // BIG CREDIT TO THE OG Pete the Speed
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            HttpRequestMessage message = new(HttpMethod.Post, "api/Board?4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpContent content = new StringContent(JsonSerializer.Serialize(board));
+            message.Content = content;
+
+            // Hent Boards fra API
+            using (HttpResponseMessage response = await client.SendAsync(message))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
+
+                if (board == null)
+                {
+                    throw new Exception("There was an error Posting the board");
+                }
+                return boardToCheck;
+
+            }
+               
+        }
+
+        public async static Task<Board> PutToAPI(Board board)
+        {
+            Board boardToCheck = new Board();
+            // BIG CREDIT TO THE OG Pete the Speed
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            HttpRequestMessage message = new(HttpMethod.Put, "api/Board?4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpContent content = new StringContent(JsonSerializer.Serialize(board));
+            message.Content = content;
+
+          
+            // Hent Boards fra API
+            using (HttpResponseMessage response = await client.SendAsync(message))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
+
+                if (board == null)
+                {
+                    throw new Exception("There was an error Posting the board");
+                }
+                return boardToCheck;
+
+            }
+
+        }
+
+        public async static Task<Board> DeleteToAPI(int id)
+        {
+            Board boardToCheck = new Board();
+            // BIG CREDIT TO THE OG Pete the Speed
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            // Hent Boards fra API
+            using (HttpResponseMessage response = await client.DeleteAsync($"api/Board?Id={id}4d1bb604-377f-41e0-99c7-59846080bb47"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
+
+                if (boardToCheck == null)
+                {
+                    throw new Exception("There was an error deleting the board");
+                }
+                return boardToCheck;
+
+            }
+
+        }
+
+
 
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
+using SurfsUp.Models.Repositories;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -26,7 +27,7 @@ namespace SurfsUp.Controllers
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            List<Board> boards = await GetBoardsFromAPI();
+            List<Board> boards = await BoardRepo.GetAllFromAPI();
 
             // Få fat i sorteringsparametre
             ViewData["CurrentSort"] = sortOrder;
