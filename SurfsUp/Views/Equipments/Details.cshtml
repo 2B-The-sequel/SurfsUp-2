@@ -21,7 +21,7 @@
 <div>
     @if (User.IsInRole("Adminstrators"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.EquipmentId" class="btn btn-success">Ændr</a>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-success">Ændr</a>
     }
     <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
 </div>

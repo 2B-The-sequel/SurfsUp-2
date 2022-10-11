@@ -66,11 +66,10 @@ namespace SurfsUp.Models.Repositories
                 i = 0;
                 while (i < equipment.Count && eq == null)
                 {
-                    if (equipment[i].EquipmentId == be.EquipmentId)
+                    if (equipment[i].Id == be.EquipmentId)
                     {
                         eq = equipment[i];
                         be.Equipment = eq;
-                        eq.BoardEquipments.Add(be);
                     }
                     else
                         i++;
