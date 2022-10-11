@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfsUpAPI.Data;
 
@@ -11,9 +12,10 @@ using SurfsUpAPI.Data;
 namespace SurfsUpAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221011082908_Rental")]
+    partial class Rental
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,11 +98,11 @@ namespace SurfsUpAPI.Migrations
 
             modelBuilder.Entity("SurfsUpAPI.Models.Rental", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("RentalID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentalID"), 1L, 1);
 
                     b.Property<int>("BoardId")
                         .HasColumnType("int");
@@ -114,7 +116,7 @@ namespace SurfsUpAPI.Migrations
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("RentalID");
 
                     b.ToTable("Rental");
                 });
