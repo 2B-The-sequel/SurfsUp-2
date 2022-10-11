@@ -71,7 +71,5 @@ namespace SurfsUp.Models
             return false;
 
         }
-
-
     }
 }
