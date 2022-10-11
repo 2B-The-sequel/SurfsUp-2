@@ -10,5 +10,6 @@ namespace SurfsUpAPI.Data
         public DbSet<Board> Board { get; set; } = default!;
         public DbSet<Equipment> Equipment { get; set; } = default!;
         public DbSet<BoardEquipment> BoardEquipment { get; set; } = default!;
+        public DbSet<Rental> Rental { get; set; } = default!;
     }
 }
