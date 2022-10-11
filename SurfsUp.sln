@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfsUp", "SurfsUp\SurfsUp.csproj", "{E0B0AD60-2524-4923-B25E-6723BC30F71D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfsUpAPI", "SurfsUpAPI\SurfsUpAPI.csproj", "{5E367F66-F64E-4A21-BE90-AA3EEB8D6E1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfsUpAPI", "SurfsUpAPI\SurfsUpAPI.csproj", "{5E367F66-F64E-4A21-BE90-AA3EEB8D6E1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
