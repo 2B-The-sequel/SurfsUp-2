@@ -187,9 +187,9 @@ namespace SurfsUpAPI.Models
                 EquipmentId = 4
             };
 
-            if (!context.Board.Any())
+            if (!context.Set<Board>().Any())
             {
-                context.Board.AddRange(
+                context.Set<Board>().AddRange(
                     TheMinilog,
                     TheWideGlider,
                     TheGoldenRatio,
@@ -205,9 +205,9 @@ namespace SurfsUpAPI.Models
                 changed = true;
             }
 
-            if (!context.Equipment.Any())
+            if (!context.Set<Equipment>().Any())
             {
-                context.Equipment.AddRange(
+                context.Set<Equipment>().AddRange(
                     Paddle,
                     Fin,
                     Pump,
@@ -217,9 +217,9 @@ namespace SurfsUpAPI.Models
                 changed = true;
             }
 
-            if (!context.BoardEquipment.Any())
+            if (!context.Set<BoardEquipment>().Any())
             {
-                context.BoardEquipment.AddRange(
+                context.Set<BoardEquipment>().AddRange(
                     be1,
                     be2,
                     be3,

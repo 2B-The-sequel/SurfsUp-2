@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SurfsUpAPI.Data;
+﻿using SurfsUpAPI.Data;
 using SurfsUpAPI.Models;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SurfsUpAPI.Controllers
 {
@@ -17,6 +16,7 @@ namespace SurfsUpAPI.Controllers
     public abstract class GenericAPIController<T> : Controller where T : class, IIdentifiable
     {
         protected readonly ApplicationDbContext _context;
+        private static readonly string[] authorized_apikeys = { "4d1bb604-377f-41e0-99c7-59846080bb47" };
 
         public GenericAPIController(ApplicationDbContext context)
         {
@@ -24,10 +24,15 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpPost]
-        public virtual ActionResult<T> Create(T item)
+        public virtual ActionResult<T> Create(string apikey, T item)
         {
             try
             {
+                // Check if apikey is valid
+                ObjectResult result = IsKeyValid(apikey);
+                if (result.StatusCode != 200)
+                    return result;
+
                 // Er det et valid item der sendes til API?
                 if (item == null)
                 {
@@ -51,10 +56,15 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpGet]
-        public virtual ActionResult<List<T>> Retrieve()
+        public virtual ActionResult<List<T>> Retrieve(string apikey)
         {
             try
             {
+                // Check if apikey is valid
+                ObjectResult result = IsKeyValid(apikey);
+                if (result.StatusCode != 200)
+                    return result;
+
                 // Findes T i databasen?
                 if (_context.Set<T>() == null)
                 {
@@ -79,10 +89,15 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        public virtual ActionResult<T> Retrieve(int Id)
+        public virtual ActionResult<T> Retrieve(string apikey, int Id)
         {
             try
             {
+                // Check if apikey is valid
+                ObjectResult result = IsKeyValid(apikey);
+                if (result.StatusCode != 200)
+                    return result;
+
                 // Findes T i databasen?
                 if (_context.Set<T>() == null)
                 {
@@ -109,10 +124,15 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpPut]
-        public virtual ActionResult<T> Update(T item)
+        public virtual ActionResult<T> Update(string apikey, T item)
         {
             try
             {
+                // Check if apikey is valid
+                ObjectResult result = IsKeyValid(apikey);
+                if (result.StatusCode != 200)
+                    return result;
+
                 // Find item i databasen før det opdateres
                 T findInDatabase = _context.Set<T>().AsNoTracking().FirstOrDefault(t => t.Id == item.Id); //AsNoTracking er nødvendigt, for ellers giver Databasen ikke slip når Update kaldes.
 
@@ -139,10 +159,15 @@ namespace SurfsUpAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        public virtual ActionResult<T> Delete(int Id)
+        public virtual ActionResult<T> Delete(string apikey, int Id)
         {
             try
             {
+                // Check if apikey is valid
+                ObjectResult result = IsKeyValid(apikey);
+                if (result.StatusCode != 200)
+                    return result;
+
                 // Find item med det givne Id
                 T item = _context.Set<T>().AsNoTracking().FirstOrDefault(m => m.Id == Id);
 
@@ -166,6 +191,29 @@ namespace SurfsUpAPI.Controllers
                 // Send fejl hvis der sker en exception
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving data from the database: {ex}");
             }
+        }
+
+        private ObjectResult IsKeyValid(string apikey)
+        {
+            if (apikey == null)
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized, "An apikey is required. Insert apikey in query as string.");
+            }
+            else
+            {
+                bool found = false;
+                int i = 0;
+                while (i < authorized_apikeys.Length && !found)
+                {
+                    if (authorized_apikeys[i] == apikey)
+                        found = true;
+                    i++;
+                }
+                if (!found)
+                    return StatusCode(StatusCodes.Status401Unauthorized, "Invalid apikey.");
+            }
+
+            return StatusCode(StatusCodes.Status200OK, "Key is valid.");
         }
     }
 }
