@@ -4,6 +4,7 @@ namespace SurfsUp.Models.Repositories
 {
     public class EquipmentRepo
     {
+      
         public async static Task<Equipment> Create(Equipment equipment)
         {
             return await Request(HttpMethod.Post, equipment);

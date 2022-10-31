@@ -15,30 +15,23 @@ namespace SurfsUp.Models.Repositories
 
             List<Board> boards;
             List<BoardEquipment> boardEquipment;
-            List<Equipment> equipment;
+            List<Equipment> equipment = await EquipmentRepo.Retrieve();
 
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             // Hent Boards fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/Boards"))
+            using (HttpResponseMessage response = await client.GetAsync("api/Boards?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boards = JsonSerializer.Deserialize<List<Board>>(jsonResponse, options)!;
             }
 
             // Hent BoardEquipment fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment"))
+            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
-            }
-
-            // Hent BoardEquipment fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/Equipment"))
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!;
             }
 
             // Kombinér boards, boardEquipment og equipment
@@ -101,21 +94,21 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             // Hent Boards fra API
-            using (HttpResponseMessage response = await client.GetAsync($"api/Board/{id}"))
+            using (HttpResponseMessage response = await client.GetAsync($"api/Board/?apikey=4d1bb604-377f-41e0-99c7-59846080bb47&Id={id}"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 board = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
             }
 
             // Hent BoardEquipment fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment"))
+            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
             }
 
             // Hent BoardEquipment fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/Equipment"))
+            using (HttpResponseMessage response = await client.GetAsync("api/Equipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!;
@@ -157,11 +150,11 @@ namespace SurfsUp.Models.Repositories
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
-            HttpRequestMessage message = new(HttpMethod.Post, "api/Board?4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpRequestMessage message = new(HttpMethod.Post, "api/Board?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
             HttpContent content = new StringContent(JsonSerializer.Serialize(board));
             message.Content = content;
 
-            // Hent Boards fra API
+            // Tjek om Board er postet fra API
             using (HttpResponseMessage response = await client.SendAsync(message))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -189,7 +182,7 @@ namespace SurfsUp.Models.Repositories
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
-            HttpRequestMessage message = new(HttpMethod.Put, "api/Board?4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpRequestMessage message = new(HttpMethod.Put, "api/Board?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
             HttpContent content = new StringContent(JsonSerializer.Serialize(board));
             message.Content = content;
 
@@ -223,7 +216,7 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             // Hent Boards fra API
-            using (HttpResponseMessage response = await client.DeleteAsync($"api/Board?Id={id}4d1bb604-377f-41e0-99c7-59846080bb47"))
+            using (HttpResponseMessage response = await client.DeleteAsync($"api/Board?Id={id}&apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
