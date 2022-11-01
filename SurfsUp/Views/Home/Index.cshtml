@@ -2,7 +2,11 @@
     ViewData["Title"] = "Home Page";
 }
 
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <a asp-controller="Backup" asp-action="SqlBackupServer" class="btn btn-outline-success">Backup SQL Server</a>
+    <a asp-controller="Backup" asp-action="SqlImportServer" class="btn btn-outline-success">Import SQL Server</a>
 </div>

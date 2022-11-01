@@ -13,7 +13,7 @@ namespace SurfsUp.Controllers
 {
     public class BackUpController : Controller
     {
-        internal void SqlBackupServer()
+        public async Task<string> SqlBackupServer()
         {
             string connectionString  = $"Server=(localdb)\\MSSQLLocalDB";
 
@@ -27,9 +27,10 @@ namespace SurfsUp.Controllers
             cmd1.ExecuteNonQuery();
             cmd2.ExecuteNonQuery();
             conToDB.Close();
+            return "Backup Completed";
         }
 
-        internal void SqlImportServer()
+        public async Task<string> SqlImportServer()
         {
             string connectionString = $"Server=(localdb)\\MSSQLLocalDB";
             SqlConnection conToDB = new SqlConnection(connectionString);
@@ -69,7 +70,7 @@ namespace SurfsUp.Controllers
             }
             Alter2Cmd.ExecuteNonQuery();
             conToDB.Close();
-
+            return "Import completed";
         }
     }
    
