@@ -1,0 +1,255 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SurfsUp.Data;
+using System.Security.Claims;
+using System.Text.Json;
+using SurfsUp.Models.Repositories;
+
+namespace SurfsUp.Models.Repositories
+{
+    public class RentalRepo
+    {
+        public static ApplicationDbContext CurrentInstance { get; private set; }
+
+        public RentalRepo(ApplicationDbContext context)
+        {
+            CurrentInstance = context;
+        }
+        public async static Task<List<Rental>> GetAllFromAPI()
+        {
+            // BIG CREDIT TO THE OG KC
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+
+            List<Rental> rentals;
+            List<Board> boards = await BoardRepo.GetAllFromAPI();
+            List<ApplicationUser> Users = CurrentInstance.Users.ToList();
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            // Hent Rental fra API
+            using (HttpResponseMessage response = await client.GetAsync("api/Rentals?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                rentals = JsonSerializer.Deserialize<List<Rental>>(jsonResponse, options)!;
+            }
+
+
+            //Fylder hvert Rental objekt med dets tilhørende board
+            foreach (Rental rental in rentals)
+            {
+                Board bo = null;
+                int i = 0;
+                while (i < boards.Count && bo == null)
+                {
+                    if (rentals[i].BoardId == bo.BoardId)
+                    {
+                        bo = boards[i];
+                        rental.Board = bo;
+                    }
+                    else
+                        i++;
+                }
+                if (bo == null)
+                    throw new Exception($"Hov det board ({rental.BoardId}) findes vist ikke...");
+            }
+
+
+            //Fylder hvert Rental objekt med dets tilhørende user
+            foreach (Rental rental in rentals)
+            {
+                ApplicationUser us = null;
+                int i = 0;
+                while (i < Users.Count && us == null)
+                {
+                    if (rentals[i].UsersId == Users[i].Id)
+                    {
+                        us = Users[i];
+                        rental.User = us;
+                    }
+                    else
+                        i++;
+                }
+                if (us == null)
+                    throw new Exception($"Hov den User ({rental.UsersId}) findes vist ikke...");
+            }
+
+
+            //Skal måske ikke være her : Fylder Users med liste over rentals
+            //foreach (ApplicationUser user in Users)
+            //{
+            //    List<Rental> RentalHolder = new List<Rental>();
+            //    Rental rentalHolder = new Rental();
+            //    int i = 0;
+            //    while (i < rentals.Count)
+            //    {
+            //        if (rentals[i].UsersId == Users[i].Id)
+            //        {
+            //            RentalHolder.Add(rentals[i]);
+
+
+            //        }
+            //        else
+            //            i++;
+            //    }
+
+            //    user.rentals = RentalHolder;
+            //}
+
+            return rentals;
+        }
+
+        public async static Task<Rental> GetFromAPI(int id)
+        {
+            // BIG CREDIT TO THE OG KC
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            Rental returnRental = new Rental();
+            List<Board> boards = await BoardRepo.GetAllFromAPI();
+            List<ApplicationUser> Users = CurrentInstance.Users.ToList();
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            // Hent Rental fra API
+            using (HttpResponseMessage response = await client.GetAsync($"api/Rentals?Id={id}&apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                returnRental = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+            }
+
+            //Sætter tilhørende navigationproperty Board til Rental Objekt
+            foreach (Board board in boards)
+            {
+
+                if (board.BoardId == returnRental.BoardId)
+                {
+                    returnRental.Board = board;
+                }
+            }
+            if (returnRental.Board == null)
+                throw new Exception($"Der kunne ikke findes et tilhørende board med Id: {returnRental.BoardId}");
+
+            //Sætter tilhørende User navigationproperty til Rental Objekt
+            foreach (ApplicationUser user in Users)
+            {
+
+                if (user.Id == returnRental.UsersId)
+                {
+                    returnRental.User = user;
+                }
+            }
+            if (returnRental.User == null)
+                throw new Exception($"Hov bruger med id: ({returnRental.UsersId}) findes vist ikke...");
+
+            return returnRental;
+        }
+
+           
+
+        
+
+        public async static Task<Rental> PostToAPI(Rental rental)
+        {
+            Rental rentalToCheck = new Rental();
+            // BIG CREDIT TO THE OG Pete the Speed
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            HttpRequestMessage message = new(HttpMethod.Post, "api/Rental?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpContent content = new StringContent(JsonSerializer.Serialize(rental));
+            message.Content = content;
+
+            //Tjek response fra API
+            using (HttpResponseMessage response = await client.SendAsync(message))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+
+                if (rentalToCheck == null)
+                {
+                    throw new Exception("There was an error Posting the rental");
+                }
+                return rentalToCheck;
+
+            }
+
+        }
+
+        public async static Task<Rental> PutToAPI(Rental rental)
+        {
+            Rental rentalToCheck = new Rental();
+            // BIG CREDIT TO THE OG Pete the Speed
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+    
+            HttpRequestMessage message = new(HttpMethod.Put, "api/Rental?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpContent content = new StringContent(JsonSerializer.Serialize(rental));
+            message.Content = content;
+
+
+            // Tjek response fra API
+            using (HttpResponseMessage response = await client.SendAsync(message))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+
+                if (rentalToCheck == null)
+                {
+                    throw new Exception("There was an error Updating the rental");
+                }
+                return rentalToCheck;
+
+            }
+
+        }
+
+        public async static Task<Rental> DeleteToAPI(int id)
+        {
+            Rental rentalToCheck = new Rental();
+            // BIG CREDIT TO THE OG Pete the Speed
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            // Hent Boards fra API
+            using (HttpResponseMessage response = await client.DeleteAsync($"api/Rental?Id={id}&apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+
+                if (rentalToCheck == null)
+                {
+                    throw new Exception("There was an error deleting the rental");
+                }
+                return rentalToCheck;
+
+            }
+
+        }
+
+
+
+    }
+}
+

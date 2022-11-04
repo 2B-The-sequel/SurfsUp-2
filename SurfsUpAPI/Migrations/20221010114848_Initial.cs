@@ -2,9 +2,9 @@
 
 #nullable disable
 
-namespace SurfsUp.Data.Migrations
+namespace SurfsUpAPI.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,7 @@ namespace SurfsUp.Data.Migrations
                     Width = table.Column<float>(type: "real", nullable: false),
                     Thickness = table.Column<float>(type: "real", nullable: false),
                     Volume = table.Column<float>(type: "real", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -29,37 +29,43 @@ namespace SurfsUp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BoardEquipment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BoardId = table.Column<int>(type: "int", nullable: false),
+                    EquipmentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BoardEquipment", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Equipment",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BoardId = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Equipment", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Equipment_Board_BoardId",
-                        column: x => x.BoardId,
-                        principalTable: "Board",
-                        principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Equipment_BoardId",
-                table: "Equipment",
-                column: "BoardId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Equipment");
+                name: "Board");
 
             migrationBuilder.DropTable(
-                name: "Board");
+                name: "BoardEquipment");
+
+            migrationBuilder.DropTable(
+                name: "Equipment");
         }
     }
 }

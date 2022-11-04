@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurfsUp.Data;
+using Microsoft.Extensions.DependencyInjection;
+using SurfsUpAPI.Data;
+using System;
+using System.Linq;
 
-namespace SurfsUp.Models
+namespace SurfsUpAPI.Models
 {
     public class SeedData
     {
@@ -138,29 +141,55 @@ namespace SurfsUp.Models
                 Name = "Leash"
             };
 
-            NaishOne.Equipment.Add(Paddle);
-            SexTourer.Equipment.Add(Fin);
-            SexTourer.Equipment.Add(Paddle);
-            SexTourer.Equipment.Add(Pump);
-            SexTourer.Equipment.Add(Leash);
-            NaishMaliko.Equipment.Add(Fin);
-            NaishMaliko.Equipment.Add(Paddle);
-            NaishMaliko.Equipment.Add(Pump);
-            NaishMaliko.Equipment.Add(Leash);
-
-            Paddle.Boards.Add(NaishOne);
-            Paddle.Boards.Add(SexTourer);
-            Paddle.Boards.Add(NaishMaliko);
-            Fin.Boards.Add(SexTourer);
-            Fin.Boards.Add(NaishMaliko);
-            Pump.Boards.Add(SexTourer);
-            Pump.Boards.Add(NaishMaliko);
-            Leash.Boards.Add(SexTourer);
-            Leash.Boards.Add(NaishMaliko);
-
-            if (!context.Board.Any())
+            BoardEquipment be1 = new()
             {
-                context.Board.AddRange(
+                BoardId = 8,
+                EquipmentId = 1
+            };
+            BoardEquipment be2 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 1
+            };
+            BoardEquipment be3 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 2
+            };
+            BoardEquipment be4 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 3
+            };
+            BoardEquipment be5 = new()
+            {
+                BoardId = 9,
+                EquipmentId = 4
+            };
+            BoardEquipment be6 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 1
+            };
+            BoardEquipment be7 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 2
+            };
+            BoardEquipment be8 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 3
+            };
+            BoardEquipment be9 = new()
+            {
+                BoardId = 10,
+                EquipmentId = 4
+            };
+
+            if (!context.Set<Board>().Any())
+            {
+                context.Set<Board>().AddRange(
                     TheMinilog,
                     TheWideGlider,
                     TheGoldenRatio,
@@ -176,13 +205,30 @@ namespace SurfsUp.Models
                 changed = true;
             }
 
-            if (!context.Equipment.Any())
+            if (!context.Set<Equipment>().Any())
             {
-                context.Equipment.AddRange(
+                context.Set<Equipment>().AddRange(
                     Paddle,
                     Fin,
                     Pump,
                     Leash
+                );
+
+                changed = true;
+            }
+
+            if (!context.Set<BoardEquipment>().Any())
+            {
+                context.Set<BoardEquipment>().AddRange(
+                    be1,
+                    be2,
+                    be3,
+                    be4,
+                    be5,
+                    be6,
+                    be7,
+                    be8,
+                    be9
                 );
 
                 changed = true;

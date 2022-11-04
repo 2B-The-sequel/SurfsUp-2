@@ -87,15 +87,15 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                @foreach (BoardEquipment eq in item.BoardEquipments)
+                @for (int i = 0; i < item.Equipment.Count; i++)
                 {
-                    if (item.BoardEquipments.IndexOf(eq) == item.BoardEquipments.Count-1)
+                    if (i == item.Equipment.Count - 1)
                     {
-                        <a>@eq.Equipment.Name</a>
+                        <a>@item.Equipment[i].Name</a>
                     }
                     else
                     {
-                        <a>@eq.Equipment.Name,</a>
+                        <a>@item.Equipment[i].Name,</a>
                     }
                 }
             </td>

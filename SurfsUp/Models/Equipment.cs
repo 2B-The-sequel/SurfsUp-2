@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SurfsUp.Models
 {
-    public class Equipment
+    public class Equipment : IIdentifiable
     {
-        public int EquipmentId { get; set; }
+        public int Id { get; set; }
         [DisplayName("Navn")]
         [Required(ErrorMessage = "Udstyret skal have et navn")]
         public string Name { get; set; }
-        public ICollection<Board> Boards { get; set; } = new List<Board>();
-        public List<BoardEquipment> BoardEquipments { get; set; } = new List<BoardEquipment>();
+        [JsonIgnore]
+        public List<Board> Boards { get; set; } = new List<Board>();
     }
 }

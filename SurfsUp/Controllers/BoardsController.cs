@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
+using SurfsUp.Models.Repositories;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -26,7 +27,7 @@ namespace SurfsUp.Controllers
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            List<Board> boards = await GetBoardsFromAPI();
+            List<Board> boards = await BoardRepo.GetAllFromAPI();
 
             // Få fat i sorteringsparametre
             ViewData["CurrentSort"] = sortOrder;
@@ -102,7 +103,8 @@ namespace SurfsUp.Controllers
         // GET: Boards/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
+            // LAV FRA DATABASE TIL API
+            /*
             if (id == null || _context.Board == null)
             {
                 return NotFound();
@@ -112,6 +114,8 @@ namespace SurfsUp.Controllers
                 .Include(e => e.BoardEquipments)
                 .ThenInclude(be => be.Equipment)
                 .FirstOrDefaultAsync(m => m.BoardId == id);
+            */
+            Board board = null;
             if (board == null)
             {
                 return NotFound();
@@ -125,7 +129,8 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public IActionResult Create()
         {
-            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            // LAV FRA DATABASE TIL API
+            /*List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
             BoardViewModel bvm = new()
             {
                 EquipmentVM = new List<EquipmentViewModel>()
@@ -140,8 +145,9 @@ namespace SurfsUp.Controllers
                     Checked = false
                 };
                 bvm.EquipmentVM.Add(evm);
-            }
+            }*/
 
+            BoardViewModel bvm = null;
             return View(bvm);
         }
 
@@ -154,6 +160,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(BoardViewModel bvm)
         {
+            /*
             Board board = new()
             {
                 Name = bvm.Name,
@@ -181,6 +188,8 @@ namespace SurfsUp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            */
+            
             return View(bvm);
         }
 
@@ -192,6 +201,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
+            /*
             if (_context.Board == null)
             {
                 return NotFound();
@@ -238,6 +248,9 @@ namespace SurfsUp.Controllers
                 }
                 bvm.EquipmentVM.Add(evm);
             }
+            */
+            BoardViewModel bvm = null;
+
             return View(bvm);
         }
 
@@ -255,6 +268,7 @@ namespace SurfsUp.Controllers
                 return NotFound();
             }
 
+            /*
             Board board = await _context.Board
                 .Include(e => e.BoardEquipments)
                 .ThenInclude(be => be.Equipment)
@@ -294,6 +308,9 @@ namespace SurfsUp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+            */
+            Board board = null;
+
             return View(board);
         }
 
@@ -304,6 +321,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
+            /*
             if (_context.Board == null)
             {
                 return NotFound();
@@ -315,6 +333,8 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            */
+            Board board = null;
 
             return View(board);
         }
@@ -325,6 +345,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            /*
             if (_context.Board == null)
             {
                 return Problem("Entity set 'SurfsUpContext.Board'  is null.");
@@ -334,6 +355,7 @@ namespace SurfsUp.Controllers
             {
                 _context.Board.Remove(board);
             }
+            */
 
             Unlock(id);
 
@@ -343,7 +365,8 @@ namespace SurfsUp.Controllers
 
         private bool BoardExists(int id)
         {
-          return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+            //return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
+            return false;
         }
 
         [Authorize]
@@ -352,6 +375,7 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at leje dette board." });
 
+            /*
             if (_context.Board == null)
             {
                 return NotFound();
@@ -370,6 +394,8 @@ namespace SurfsUp.Controllers
                 StartRental = DateTime.Now,
                 EndRental = DateTime.Now
             };
+            */
+            Rental rental = null;
 
             return View(rental);
         }
@@ -379,6 +405,7 @@ namespace SurfsUp.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRental( Rental rental, int id)
         {
+            /*
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             rental.UsersId = claims.Value;
@@ -404,89 +431,10 @@ namespace SurfsUp.Controllers
                 .Where(y => y.Count > 0)
                 .ToList();
             }
+            */
+            
             return View(rental);
         }
-
-        private async static Task<List<Board>> GetBoardsFromAPI()
-        {
-            // BIG CREDIT TO THE OG KC
-            using HttpClient client = new()
-            {
-                BaseAddress = new Uri("https://localhost:7122/")
-            };
-
-            List<Board> boards;
-            List<BoardEquipment> boardEquipment;
-            List<Equipment> equipment;
-
-            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
-            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
-
-            // Hent Boards fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/Boards"))
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                boards = JsonSerializer.Deserialize<List<Board>>(jsonResponse, options)!;
-            }
-
-            // Hent BoardEquipment fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment"))
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
-            }
-
-            // Hent BoardEquipment fra API
-            using (HttpResponseMessage response = await client.GetAsync("api/Equipment"))
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!;
-            }
-
-            // Kombinér boards, boardEquipment og equipment
-            foreach (BoardEquipment be in boardEquipment)
-            {
-                Board b = null;
-                Equipment eq = null;
-
-                // FIND BOARD
-                int i = 0;
-                while (i < boards.Count && b == null)
-                {
-                    if (boards[i].BoardId == be.BoardId)
-                    {
-                        b = boards[i];
-                        be.Board = b;
-                        b.BoardEquipments.Add(be);
-                    }
-                    else
-                        i++;
-                }
-                if (b == null)
-                    throw new Exception($"Hov det board ({be.BoardId}) findes vist ikke...");
-
-                // FIND EQUIPMENT
-                i = 0;
-                while (i < equipment.Count && eq == null)
-                {
-                    if (equipment[i].EquipmentId == be.EquipmentId)
-                    {
-                        eq = equipment[i];
-                        be.Equipment = eq;
-                        eq.BoardEquipments.Add(be);
-                    }
-                    else
-                        i++;
-                }
-                if (eq == null)
-                    throw new Exception($"Hov det equipment ({be.EquipmentId}) findes vist ikke...");
-
-                // INDSÆT I BOARD OG EQUIPMENT NAVIGATION PROPERTIES
-                b.Equipment.Add(eq);
-                eq.Boards.Add(b);
-            }
-
-            return boards;
-        }
+         
     }
 }

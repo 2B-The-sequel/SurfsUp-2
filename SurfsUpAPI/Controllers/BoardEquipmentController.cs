@@ -1,28 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SurfsUp.Data;
-using SurfsUp.Models;
-using System.Linq;
-using System.Collections.Generic;
+﻿using SurfsUpAPI.Data;
+using SurfsUpAPI.Models;
 
 namespace SurfsUpAPI.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BoardEquipmentController : Controller
+    public class BoardEquipmentController : GenericAPIController<BoardEquipment>
     {
-        private readonly ApplicationDbContext _context;
-
-        public BoardEquipmentController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        [HttpGet]
-        public List<BoardEquipment> Get()
-        {
-            IQueryable<BoardEquipment> BoardEquipment = from s in _context.BoardEquipment select s;
-            List<BoardEquipment> boardEquipment = BoardEquipment.ToList();
-            return boardEquipment;
-        }
+        public BoardEquipmentController(ApplicationDbContext context) : base(context) { }
     }
 }
