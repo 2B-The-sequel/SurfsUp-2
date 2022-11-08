@@ -29,6 +29,25 @@ namespace SurfsUp.Models
                     SecurityStamp = Guid.NewGuid().ToString("D"),
                     PhoneNumberConfirmed = true
                 };
+
+                IdentityUser AdminUser = new()
+                {
+                    UserName = "Admin",
+                    Email = "admin@admin.admin",
+                    Id = "=0dc76dc5-d957-4aa6-8d1d-85301ac377ab",
+                    AccessFailedCount = 0,
+                    EmailConfirmed = true,
+                    ConcurrencyStamp = "",
+                    LockoutEnabled = false,
+                    NormalizedEmail = "ADMIN@ADMIN.ADMIN",
+                    PhoneNumber = null,
+                    TwoFactorEnabled = false,
+                    LockoutEnd = null,
+                    NormalizedUserName = "ADMIN@ADMIN.ADMIN",
+                    PasswordHash = "AQAAAAEAACcQAAAAEGDUXbGyj5Y26UJd97uFU/lwRUV+ETqPe2IpgliwoE9Afvs1vD19YO+eWYznFNeLjQ==",
+                    SecurityStamp = Guid.NewGuid().ToString("N"),
+                    PhoneNumberConfirmed = false
+                };
                 Board TheMinilog = new()
                 {
                     Name = "The Minilog",
@@ -197,7 +216,8 @@ namespace SurfsUp.Models
                 if (!context.Users.Any())
                 {
                     context.Users.AddRange(
-                        GuestUser
+                        GuestUser,
+                        AdminUser
 
                         );
                     changed = true;
