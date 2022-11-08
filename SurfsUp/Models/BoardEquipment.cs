@@ -1,6 +1,6 @@
 ﻿namespace SurfsUp.Models
 {
-    public class BoardEquipment
+    public class BoardEquipment : IIdentifiable
     {
         public int Id { get; set; }
 

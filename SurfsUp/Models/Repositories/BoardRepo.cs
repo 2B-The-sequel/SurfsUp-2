@@ -229,8 +229,5 @@ namespace SurfsUp.Models.Repositories
             }
 
         }
-
-
-
     }
 }
