@@ -5,7 +5,6 @@ using SurfsUp.Data;
 using SurfsUp.Models;
 using SurfsUp.Models.Repositories;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace SurfsUp.Controllers
 {
@@ -39,7 +38,6 @@ namespace SurfsUp.Controllers
             //Metode der tjekker både navn og type for match med searchString.
             //Tjek om den første char samt resten af alle chars i searchstring kronologisk passer med Type i hvert board.
             //Substring(searchString[0],searchString.Length)
-
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -96,27 +94,18 @@ namespace SurfsUp.Controllers
                 "type_desc" => boards.OrderByDescending(s => s.Type).ToList(),
                 _ => boards.OrderBy(s => s.Name).ToList(),
             };
+
             int pageSize = 5;
             return View(PaginatedList<Board>.Create(boards, pageNumber ?? 1, pageSize));
         }
 
         // GET: Boards/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            // LAV FRA DATABASE TIL API
-            /*
-            if (id == null || _context.Board == null)
-            {
-                return NotFound();
-            }
-
-            var board = await _context.Board
-                .Include(e => e.BoardEquipments)
-                .ThenInclude(be => be.Equipment)
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-            */
-            Board board = null;
-            if (board == null)
+            // Hent specifik board fra API
+            Board board = await BoardRepo.GetFromAPI(id);
+           
+            if (id == null || board == null)
             {
                 return NotFound();
             }
@@ -127,10 +116,11 @@ namespace SurfsUp.Controllers
         // GET: Boards/Create
         // Husk og ændre ting i databasen så rollen er Admin
         [Authorize(Roles = "Adminstrators")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // LAV FRA DATABASE TIL API
-            /*List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
+            //Hent alle Equipment til checkboxes
+            List<Equipment> BoardEquipment = await EquipmentRepo.Retrieve();
+          
             BoardViewModel bvm = new()
             {
                 EquipmentVM = new List<EquipmentViewModel>()
@@ -140,14 +130,13 @@ namespace SurfsUp.Controllers
             {
                 EquipmentViewModel evm = new()
                 {
-                    Id = equipment.EquipmentId,
+                    Id = equipment.Id,
                     Name = equipment.Name,
                     Checked = false
                 };
                 bvm.EquipmentVM.Add(evm);
-            }*/
+            }
 
-            BoardViewModel bvm = null;
             return View(bvm);
         }
 
@@ -160,7 +149,6 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(BoardViewModel bvm)
         {
-            /*
             Board board = new()
             {
                 Name = bvm.Name,
@@ -172,23 +160,22 @@ namespace SurfsUp.Controllers
                 Type = bvm.Type
             };
 
-            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
-            foreach (Equipment equipment in DatabaseEquipment)
+            List<Equipment> EquipmentAll = await EquipmentRepo.Retrieve();
+            foreach (Equipment equipment in EquipmentAll)
             {
                 foreach (EquipmentViewModel equipmentViewModel in bvm.EquipmentVM)
                 {
-                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
+                    if (equipment.Id == equipmentViewModel.Id && equipmentViewModel.Checked)
                         board.Equipment.Add(equipment);
                 }
             }
 
             if (ModelState.IsValid)
             {
-                _context.Add(board);
-                await _context.SaveChangesAsync();
+                await BoardRepo.PostToAPI(board);
+                
                 return RedirectToAction(nameof(Index));
             }
-            */
             
             return View(bvm);
         }
@@ -201,55 +188,56 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
-            /*
-            if (_context.Board == null)
+            Board boardWithId;
+            try 
+            { 
+                boardWithId = await BoardRepo.GetFromAPI(id); 
+            }
+            catch (Exception)
+            { 
+                return NotFound(); 
+            }
+
+            List<Equipment> equipmentAll;
+            try
+            {
+                equipmentAll = await EquipmentRepo.Retrieve();
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
 
-            Board board = await _context.Board
-                .Include(e => e.BoardEquipments)
-                .ThenInclude(be => be.Equipment)
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-
-            if (board == null)
-            {
-                return NotFound();
-            }
-
-            List<Equipment> BoardEquipment = (from s in _context.Equipment select s).ToList();
             BoardViewModel bvm = new()
             {
-                BoardId = board.BoardId,
-                Name = board.Name,
-                Image = board.Image,
-                Length = board.Length,
-                Width = board.Width,
-                Thickness = board.Thickness,
-                Price = board.Price,
-                Type = board.Type,
+                Id = boardWithId.Id,
+                Name = boardWithId.Name,
+                Image = boardWithId.Image,
+                Length = boardWithId.Length,
+                Width = boardWithId.Width,
+                Thickness = boardWithId.Thickness,
+                Price = boardWithId.Price,
+                Type = boardWithId.Type,
                 EquipmentVM = new List<EquipmentViewModel>()
             };
 
-            foreach (Equipment equipment in BoardEquipment)
+            foreach (Equipment equipment in equipmentAll)
             {
                 EquipmentViewModel evm = new()
                 {
-                    Id = equipment.EquipmentId,
+                    Id = equipment.Id,
                     Name = equipment.Name,
                     Checked = false
                 };
-                foreach (Equipment eq in board.Equipment)
+                foreach (Equipment eq in boardWithId.Equipment)
                 {
-                    if (evm.Id == eq.EquipmentId)
+                    if (evm.Id == eq.Id)
                     {
                         evm.Checked = true;
                     }
                 }
                 bvm.EquipmentVM.Add(evm);
             }
-            */
-            BoardViewModel bvm = null;
 
             return View(bvm);
         }
@@ -267,21 +255,34 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            Board boardToEdit;
+            try
+            {
+                boardToEdit = await BoardRepo.GetFromAPI(id);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
 
-            /*
-            Board board = await _context.Board
-                .Include(e => e.BoardEquipments)
-                .ThenInclude(be => be.Equipment)
-                .FirstOrDefaultAsync(m => m.BoardId == id);
+            boardToEdit.Equipment.Clear();
 
-            List<Equipment> DatabaseEquipment = (from s in _context.Equipment select s).ToList();
-            board.Equipment.Clear();
-            foreach (Equipment equipment in DatabaseEquipment)
+            List<Equipment> equipmentAll;
+            try
+            {
+                equipmentAll = await EquipmentRepo.Retrieve();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+
+            foreach (Equipment equipment in equipmentAll)
             {
                 foreach (EquipmentViewModel equipmentViewModel in bvm.EquipmentVM)
                 {
-                    if (equipment.EquipmentId == equipmentViewModel.Id && equipmentViewModel.Checked)
-                        board.Equipment.Add(equipment);
+                    if (equipment.Id == equipmentViewModel.Id && equipmentViewModel.Checked)
+                        boardToEdit.Equipment.Add(equipment);
                 }
             }
 
@@ -289,29 +290,19 @@ namespace SurfsUp.Controllers
             {
                 try
                 {
-                    _context.Update(board);
-                    await _context.SaveChangesAsync();
+                    await BoardRepo.PutToAPI(boardToEdit);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!BoardExists(board.BoardId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 Unlock(id);
 
                 return RedirectToAction(nameof(Index));
             }
-            */
-            Board board = null;
 
-            return View(board);
+            return View(boardToEdit);
         }
 
         // GET: Boards/Delete/5
@@ -321,22 +312,20 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette board." });
 
-            /*
-            if (_context.Board == null)
+            Board boardToEdit;
+            try
+            {
+                boardToEdit = await BoardRepo.GetFromAPI(id);
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
 
-            var board = await _context.Board
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-            if (board == null)
-            {
-                return NotFound();
-            }
-            */
-            Board board = null;
+            if(boardToEdit == null)
+            { return NotFound(); }
 
-            return View(board);
+            return View(boardToEdit);
         }
 
         // POST: Boards/Delete/5
@@ -345,28 +334,18 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*
-            if (_context.Board == null)
+            try
             {
-                return Problem("Entity set 'SurfsUpContext.Board'  is null.");
+               await BoardRepo.DeleteToAPI(id);
             }
-            var board = await _context.Board.FindAsync(id);
-            if (board != null)
+            catch (Exception)
             {
-                _context.Board.Remove(board);
+                return NotFound();
             }
-            */
 
             Unlock(id);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool BoardExists(int id)
-        {
-            //return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
-            return false;
         }
 
         [Authorize]
@@ -375,27 +354,23 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at leje dette board." });
 
-            /*
-            if (_context.Board == null)
+            Board board;
+            try
+            {
+               board = await BoardRepo.GetFromAPI(id);
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
-
-            var board = await _context.Board
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-            if (board == null)
-            {
-                return NotFound();
-            }
+        
             Rental rental = new()
             {
                 Board = board,
-                BoardId = board.BoardId,
+                BoardId = board.Id,
                 StartRental = DateTime.Now,
                 EndRental = DateTime.Now
             };
-            */
-            Rental rental = null;
 
             return View(rental);
         }
@@ -403,38 +378,49 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> CreateRental( Rental rental, int id)
+        public async Task<IActionResult> CreateRental(Rental rental, int id)
         {
-            /*
+            //Hent logged in bruger vha. Claimsidentity
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
             rental.UsersId = claims.Value;
             rental.BoardId = id;
             ViewData["SelectedBoardId"] = rental.StartRental;
-            rental.Board = await _context.Board
-                .FirstOrDefaultAsync(m => m.BoardId == id);
-            rental.User = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
+
+            try
+            {
+                rental.Board = await BoardRepo.GetFromAPI(id);
+            }
+            catch (Exception)
+            { 
+                return NotFound();
+            }
+                
+            rental.User = await _context.Users.FirstOrDefaultAsync(m => m.Id == rental.UsersId);
+
+            if (rental.User == null)
+            { 
+                return NotFound("User not found");
+            }
 
             if (ModelState.IsValid)
             {
-                _context.Add(rental);
-
+                try
+                {
+                    await RentalRepo.PostToAPI(rental);
+                }
+                catch (Exception)
+                {
+                    return NotFound("Rental could not be Posted");
+                }
+                
                 Unlock(id);
 
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                var errors = ModelState.Select(x => x.Value.Errors)
-                .Where(y => y.Count > 0)
-                .ToList();
-            }
-            */
-            
+
             return View(rental);
         }
-         
     }
 }
