@@ -1,6 +1,6 @@
 ﻿using SurfsUp.Data;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace SurfsUp.Models.Repositories
 {
@@ -133,7 +133,6 @@ namespace SurfsUp.Models.Repositories
             //Sætter tilhørende User navigationproperty til Rental Objekt
             foreach (ApplicationUser user in Users)
             {
-
                 if (user.Id == returnRental.UsersId)
                 {
                     returnRental.User = user;
@@ -163,14 +162,14 @@ namespace SurfsUp.Models.Repositories
             //Tjek response fra API
             using (HttpResponseMessage response = await client.SendAsync(message))
             {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                Rental rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
-
-                if (rentalToCheck == null)
+                if (response.IsSuccessStatusCode)
                 {
-                    throw new Exception("There was an error Posting the rental");
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Rental rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+                    return rentalToCheck;
                 }
-                return rentalToCheck;
+                else
+                    throw new Exception("There was an error Posting the rental");
             }
         }
 
@@ -192,14 +191,14 @@ namespace SurfsUp.Models.Repositories
             // Tjek response fra API
             using (HttpResponseMessage response = await client.SendAsync(message))
             {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                Rental rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
-
-                if (rentalToCheck == null)
+                if (response.IsSuccessStatusCode)
                 {
-                    throw new Exception("There was an error Updating the rental");
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Rental rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+                    return rentalToCheck;
                 }
-                return rentalToCheck;
+                else
+                    throw new Exception("There was an error Updating the rental");
             }
         }
 
@@ -217,14 +216,14 @@ namespace SurfsUp.Models.Repositories
             // Hent Boards fra API
             using (HttpResponseMessage response = await client.DeleteAsync($"api/Rental?Id={id}&apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                Rental rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
-
-                if (rentalToCheck == null)
+                if (response.IsSuccessStatusCode)
                 {
-                    throw new Exception("There was an error deleting the rental");
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Rental rentalToCheck = JsonSerializer.Deserialize<Rental>(jsonResponse, options)!;
+                    return rentalToCheck;
                 }
-                return rentalToCheck;
+                else
+                    throw new Exception("There was an error Updating the rental");
             }
         }
     }
