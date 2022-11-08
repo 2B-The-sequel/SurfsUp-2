@@ -263,7 +263,7 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, BoardViewModel bvm)
         {
-            if (id != bvm.BoardId)
+            if (id != bvm.Id)
             {
                 return NotFound();
             }

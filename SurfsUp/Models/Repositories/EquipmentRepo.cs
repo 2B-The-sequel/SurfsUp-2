@@ -4,7 +4,6 @@ namespace SurfsUp.Models.Repositories
 {
     public class EquipmentRepo
     {
-      
         public async static Task<Equipment> Create(Equipment equipment)
         {
             return await Request(HttpMethod.Post, equipment);
@@ -29,7 +28,7 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             //Hent Equipment fra API
-            using HttpResponseMessage response = await client.GetAsync("api/Equipment");
+            using HttpResponseMessage response = await client.GetAsync("api/Equipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();

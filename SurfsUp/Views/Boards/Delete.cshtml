@@ -56,9 +56,9 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="BoardId" />
+        <input type="hidden" asp-for="Id" />
         <input type="submit" value="Slet" class="btn btn-danger" />
-        <a class="btn btn-primary" asp-route-unlock="@Model.BoardId" asp-action="Index">Tilbage til liste</a>
+        <a class="btn btn-primary" asp-route-unlock="@Model.Id" asp-action="Index">Tilbage til liste</a>
     </form>
 </div>
 

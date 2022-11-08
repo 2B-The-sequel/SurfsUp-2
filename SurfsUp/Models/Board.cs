@@ -6,10 +6,10 @@ using Newtonsoft.Json.Converters;
 
 namespace SurfsUp.Models
 {
-    public class Board
+    public class Board : IIdentifiable
     {
         [Key]
-        public int BoardId { get; set; }
+        public int Id { get; set; }
         [Required(ErrorMessage = "Der skal være et navn")]
         [DisplayName("Navn")]
         public string Name { get; set; }

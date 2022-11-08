@@ -70,7 +70,7 @@
 <div>
     @if (User.IsInRole("Adminstrators"))
     {
-        <a asp-action="Edit" class="btn btn-success" asp-route-id="@Model?.BoardId">Ændr</a>
+        <a asp-action="Edit" class="btn btn-success" asp-route-id="@Model?.Id">Ændr</a>
     }
     <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
 </div>

@@ -4,7 +4,6 @@ namespace SurfsUp.Models.Repositories
 {
     public class BoardRepo
     {
-
         public async static Task<List<Board>> GetAllFromAPI()
         {
             // BIG CREDIT TO THE OG KC
@@ -44,7 +43,7 @@ namespace SurfsUp.Models.Repositories
                 int i = 0;
                 while (i < boards.Count && b == null)
                 {
-                    if (boards[i].BoardId == be.BoardId)
+                    if (boards[i].Id == be.BoardId)
                     {
                         b = boards[i];
                         be.Board = b;
@@ -121,7 +120,7 @@ namespace SurfsUp.Models.Repositories
 
                 // FIND BOARD
                 
-                    if (board.BoardId == be.BoardId)
+                    if (board.Id == be.BoardId)
                     {
                         be.Equipment = eq;
                     }

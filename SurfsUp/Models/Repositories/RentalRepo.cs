@@ -14,6 +14,7 @@ namespace SurfsUp.Models.Repositories
         {
             CurrentInstance = context;
         }
+
         public async static Task<List<Rental>> GetAllFromAPI()
         {
             // BIG CREDIT TO THE OG KC
@@ -41,19 +42,19 @@ namespace SurfsUp.Models.Repositories
             //Fylder hvert Rental objekt med dets tilhørende board
             foreach (Rental rental in rentals)
             {
-                Board bo = null;
+                Board board = null;
                 int i = 0;
-                while (i < boards.Count && bo == null)
+                while (i < boards.Count && board == null)
                 {
-                    if (rentals[i].BoardId == bo.BoardId)
+                    if (rentals[i].BoardId == board.Id)
                     {
-                        bo = boards[i];
-                        rental.Board = bo;
+                        board = boards[i];
+                        rental.Board = board;
                     }
                     else
                         i++;
                 }
-                if (bo == null)
+                if (board == null)
                     throw new Exception($"Hov det board ({rental.BoardId}) findes vist ikke...");
             }
 
@@ -127,8 +128,7 @@ namespace SurfsUp.Models.Repositories
             //Sætter tilhørende navigationproperty Board til Rental Objekt
             foreach (Board board in boards)
             {
-
-                if (board.BoardId == returnRental.BoardId)
+                if (board.Id == returnRental.BoardId)
                 {
                     returnRental.Board = board;
                 }
@@ -150,10 +150,6 @@ namespace SurfsUp.Models.Repositories
 
             return returnRental;
         }
-
-           
-
-        
 
         public async static Task<Rental> PostToAPI(Rental rental)
         {
@@ -247,9 +243,5 @@ namespace SurfsUp.Models.Repositories
             }
 
         }
-
-
-
     }
 }
-
