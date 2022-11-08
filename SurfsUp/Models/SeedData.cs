@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using SurfsUp.Data;
+using System.Security.Claims;
 
 namespace SurfsUp.Models
 {
@@ -11,6 +12,26 @@ namespace SurfsUp.Models
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
                 bool changed = false;
+
+                
+                IdentityUser AdminUser = new()
+                {
+                    UserName = "Admin",
+                    Email = "admin@admin.admin",
+                    Id = "=0dc76dc5-d957-4aa6-8d1d-85301ac377ab",
+                    AccessFailedCount = 0,
+                    EmailConfirmed = true,
+                    ConcurrencyStamp = "",
+                    LockoutEnabled = false,
+                    NormalizedEmail = "ADMIN@ADMIN.ADMIN",
+                    PhoneNumber = null,
+                    TwoFactorEnabled = false,
+                    LockoutEnd = null,
+                    NormalizedUserName = "ADMIN@ADMIN.ADMIN",
+                    PasswordHash = "AQAAAAEAACcQAAAAEGDUXbGyj5Y26UJd97uFU/lwRUV+ETqPe2IpgliwoE9Afvs1vD19YO+eWYznFNeLjQ==",
+                    SecurityStamp = Guid.NewGuid().ToString("N"),
+                    PhoneNumberConfirmed = false
+                };
                 IdentityUser GuestUser = new()
                 {
                     UserName = "Guest",
@@ -28,6 +49,23 @@ namespace SurfsUp.Models
                     PasswordHash = "",
                     SecurityStamp = Guid.NewGuid().ToString("D"),
                     PhoneNumberConfirmed = true
+                };
+                IdentityRole AdminRole = new()
+                {
+                    Id = "1",
+                    Name = "Administrators",
+                    NormalizedName = "Admin"
+                };
+                IdentityRole UserRole = new()
+                {
+                    Id = "2",
+                    Name = "Users",
+                    NormalizedName = "User"
+                };
+                IdentityUserRole<string> AdminToRole = new()
+                {
+                    RoleId = AdminRole.Id,
+                    UserId = AdminUser.Id
                 };
                 Board TheMinilog = new()
                 {
@@ -197,11 +235,28 @@ namespace SurfsUp.Models
                 if (!context.Users.Any())
                 {
                     context.Users.AddRange(
-                        GuestUser
-
+                        GuestUser,
+                        AdminUser
+                        
                         );
                     changed = true;
                 }
+                if (!context.Roles.Any())
+                {
+                    context.Roles.AddRange(
+                        AdminRole,
+                        UserRole
+                        );
+                    changed = true;
+                }
+                if (!context.UserRoles.Any())
+                {
+                    context.UserRoles.AddRange(
+                        AdminToRole                        
+                        );
+                    changed = true;
+                }
+                
                 if (!context.Equipment.Any())
                 {
                     context.Equipment.AddRange(

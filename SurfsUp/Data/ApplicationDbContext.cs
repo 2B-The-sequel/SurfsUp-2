@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Models;
+using System.Data;
 
 namespace SurfsUp.Data
 {
@@ -16,6 +18,7 @@ namespace SurfsUp.Data
      
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             modelBuilder.Entity<Board>()
             .HasMany(p => p.Equipment)
             .WithMany(p => p.Boards)
@@ -35,5 +38,6 @@ namespace SurfsUp.Data
 
             base.OnModelCreating(modelBuilder);
         }
+        
     }
 }
