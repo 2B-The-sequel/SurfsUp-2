@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 using SurfsUp.Models.Repositories;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace SurfsUp.Controllers
 {
@@ -40,7 +38,6 @@ namespace SurfsUp.Controllers
             //Metode der tjekker både navn og type for match med searchString.
             //Tjek om den første char samt resten af alle chars i searchstring kronologisk passer med Type i hvert board.
             //Substring(searchString[0],searchString.Length)
-
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -97,6 +94,7 @@ namespace SurfsUp.Controllers
                 "type_desc" => boards.OrderByDescending(s => s.Type).ToList(),
                 _ => boards.OrderBy(s => s.Name).ToList(),
             };
+
             int pageSize = 5;
             return View(PaginatedList<Board>.Create(boards, pageNumber ?? 1, pageSize));
         }
@@ -121,7 +119,6 @@ namespace SurfsUp.Controllers
         public async Task<IActionResult> Create()
         {
             //Hent alle Equipment til checkboxes
-
             List<Equipment> BoardEquipment = await EquipmentRepo.Retrieve();
           
             BoardViewModel bvm = new()
@@ -152,7 +149,6 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(BoardViewModel bvm)
         {
-            
             Board board = new()
             {
                 Name = bvm.Name,
@@ -305,7 +301,6 @@ namespace SurfsUp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            
 
             return View(boardToEdit);
         }
@@ -353,12 +348,6 @@ namespace SurfsUp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BoardExists(int id)
-        {
-            //return (_context.Board?.Any(e => e.BoardId == id)).GetValueOrDefault();
-            return false;
-        }
-
         [Authorize]
         public async Task<IActionResult> CreateRental(int id)
         {
@@ -391,8 +380,7 @@ namespace SurfsUp.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRental(Rental rental, int id)
         {
-
-          //Hent logged in bruger vha. Claimsidentity
+            //Hent logged in bruger vha. Claimsidentity
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
@@ -405,13 +393,16 @@ namespace SurfsUp.Controllers
                 rental.Board = await BoardRepo.GetFromAPI(id);
             }
             catch (Exception)
-            { return NotFound(); }
+            { 
+                return NotFound();
+            }
                 
-            rental.User = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == rental.UsersId);
+            rental.User = await _context.Users.FirstOrDefaultAsync(m => m.Id == rental.UsersId);
 
             if (rental.User == null)
-            { return NotFound("User not found"); }
+            { 
+                return NotFound("User not found");
+            }
 
             if (ModelState.IsValid)
             {
@@ -423,8 +414,7 @@ namespace SurfsUp.Controllers
                 {
                     return NotFound("Rental could not be Posted");
                 }
-               
-
+                
                 Unlock(id);
 
                 return RedirectToAction(nameof(Index));
@@ -432,6 +422,5 @@ namespace SurfsUp.Controllers
 
             return View(rental);
         }
-         
     }
 }
