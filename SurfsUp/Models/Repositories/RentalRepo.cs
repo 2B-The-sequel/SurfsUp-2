@@ -3,6 +3,7 @@ using SurfsUp.Data;
 using System.Security.Claims;
 using System.Text.Json;
 using SurfsUp.Models.Repositories;
+using System.Text;
 
 namespace SurfsUp.Models.Repositories
 {
@@ -196,7 +197,7 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
     
             HttpRequestMessage message = new(HttpMethod.Put, "api/Rental?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
-            HttpContent content = new StringContent(JsonSerializer.Serialize(rental));
+            HttpContent content = new StringContent(JsonSerializer.Serialize(rental), Encoding.UTF8, "application/json");
             message.Content = content;
 
 

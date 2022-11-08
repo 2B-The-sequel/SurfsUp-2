@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 
 namespace SurfsUp.Models.Repositories
 {
@@ -96,23 +97,30 @@ namespace SurfsUp.Models.Repositories
             using (HttpResponseMessage response = await client.GetAsync($"api/Board/?apikey=4d1bb604-377f-41e0-99c7-59846080bb47&Id={id}"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                board = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
+                if (response.IsSuccessStatusCode)
+                { board = JsonSerializer.Deserialize<Board>(jsonResponse, options)!; }
+                else { throw new Exception("Exception"); }
             }
 
             // Hent BoardEquipment fra API
             using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
+                if (response.IsSuccessStatusCode)
+                { boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!; }
+                else { throw new Exception("Exception"); }
             }
 
             // Hent BoardEquipment fra API
             using (HttpResponseMessage response = await client.GetAsync("api/Equipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!;
+                if (response.IsSuccessStatusCode)
+                {  equipment = JsonSerializer.Deserialize<List<Equipment>>(jsonResponse, options)!; }
+                else { throw new Exception("Exception"); }
             }
 
+            
             // Kombinér board med tilhørende equipment
             foreach (BoardEquipment be in boardEquipment)
             {
@@ -171,6 +179,10 @@ namespace SurfsUp.Models.Repositories
 
         public async static Task<Board> PutToAPI(Board board)
         {
+
+            if (board == null)
+            { throw new Exception();
+            }
             Board boardToCheck = new Board();
             // BIG CREDIT TO THE OG Pete the Speed
             using HttpClient client = new()
@@ -182,7 +194,7 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             HttpRequestMessage message = new(HttpMethod.Put, "api/Board?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
-            HttpContent content = new StringContent(JsonSerializer.Serialize(board));
+            HttpContent content = new StringContent(JsonSerializer.Serialize(board),Encoding.UTF8,"application/json");
             message.Content = content;
 
           
@@ -220,11 +232,10 @@ namespace SurfsUp.Models.Repositories
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
 
-                if (boardToCheck == null)
-                {
-                    throw new Exception("There was an error deleting the board");
-                }
-                return boardToCheck;
+                if(response.StatusCode == System.Net.HttpStatusCode.OK)
+                { return boardToCheck; }
+                else
+                { throw new Exception($"{response.StatusCode}"); }
 
             }
 
