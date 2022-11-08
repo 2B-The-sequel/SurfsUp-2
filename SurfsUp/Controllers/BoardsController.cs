@@ -361,7 +361,7 @@ namespace SurfsUp.Controllers
 
             return View(board);
         }
-
+        //rental
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmRental( Rental rental, int id)

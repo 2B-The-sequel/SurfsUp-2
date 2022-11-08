@@ -50,7 +50,6 @@ else
     app.UseHsts();
 }
 
-
 var defaultCulture = new CultureInfo("de-DE");
 var localizationOptions = new RequestLocalizationOptions
 {

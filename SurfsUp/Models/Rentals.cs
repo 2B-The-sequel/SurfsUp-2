@@ -12,7 +12,7 @@ namespace SurfsUp.Models
         public int RentalID { get; set; }
 
         [ForeignKey("UsersId")]
-        public string UsersId { get; set; }
+        public string UsersId { get; set; } //Har brug for en user gæst med et bestemt ID
         [Required]
         [ForeignKey("BoardId")]
         public int BoardId { get; set; }
@@ -32,7 +32,7 @@ namespace SurfsUp.Models
         public DateTime EndRental { get; set; }
       
 
-        public IdentityUser User { get; set; }
+        public IdentityUser User { get; set; }  
         
         public Board Board { get; set; }
 
