@@ -124,69 +124,6 @@ namespace SurfsUpAPI.Models
                 Price = 1304
             };
 
-            Equipment Paddle = new()
-            {
-                Name = "Paddle"
-            };
-            Equipment Fin = new()
-            {
-                Name = "Fin"
-            };
-            Equipment Pump = new()
-            {
-                Name = "Pump"
-            };
-            Equipment Leash = new()
-            {
-                Name = "Leash"
-            };
-
-            BoardEquipment be1 = new()
-            {
-                BoardId = 8,
-                EquipmentId = 1
-            };
-            BoardEquipment be2 = new()
-            {
-                BoardId = 9,
-                EquipmentId = 1
-            };
-            BoardEquipment be3 = new()
-            {
-                BoardId = 9,
-                EquipmentId = 2
-            };
-            BoardEquipment be4 = new()
-            {
-                BoardId = 9,
-                EquipmentId = 3
-            };
-            BoardEquipment be5 = new()
-            {
-                BoardId = 9,
-                EquipmentId = 4
-            };
-            BoardEquipment be6 = new()
-            {
-                BoardId = 10,
-                EquipmentId = 1
-            };
-            BoardEquipment be7 = new()
-            {
-                BoardId = 10,
-                EquipmentId = 2
-            };
-            BoardEquipment be8 = new()
-            {
-                BoardId = 10,
-                EquipmentId = 3
-            };
-            BoardEquipment be9 = new()
-            {
-                BoardId = 10,
-                EquipmentId = 4
-            };
-
             if (!context.Set<Board>().Any())
             {
                 context.Set<Board>().AddRange(
@@ -205,6 +142,26 @@ namespace SurfsUpAPI.Models
                 changed = true;
             }
 
+            if (changed)
+                context.SaveChanges();
+
+            Equipment Paddle = new()
+            {
+                Name = "Paddle"
+            };
+            Equipment Fin = new()
+            {
+                Name = "Fin"
+            };
+            Equipment Pump = new()
+            {
+                Name = "Pump"
+            };
+            Equipment Leash = new()
+            {
+                Name = "Leash"
+            };
+
             if (!context.Set<Equipment>().Any())
             {
                 context.Set<Equipment>().AddRange(
@@ -216,6 +173,55 @@ namespace SurfsUpAPI.Models
 
                 changed = true;
             }
+
+            if (changed)
+                context.SaveChanges();
+
+            BoardEquipment be1 = new()
+            {
+                BoardId = NaishOne.Id,
+                EquipmentId = Paddle.Id
+            };
+            BoardEquipment be2 = new()
+            {
+                BoardId = SexTourer.Id,
+                EquipmentId = Paddle.Id
+            };
+            BoardEquipment be3 = new()
+            {
+                BoardId = SexTourer.Id,
+                EquipmentId = Fin.Id
+            };
+            BoardEquipment be4 = new()
+            {
+                BoardId = SexTourer.Id,
+                EquipmentId = Pump.Id
+            };
+            BoardEquipment be5 = new()
+            {
+                BoardId = SexTourer.Id,
+                EquipmentId = Leash.Id
+            };
+            BoardEquipment be6 = new()
+            {
+                BoardId = NaishMaliko.Id,
+                EquipmentId = Paddle.Id
+            };
+            BoardEquipment be7 = new()
+            {
+                BoardId = NaishMaliko.Id,
+                EquipmentId = Fin.Id
+            };
+            BoardEquipment be8 = new()
+            {
+                BoardId = NaishMaliko.Id,
+                EquipmentId = Pump.Id
+            };
+            BoardEquipment be9 = new()
+            {
+                BoardId = NaishMaliko.Id,
+                EquipmentId = Leash.Id
+            };
 
             if (!context.Set<BoardEquipment>().Any())
             {

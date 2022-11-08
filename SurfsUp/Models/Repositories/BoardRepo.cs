@@ -182,9 +182,9 @@ namespace SurfsUp.Models.Repositories
 
         public async static Task<Board> PutToAPI(Board board)
         {
-
             if (board == null)
-            { throw new Exception();
+            { 
+                throw new Exception();
             }
             Board boardToCheck = new Board();
             // BIG CREDIT TO THE OG Pete the Speed
@@ -210,14 +210,12 @@ namespace SurfsUp.Models.Repositories
             //Først delete alle boardId relationer til det board med det samme id board.id
             foreach (BoardEquipment be in boardEquipmentList)
             {
-                
                 if (be.BoardId == board.Id)
                 {
-
                     HttpRequestMessage message2 = new(HttpMethod.Delete, $"api/BoardEquipment/{be.Id}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
                     HttpContent content2 = new StringContent(JsonSerializer.Serialize(be), Encoding.UTF8, "application/json");
-                    message.Content = content2;
-                    using (HttpResponseMessage response = await client.SendAsync(message))
+                    message2.Content = content2;
+                    using (HttpResponseMessage response = await client.SendAsync(message2))
                     {
                         string jsonResponse = await response.Content.ReadAsStringAsync();
                         BoardEquipment beToCheck = JsonSerializer.Deserialize<BoardEquipment>(jsonResponse, options)!;
@@ -239,8 +237,8 @@ namespace SurfsUp.Models.Repositories
 
                 HttpRequestMessage message3 = new(HttpMethod.Post, $"api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
                 HttpContent content3 = new StringContent(JsonSerializer.Serialize(be), Encoding.UTF8, "application/json");
-                message.Content = content3;
-                using (HttpResponseMessage response = await client.SendAsync(message))
+                message3.Content = content3;
+                using (HttpResponseMessage response = await client.SendAsync(message3))
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     BoardEquipment beToCheck = JsonSerializer.Deserialize<BoardEquipment>(jsonResponse, options)!;
