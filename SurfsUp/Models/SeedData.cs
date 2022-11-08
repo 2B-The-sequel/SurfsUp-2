@@ -11,7 +11,24 @@ namespace SurfsUp.Models
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
                 bool changed = false;
-
+                IdentityUser GuestUser = new()
+                {
+                    UserName = "Guest",
+                    Email = "Guest@Guest.com",
+                    Id = "1",
+                    AccessFailedCount = 0,
+                    EmailConfirmed = true,
+                    ConcurrencyStamp = "",
+                    LockoutEnabled = false,
+                    NormalizedEmail = "Guest@Guest.com",
+                    PhoneNumber = "11111111",
+                    TwoFactorEnabled = false,
+                    LockoutEnd = null,
+                    NormalizedUserName = "Guest",
+                    PasswordHash = "",
+                    SecurityStamp = Guid.NewGuid().ToString("D"),
+                    PhoneNumberConfirmed = true
+                };
                 Board TheMinilog = new()
                 {
                     Name = "The Minilog",
@@ -177,7 +194,14 @@ namespace SurfsUp.Models
 
                     changed = true;
                 }
+                if (!context.Users.Any())
+                {
+                    context.Users.AddRange(
+                        GuestUser
 
+                        );
+                    changed = true;
+                }
                 if (!context.Equipment.Any())
                 {
                     context.Equipment.AddRange(

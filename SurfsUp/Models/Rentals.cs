@@ -13,20 +13,22 @@ namespace SurfsUp.Models
 
         [ForeignKey("UsersId")]
         public string UsersId { get; set; } //Har brug for en user gæst med et bestemt ID
+        
+        public string GuestName { get; set; }
         [Required]
         [ForeignKey("BoardId")]
         public int BoardId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Startdato")]
         [ValidStartDate(ErrorMessage = "Start rentaldate must be greater than current date.") ]
         public DateTime StartRental { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Slutdato")]
         [ValidEndDate(ErrorMessage = "Start rentaldate must be greater than current date.")]
         public DateTime EndRental { get; set; }

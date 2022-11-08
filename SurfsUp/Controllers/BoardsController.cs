@@ -347,7 +347,8 @@ namespace SurfsUp.Controllers
 
         public async Task<IActionResult> CreateRental(int id)
         {
-            if (id == null || _context.Board == null)
+            
+            if (_context.Board == null)
             {
                 return NotFound();
             }
@@ -358,18 +359,36 @@ namespace SurfsUp.Controllers
             {
                 return NotFound();
             }
+            Rental rental = new()
+            {
+                Board = board,
+                BoardId = board.BoardId,
+                StartRental = DateTime.Now,
+                EndRental = DateTime.Now
+            };
+            
+            
 
-            return View(board);
+            return View(rental);
         }
         //rental
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmRental( Rental rental, int id)
+        public async Task<IActionResult> CreateRental(Rental rental, int id)
         {
             
+            string guestid = "1";
             var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
-            rental.UsersId = claims.Value;
+            if (claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string) == null)
+            {
+                rental.UsersId = guestid;
+            }
+            else
+            {
+                var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+                rental.UsersId = claims.Value;
+            }
+            
             rental.BoardId = id;
             ViewData["SelectedBoardId"] = rental.StartRental;
             rental.Board = await _context.Board
@@ -380,6 +399,9 @@ namespace SurfsUp.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(rental);
+
+                
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -389,7 +411,10 @@ namespace SurfsUp.Controllers
                 .Where(y => y.Count > 0)
                 .ToList();
             }
-            return RedirectToAction(nameof(Index));
+            
+
+            return View(rental);
         }
+        
     }
 }
