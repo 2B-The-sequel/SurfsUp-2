@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 
 namespace SurfsUp.Models.Repositories
@@ -199,8 +200,59 @@ namespace SurfsUp.Models.Repositories
             HttpContent content = new StringContent(JsonSerializer.Serialize(board),Encoding.UTF8,"application/json");
             message.Content = content;
 
-          
-            // Hent Boards fra API
+            List<BoardEquipment> boardEquipmentList;
+            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boardEquipmentList = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
+            }
+
+            //Først delete alle boardId relationer til det board med det samme id board.id
+            foreach (BoardEquipment be in boardEquipmentList)
+            {
+                
+                if (be.BoardId == board.Id)
+                {
+
+                    HttpRequestMessage message2 = new(HttpMethod.Delete, $"api/BoardEquipment/{be.Id}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+                    HttpContent content2 = new StringContent(JsonSerializer.Serialize(be), Encoding.UTF8, "application/json");
+                    message.Content = content2;
+                    using (HttpResponseMessage response = await client.SendAsync(message))
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        BoardEquipment beToCheck = JsonSerializer.Deserialize<BoardEquipment>(jsonResponse, options)!;
+
+                        if (be == null)
+                        {
+                            throw new Exception("There was an error deleting the BoardEquipment");
+                        }
+                    }
+                }
+                
+            }
+
+            foreach (Equipment eq in board.Equipment)
+            {
+                BoardEquipment be = new();
+                be.BoardId = board.Id;
+                be.EquipmentId = eq.Id;
+
+                HttpRequestMessage message3 = new(HttpMethod.Post, $"api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+                HttpContent content3 = new StringContent(JsonSerializer.Serialize(be), Encoding.UTF8, "application/json");
+                message.Content = content3;
+                using (HttpResponseMessage response = await client.SendAsync(message))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    BoardEquipment beToCheck = JsonSerializer.Deserialize<BoardEquipment>(jsonResponse, options)!;
+
+                    if (be == null)
+                    {
+                        throw new Exception("There was an error Posting the BoardEquipment");
+                    }
+                }
+            }
+
+            //Hent det board der bliver sendt tilbage fra API
             using (HttpResponseMessage response = await client.SendAsync(message))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -210,6 +262,7 @@ namespace SurfsUp.Models.Repositories
                 {
                     throw new Exception("There was an error Posting the board");
                 }
+
                 return boardToCheck;
 
             }
