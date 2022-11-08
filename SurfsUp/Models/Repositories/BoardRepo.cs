@@ -94,7 +94,7 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             // Hent Boards fra API
-            using (HttpResponseMessage response = await client.GetAsync($"api/Board/?apikey=4d1bb604-377f-41e0-99c7-59846080bb47&Id={id}"))
+            using (HttpResponseMessage response = await client.GetAsync($"api/Boards/{id}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -126,20 +126,24 @@ namespace SurfsUp.Models.Repositories
             {
                 Equipment eq = null;
 
-                // FIND BOARD
-                
-                    if (board.Id == be.BoardId)
+                // FIND EQUIPMENT
+                int i = 0;
+                while (i < equipment.Count && eq == null)
+                {
+                    if (equipment[i].Id == be.EquipmentId)
                     {
-                        be.Equipment = eq;
+                        eq = equipment[i];
                     }
+                    i++;
+                }
 
-                
                 if (eq == null)
                     throw new Exception($"Hov det equipment ({be.EquipmentId}) findes vist ikke...");
 
-                // INDSÆT EQUIPMENT I BOARD NAVIGATION PROPERTIES EQUIPMENTS
-                board.Equipment.Add(eq);
-                
+                if (board.Id == be.BoardId)
+                {
+                    board.Equipment.Add(eq);
+                }
             }
 
             return board;
@@ -157,8 +161,8 @@ namespace SurfsUp.Models.Repositories
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
-            HttpRequestMessage message = new(HttpMethod.Post, "api/Board?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
-            HttpContent content = new StringContent(JsonSerializer.Serialize(board));
+            HttpRequestMessage message = new(HttpMethod.Post, "api/Boards?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpContent content = new StringContent(JsonSerializer.Serialize(board), Encoding.UTF8, "application/json");
             message.Content = content;
 
             // Tjek om Board er postet fra API
@@ -172,9 +176,7 @@ namespace SurfsUp.Models.Repositories
                     throw new Exception("There was an error Posting the board");
                 }
                 return boardToCheck;
-
             }
-               
         }
 
         public async static Task<Board> PutToAPI(Board board)
@@ -193,7 +195,7 @@ namespace SurfsUp.Models.Repositories
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
-            HttpRequestMessage message = new(HttpMethod.Put, "api/Board?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+            HttpRequestMessage message = new(HttpMethod.Put, "api/Boards?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
             HttpContent content = new StringContent(JsonSerializer.Serialize(board),Encoding.UTF8,"application/json");
             message.Content = content;
 
@@ -227,7 +229,7 @@ namespace SurfsUp.Models.Repositories
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
             // Hent Boards fra API
-            using (HttpResponseMessage response = await client.DeleteAsync($"api/Board?Id={id}&apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
+            using (HttpResponseMessage response = await client.DeleteAsync($"api/Boards/{id}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;

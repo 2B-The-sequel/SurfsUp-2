@@ -105,7 +105,7 @@ namespace SurfsUp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             // Hent specifik board fra API
-            var board = BoardRepo.GetFromAPI(id);
+            Board board = await BoardRepo.GetFromAPI(id);
            
             if (id == null || board == null)
             {
