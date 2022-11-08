@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
+using SurfsUp.Models.Repositories;
 
 namespace SurfsUp.Controllers
 {
@@ -23,38 +23,24 @@ namespace SurfsUp.Controllers
                 Unlock(unlock);
             }
 
-            /*
-            return _context.Equipment != null ? 
-                          View(await _context.Equipment.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Equipment'  is null.");
-            */
-
-            return View(); // SKAL FJERNES SENERE
+            return View(await EquipmentRepo.Retrieve());
         }
 
         // GET: Equipments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            /*
-            if (id == null || _context.Equipment == null)
+            try
+            {
+                Equipment equipment = await EquipmentRepo.Retrieve(id);
+                return View(equipment);
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
-
-            Equipment equipment = await _context.Equipment.FirstOrDefaultAsync(m => m.EquipmentId == id);
-            if (equipment == null)
-            {
-                return NotFound();
-            }
-            */
-
-            Equipment equipment = null;
-
-            return View(equipment);
         }
 
         // GET: Equipments/Create
-
         public IActionResult Create()
         {
             return View();
@@ -64,18 +50,18 @@ namespace SurfsUp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         // Husk og ændre ting i databasen så rollen er Admin
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Equipment equipment)
+        public async Task<IActionResult> Create(Equipment equipment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(equipment);
-                await _context.SaveChangesAsync();
+                await EquipmentRepo.Create(equipment);
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(equipment);
         }
 
@@ -86,21 +72,15 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
 
-            /*
-            if (_context.Equipment == null)
+            try
+            {
+                Equipment equipment = await EquipmentRepo.Retrieve(id);
+                return View(equipment);
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
-
-            Equipment equipment = await _context.Equipment.FindAsync(id);
-            if (equipment == null)
-            {
-                return NotFound();
-            }
-            */
-            Equipment equipment = null;
-
-            return View(equipment);
         }
 
         // POST: Equipments/Edit/5
@@ -109,7 +89,7 @@ namespace SurfsUp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Adminstrators")]
-        public async Task<IActionResult> Edit(int id, [Bind("EquipmentId,Name")] Equipment equipment)
+        public async Task<IActionResult> Edit(int id, Equipment equipment)
         {
             if (id != equipment.Id)
             {
@@ -120,25 +100,18 @@ namespace SurfsUp.Controllers
             {
                 try
                 {
-                    _context.Update(equipment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EquipmentExists(equipment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                    await EquipmentRepo.Update(equipment);
 
-                Unlock(id);
-                
-                return RedirectToAction(nameof(Index));
+                    Unlock(id);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception)
+                {
+                    return NotFound();
+                }
             }
+
             return View(equipment);
         }
 
@@ -149,22 +122,15 @@ namespace SurfsUp.Controllers
             if (Lock(id))
                 return RedirectToAction(nameof(Index), new { Error = "Der er en som allerede er ved at ændre dette udstyr." });
 
-            /*
-            if (_context.Equipment == null)
+            try
+            {
+                Equipment equipment = await EquipmentRepo.Retrieve(id);
+                return View(equipment);
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
-
-            var equipment = await _context.Equipment
-                .FirstOrDefaultAsync(m => m.EquipmentId == id);
-            if (equipment == null)
-            {
-                return NotFound();
-            }
-            */
-            Equipment equipment = null;
-
-            return View(equipment);
         }
 
         // POST: Equipments/Delete/5
@@ -173,28 +139,18 @@ namespace SurfsUp.Controllers
         [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*
-            if (_context.Equipment == null)
+            Equipment equipment = await EquipmentRepo.Retrieve(id);
+
+            try
             {
-                return Problem("Entity set 'ApplicationDbContext.Equipment'  is null.");
+                await EquipmentRepo.Delete(equipment);
+                Unlock(id);
+                return RedirectToAction(nameof(Index));
             }
-            var equipment = await _context.Equipment.FindAsync(id);
-            if (equipment != null)
+            catch (Exception)
             {
-                _context.Equipment.Remove(equipment);
+                return NotFound();
             }
-            */
-
-            Unlock(id);
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool EquipmentExists(int id)
-        {
-            //return (_context.Equipment?.Any(e => e.EquipmentId == id)).GetValueOrDefault();
-            return false;
         }
     }
 }
