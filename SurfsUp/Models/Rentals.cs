@@ -13,8 +13,10 @@ namespace SurfsUp.Models
 
         [ForeignKey("UsersId")]
         public string UsersId { get; set; } //Har brug for en user gæst med et bestemt ID
-        
+        //Nyt start
+        [DisplayName("Full Navn")]
         public string GuestName { get; set; }
+        //Nyt slut
         [Required]
         [ForeignKey("BoardId")]
         public int BoardId { get; set; }

@@ -376,7 +376,7 @@ namespace SurfsUp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRental(Rental rental, int id)
         {
-            
+            //Nyt start
             string guestid = "1";
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             if (claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string) == null)
@@ -388,7 +388,7 @@ namespace SurfsUp.Controllers
                 var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
                 rental.UsersId = claims.Value;
             }
-            
+            //Nyt slut
             rental.BoardId = id;
             ViewData["SelectedBoardId"] = rental.StartRental;
             rental.Board = await _context.Board
@@ -399,9 +399,7 @@ namespace SurfsUp.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(rental);
-
                 
-
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

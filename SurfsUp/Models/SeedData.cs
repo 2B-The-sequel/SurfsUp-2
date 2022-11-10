@@ -13,7 +13,7 @@ namespace SurfsUp.Models
             {
                 bool changed = false;
 
-                
+                //Nyt start
                 IdentityUser AdminUser = new()
                 {
                     UserName = "Admin",
@@ -52,7 +52,7 @@ namespace SurfsUp.Models
                 };
                 IdentityRole AdminRole = new()
                 {
-                    Id = "1",
+                    
                     Name = "Administrators",
                     NormalizedName = "Admin"
                 };
@@ -67,6 +67,7 @@ namespace SurfsUp.Models
                     RoleId = AdminRole.Id,
                     UserId = AdminUser.Id
                 };
+                //Nyt Slut
                 Board TheMinilog = new()
                 {
                     Name = "The Minilog",
@@ -232,6 +233,7 @@ namespace SurfsUp.Models
 
                     changed = true;
                 }
+                //Nyt Start
                 if (!context.Users.Any())
                 {
                     context.Users.AddRange(
@@ -256,7 +258,7 @@ namespace SurfsUp.Models
                         );
                     changed = true;
                 }
-                
+                //Nyt Slut
                 if (!context.Equipment.Any())
                 {
                     context.Equipment.AddRange(

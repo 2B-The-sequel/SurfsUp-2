@@ -63,6 +63,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+            //Nyt start
             @if (User.Identity.IsAuthenticated)
             {
                 //Priemium boards!
@@ -121,7 +122,7 @@
                     </td>
                 </tr>
             }else{
-                if (item.BoardId % 2 == 0)
+                if (item.BoardId % 2 == 0) //Mangler en måde at vægle enkelte bords, nu er det bare 50/50
                 {
 
 
@@ -180,7 +181,7 @@
                 </tr>
                 }
             }
-        
+            //Nyt Slut
 }
     </tbody>
 </table>
