@@ -17,6 +17,9 @@ namespace SurfsUp.Models
         [ForeignKey("BoardId")]
         public int BoardId { get; set; }
 
+        [DisplayName("Full Navn")]
+        public string GuestName { get; set; }
+
         [Required]
         [DataType(DataType.Date)]
         //[DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]

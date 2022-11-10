@@ -59,34 +59,38 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-            @if (User.IsInRole("Adminstrators")|| !item.IsRented() )
-            {
-        <tr>
-            <td>
-                <image width="150px" src="@item.Image"></image>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Length) ft.
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Width) in.
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Thickness) in.
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Volume) L
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
+    @if (User.IsInRole("Adminstrators") || !item.IsRented())
+    {
+        @if (User.Identity.IsAuthenticated)
+        {
+            //Priemium boards!
+
+            <tr>
+                <td>
+                    <image width="150px" src="@item.Image"></image>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Length) ft.
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Width) in.
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Thickness) in.
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Volume) L
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
                 @for (int i = 0; i < item.Equipment.Count; i++)
                 {
                     if (i == item.Equipment.Count - 1)
@@ -98,23 +102,85 @@
                         <a>@item.Equipment[i].Name,</a>
                     }
                 }
-            </td>
-            <td style="text-align: right">
-                @if (User.IsInRole("Adminstrators"))
-                {
-                    <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
-                }
-                
-                @if (User.IsInRole("Adminstrators"))
-                { 
-                    <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
-                    
-                }
-                <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
-                <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
-            </td>
-        </tr>
+                </td>
+                <td style="text-align: right">
+                    @if (User.IsInRole("Adminstrators"))
+                    {
+                        <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
+                    }
+
+                    @if (User.IsInRole("Adminstrators"))
+                    {
+                        <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
+
+                    }
+                    <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
+                    <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
+                </td>
+            </tr>
         }
+        else
+        {
+            if (item.Id % 2 == 0) //Mangler en måde at vægle enkelte bords, nu er det bare 50/50
+            {
+
+
+                <tr>
+                    <td>
+                        <image width="150px" src="@item.Image"></image>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Length) ft.
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Width) in.
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Thickness) in.
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Volume) L
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td>
+                    @for (int i = 0; i < item.Equipment.Count; i++)
+                    {
+                        if (i == item.Equipment.Count - 1)
+                        {
+                            <a>@item.Equipment[i].Name</a>
+                        }
+                        else
+                        {
+                            <a>@item.Equipment[i].Name,</a>
+                        }
+                    }
+                    </td>
+                    <td style="text-align: right">
+                        @if (User.IsInRole("Adminstrators"))
+                        {
+                            <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
+                        }
+
+                        @if (User.IsInRole("Adminstrators"))
+                        {
+                            <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
+
+                        }
+                        <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
+                        <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
+                    </td>
+                </tr>
+            }
+        }
+    }
 }
     </tbody>
 </table>

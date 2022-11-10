@@ -35,7 +35,17 @@
                 <label asp-for="EndRental" class="control-label"></label>
                 <input asp-for="EndRental" class="form-control" type="date"/>
                 <span asp-validation-for="EndRental" class="text-danger"></span>
-            </div><br />
+            </div>
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <div class="form-group">
+                    <label asp-for="GuestName" class="control-label"></label>
+                    <input asp-for="GuestName" class="form-control" type="input" />
+                    <span asp-validation-for="GuestName" class="text-danger"></span>
+                </div>
+            }
+            <br />
+
             <div class="form-group">
                 <input type="submit" value="Tilføj" class="btn btn-success" asp-action="CreateRental" asp-route-id=@Model.BoardId/>
                 <a asp-action="Index" asp-route-unlock="@Model.BoardId" class="btn btn-primary">Tilbage til listen</a>

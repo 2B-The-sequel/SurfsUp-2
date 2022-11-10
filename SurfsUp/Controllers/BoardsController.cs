@@ -347,8 +347,7 @@ namespace SurfsUp.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        [Authorize]
+        
         public async Task<IActionResult> CreateRental(int id)
         {
             if (Lock(id))
@@ -377,14 +376,20 @@ namespace SurfsUp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> CreateRental(Rental rental, int id)
         {
-            //Hent logged in bruger vha. Claimsidentity
-            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
-            Claim claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-
-            rental.UsersId = claims.Value;
+            //Nyt start
+            string guestid = "1";
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string) == null)
+            {
+                rental.UsersId = guestid;
+            }
+            else
+            {
+                var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string);
+                rental.UsersId = claims.Value;
+            }
             rental.BoardId = id;
             ViewData["SelectedBoardId"] = rental.StartRental;
 
