@@ -1,0 +1,117 @@
+﻿@page "/forecast"
+@inject HttpClient Http
+@using System.Text.Json
+@using System.Net.Http.Json
+@using System.Text.Json.Serialization
+
+<PageTitle>Vejrudsigt</PageTitle>
+
+<h3>Find vejrudsigt for din by</h3>
+
+<h4>Indtast navnet på din by:</h4>
+
+<input @bind="CityName" @bind:event="oninput" />
+
+<a class="btn" @onclick="CityFinder">Søg</a>
+
+@if (rootApp == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Clouds</th>
+                <th>Temp. (C)</th>
+                <th>Temp. min.</th>
+                <th>Temp. max.</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@rootApp.clouds.all</td>
+                <td>@rootApp.main.temp</td>
+                <td>@rootApp.main.temp_min</td>
+                <td>@rootApp.main.temp_max</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+
+    public async void CityFinder()
+    {
+        rootApp = await Http.GetFromJsonAsync<Root>($"https://api.openweathermap.org/data/2.5/weather?q={CityName}&appid=a5a8d44999402dcea767bfab1706a8bf");
+    }
+
+    public Root rootApp;
+
+    public string CityName = "Odense";
+
+    public class Clouds
+    {
+        public int all { get; set; }
+    }
+
+    public class Coord
+    {
+        public double lon { get; set; }
+        public double lat { get; set; }
+    }
+
+    public class Main
+    {
+        public double temp { get; set; }
+        public double feels_like { get; set; }
+        public double temp_min { get; set; }
+        public double temp_max { get; set; }
+        public int pressure { get; set; }
+        public int humidity { get; set; }
+        public int sea_level { get; set; }
+        public int grnd_level { get; set; }
+    }
+
+    public class Root
+    {
+        public Coord coord { get; set; }
+        public List<Weather> weather { get; set; }
+        public string @base { get; set; }
+        public Main main { get; set; }
+        public int visibility { get; set; }
+        public Wind wind { get; set; }
+        public Clouds clouds { get; set; }
+        public int dt { get; set; }
+        public Sys sys { get; set; }
+        public int timezone { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public int cod { get; set; }
+    }
+
+    public class Sys
+    {
+        public int type { get; set; }
+        public int id { get; set; }
+        public string country { get; set; }
+        public int sunrise { get; set; }
+        public int sunset { get; set; }
+    }
+
+    public class Weather
+    {
+        public int id { get; set; }
+        public string main { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
+    }
+
+    public class Wind
+    {
+        public double speed { get; set; }
+        public int deg { get; set; }
+        public double gust { get; set; }
+    }
+}
