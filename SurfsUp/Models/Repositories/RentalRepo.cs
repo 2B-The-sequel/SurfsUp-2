@@ -28,7 +28,7 @@ namespace SurfsUp.Models.Repositories
             {
                 ApplicationUser guestUser = new();
                 guestUser.Id = "1";
-                guestUser = CurrentInstance.Users;
+                guestUser = CurrentInstance.Users.;
                 CurrentInstance.Users = guestUser;
                 
 
