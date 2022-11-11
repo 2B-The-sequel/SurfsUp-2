@@ -1,4 +1,5 @@
-﻿using SurfsUp.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using SurfsUp.Data;
 using System.Text;
 using System.Text.Json;
 
@@ -23,6 +24,15 @@ namespace SurfsUp.Models.Repositories
 
             List<Rental> rentals;
             List<Board> boards = await BoardRepo.GetAllFromAPI();
+            if (CurrentInstance.Users == null)
+            {
+                ApplicationUser guestUser = new();
+                guestUser.Id = "1";
+                guestUser = CurrentInstance.Users;
+                CurrentInstance.Users = guestUser;
+                
+
+            }
             List<ApplicationUser> Users = CurrentInstance.Users.ToList();
 
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.

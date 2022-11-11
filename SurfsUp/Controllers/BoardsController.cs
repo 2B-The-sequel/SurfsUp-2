@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SurfsUp.Data;
 using SurfsUp.Models;
 using SurfsUp.Models.Repositories;
+using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace SurfsUp.Controllers
@@ -378,9 +379,22 @@ namespace SurfsUp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRental(Rental rental, int id)
         {
+            List<Rental> rental1 = await RentalRepo.GetAllFromAPI();
             //Nyt start
             string guestid = "1";
             var claimsIdentity = (ClaimsIdentity)User.Identity;
+            
+            if (rental.EndRental >= DateTime.Today.Date)
+            {
+                
+                for (int i = 0; i < rental1.Count; i++)
+                {
+                    if (rental.GuestName == rental1[i].GuestName)
+                    {
+                        throw new Exception("Du har allrede lejet et bord, du kan lave en bruger og leje flere");
+                    }
+                }
+            }
             if (claimsIdentity.FindFirst(ClaimTypes.NameIdentifier as string) == null)
             {
                 rental.UsersId = guestid;
