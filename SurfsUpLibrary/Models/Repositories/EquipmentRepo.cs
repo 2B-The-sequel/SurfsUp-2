@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 
-namespace SurfsUp.Models.Repositories
+namespace SurfsUpLibrary.Models.Repositories
 {
     public class EquipmentRepo
     {

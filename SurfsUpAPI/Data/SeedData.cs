@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SurfsUpAPI.Data;
 using System;
 using System.Linq;
+using SurfsUpLibrary.Models;
 
-namespace SurfsUpAPI.Models
+namespace SurfsUpAPI.Data
 {
     public class SeedData
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            using var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
+            using ApplicationDbContext context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
             bool changed = false;
 
             Board TheMinilog = new()

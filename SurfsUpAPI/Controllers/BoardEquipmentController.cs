@@ -1,5 +1,5 @@
 ﻿using SurfsUpAPI.Data;
-using SurfsUpAPI.Models;
+using SurfsUpLibrary.Models;
 
 namespace SurfsUpAPI.Controllers
 {

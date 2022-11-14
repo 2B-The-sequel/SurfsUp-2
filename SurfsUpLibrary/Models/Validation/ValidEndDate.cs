@@ -1,14 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using SurfsUp.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using SurfsUpLibrary.Models;
 
-namespace SurfsUp.Models.Validation
+namespace SurfsUpLibrary.Models.Validation
 {
         public class ValidEndDate : ValidationAttribute
         {
             protected override ValidationResult IsValid(object value, ValidationContext validationContext)
             {
-                var model = (Models.Rental)validationContext.ObjectInstance;
+                var model = (Rental)validationContext.ObjectInstance;
                 DateTime _endRental = Convert.ToDateTime(value);
                 DateTime _startRental = Convert.ToDateTime(model.StartRental);
                 TimeSpan span = _endRental.Subtract(_startRental);

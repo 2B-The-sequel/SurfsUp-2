@@ -1,15 +1,15 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
-using SurfsUp.Models.Validation;
+using Newtonsoft.Json;
+using SurfsUpLibrary.Models.Validation;
 
-namespace SurfsUp.Models
+namespace SurfsUpLibrary.Models
 {
-    public class Rental
+    public class Rental : IIdentifiable
     {
         [Key]
-        public int RentalID { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("UsersId")]
         public string UsersId { get; set; }
@@ -17,7 +17,7 @@ namespace SurfsUp.Models
         [ForeignKey("BoardId")]
         public int BoardId { get; set; }
 
-        [DisplayName("Full Navn")]
+        [DisplayName("Fulde navn")]
         public string GuestName { get; set; }
 
         [Required]
@@ -33,10 +33,11 @@ namespace SurfsUp.Models
         [DisplayName("Slutdato")]
         [ValidEndDate]
         public DateTime EndRental { get; set; }
-      
-        public ApplicationUser User { get; set; }
-        
-        public Board Board { get; set; }
 
+        [JsonIgnore]
+        public ApplicationUser User { get; set; }
+
+        [JsonIgnore]
+        public Board Board { get; set; }
     }
 }

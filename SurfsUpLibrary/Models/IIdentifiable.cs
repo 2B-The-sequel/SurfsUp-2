@@ -1,4 +1,4 @@
-﻿namespace SurfsUp.Models
+﻿namespace SurfsUpLibrary.Models
 {
     public interface IIdentifiable
     {

@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using SurfsUp.Models.Validation;
+using SurfsUpLibrary.Models.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SurfsUp.Models
+namespace SurfsUpLibrary.Models
 {
     public class Board : IIdentifiable
     {
@@ -40,7 +41,7 @@ namespace SurfsUp.Models
         [ValidOnlyPositive(ErrorMessage = "Prisen skal være over nul din taber")]
         public decimal Price { get; set; }
 
-        [JsonIgnore]
+        [JsonIgnore, NotMapped]
         [DisplayName("Udstyr")]
         public List<Equipment> Equipment { get; set; } = new List<Equipment>();
 
@@ -51,7 +52,7 @@ namespace SurfsUp.Models
         [JsonIgnore]
         public ApplicationUser applicationUser { get; set; }
 
-        [JsonIgnore]
+        [JsonIgnore, NotMapped]
         public ICollection<Rental> rentals { get ; set; }
 
         public bool IsRented()

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using SurfsUpLibrary.Models;
 
 namespace SurfsUp.Models
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SurfsUp.Models.Validation
+namespace SurfsUpLibrary.Models.Validation
 {
     public class ValidOnlyPositive : ValidationAttribute
     {

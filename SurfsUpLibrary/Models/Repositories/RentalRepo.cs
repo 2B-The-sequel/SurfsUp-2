@@ -1,8 +1,8 @@
-﻿using SurfsUp.Data;
+﻿using SurfsUpLibrary.Data;
 using System.Text;
 using System.Text.Json;
 
-namespace SurfsUp.Models.Repositories
+namespace SurfsUpLibrary.Models.Repositories
 {
     public class RentalRepo
     {

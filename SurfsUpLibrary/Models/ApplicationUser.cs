@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace SurfsUp.Models
+namespace SurfsUpLibrary.Models
 {
     public class ApplicationUser : IdentityUser
     {

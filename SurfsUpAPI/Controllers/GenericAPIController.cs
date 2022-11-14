@@ -1,5 +1,5 @@
 ﻿using SurfsUpAPI.Data;
-using SurfsUpAPI.Models;
+using SurfsUpLibrary.Models;
 using System;
 using System.Linq;
 using System.Collections.Generic;

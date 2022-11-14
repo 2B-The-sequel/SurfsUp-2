@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurfsUpAPI.Models;
+using SurfsUpLibrary.Models;
 
 namespace SurfsUpAPI.Data
 {

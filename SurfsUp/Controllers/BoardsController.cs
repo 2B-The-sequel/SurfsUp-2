@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SurfsUp.Data;
 using SurfsUp.Models;
-using SurfsUp.Models.Repositories;
+using SurfsUpLibrary.Data;
+using SurfsUpLibrary.Models;
+using SurfsUpLibrary.Models.Repositories;
 using System.Security.Claims;
 
 namespace SurfsUp.Controllers

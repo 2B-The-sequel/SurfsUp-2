@@ -1,16 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
-using SurfsUp.Data;
-using SurfsUp.Models;
+using SurfsUpLibrary.Data;
+using SurfsUpLibrary.Models;
 using System.Globalization;
-using Microsoft.SqlServer.Management.Smo;
-using SurfsUp.Controllers;
-
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -43,7 +38,6 @@ builder.Services.AddAuthentication()
     });
 
 #endregion //  <--- Secret manager
-
 
 var app = builder.Build();
 
@@ -82,7 +76,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Boards}/{action=Index}/{id?}");
 app.MapRazorPages();
-
-
 
 app.Run();

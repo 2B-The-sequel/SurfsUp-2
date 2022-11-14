@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@model SurfsUp.Models.Board
+@model SurfsUpLibrary.Models.Board
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
