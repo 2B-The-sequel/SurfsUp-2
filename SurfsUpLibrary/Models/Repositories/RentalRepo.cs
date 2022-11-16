@@ -73,27 +73,6 @@ namespace SurfsUpLibrary.Models.Repositories
                     throw new Exception($"Hov den User ({rental.UsersId}) findes vist ikke...");
             }
 
-            //Skal måske ikke være her : Fylder Users med liste over rentals
-            //foreach (ApplicationUser user in Users)
-            //{
-            //    List<Rental> RentalHolder = new List<Rental>();
-            //    Rental rentalHolder = new Rental();
-            //    int i = 0;
-            //    while (i < rentals.Count)
-            //    {
-            //        if (rentals[i].UsersId == Users[i].Id)
-            //        {
-            //            RentalHolder.Add(rentals[i]);
-
-
-            //        }
-            //        else
-            //            i++;
-            //    }
-
-            //    user.rentals = RentalHolder;
-            //}
-
             return rentals;
         }
 
