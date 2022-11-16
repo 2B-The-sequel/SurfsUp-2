@@ -34,10 +34,7 @@ namespace SurfsUpLibrary.Models
         [ValidEndDate]
         public DateTime EndRental { get; set; }
 
-        [JsonIgnore]
-        public ApplicationUser User { get; set; }
-
-        [JsonIgnore]
+        [JsonIgnore, NotMapped]
         public Board Board { get; set; }
     }
 }

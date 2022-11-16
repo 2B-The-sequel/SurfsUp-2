@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SurfsUpLibrary.Models;
+using SurfsUp.Models;
 
 namespace SurfsUp.Areas.Identity.Pages.Account
 {

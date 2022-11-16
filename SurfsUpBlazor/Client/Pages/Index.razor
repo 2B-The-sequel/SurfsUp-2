@@ -7,3 +7,17 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@foreach (Equipment eq in equipment) {
+	<p>@eq.Name</p>
+}
+
+@code {
+	List<Equipment> equipment = new List<Equipment>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		equipment = await EquipmentRepo.Retrieve();
+		base.OnInitialized();
+	}
+}

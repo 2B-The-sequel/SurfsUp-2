@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
-using SurfsUpLibrary.Data;
-using SurfsUpLibrary.Models;
+using SurfsUp.Data;
+using SurfsUp.Models;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -105,7 +105,7 @@ namespace SurfsUpLibrary.Models.Repositories
             {
                 message = new(method, $"api/{typeof(T).Name}/{item.Id}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
             }
-
+            
             //Hent Equipment fra API
             using HttpResponseMessage response = await client.SendAsync(message);
 

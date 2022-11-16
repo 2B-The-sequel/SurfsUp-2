@@ -1,18 +1,10 @@
-﻿using SurfsUpLibrary.Data;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 
 namespace SurfsUpLibrary.Models.Repositories
 {
     public class RentalRepo
     {
-        public static ApplicationDbContext CurrentInstance { get; private set; }
-
-        public RentalRepo(ApplicationDbContext context)
-        {
-            CurrentInstance = context;
-        }
-
         public async static Task<List<Rental>> GetAllFromAPI()
         {
             // BIG CREDIT TO THE OG KC
@@ -23,7 +15,6 @@ namespace SurfsUpLibrary.Models.Repositories
 
             List<Rental> rentals;
             List<Board> boards = await BoardRepo.GetAllFromAPI();
-            List<ApplicationUser> Users = CurrentInstance.Users.ToList();
 
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
@@ -54,25 +45,6 @@ namespace SurfsUpLibrary.Models.Repositories
                     throw new Exception($"Hov det board ({rental.BoardId}) findes vist ikke...");
             }
 
-            //Fylder hvert Rental objekt med dets tilhørende user
-            foreach (Rental rental in rentals)
-            {
-                ApplicationUser us = null;
-                int i = 0;
-                while (i < Users.Count && us == null)
-                {
-                    if (rentals[i].UsersId == Users[i].Id)
-                    {
-                        us = Users[i];
-                        rental.User = us;
-                    }
-                    else
-                        i++;
-                }
-                if (us == null)
-                    throw new Exception($"Hov den User ({rental.UsersId}) findes vist ikke...");
-            }
-
             return rentals;
         }
 
@@ -86,7 +58,6 @@ namespace SurfsUpLibrary.Models.Repositories
 
             Rental returnRental = new Rental();
             List<Board> boards = await BoardRepo.GetAllFromAPI();
-            List<ApplicationUser> Users = CurrentInstance.Users.ToList();
 
             // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
             JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
@@ -108,17 +79,6 @@ namespace SurfsUpLibrary.Models.Repositories
             }
             if (returnRental.Board == null)
                 throw new Exception($"Der kunne ikke findes et tilhørende board med Id: {returnRental.BoardId}");
-
-            //Sætter tilhørende User navigationproperty til Rental Objekt
-            foreach (ApplicationUser user in Users)
-            {
-                if (user.Id == returnRental.UsersId)
-                {
-                    returnRental.User = user;
-                }
-            }
-            if (returnRental.User == null)
-                throw new Exception($"Hov bruger med id: ({returnRental.UsersId}) findes vist ikke...");
 
             return returnRental;
         }

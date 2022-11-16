@@ -49,28 +49,23 @@ namespace SurfsUpLibrary.Models
         [DisplayName("Type")]
         public BoardType Type { get; set; }
 
-        [JsonIgnore]
-        public ApplicationUser applicationUser { get; set; }
-
         [JsonIgnore, NotMapped]
-        public ICollection<Rental> rentals { get ; set; }
+        public ICollection<Rental> Rentals { get ; set; }
 
         public bool IsRented()
         {
-
-            if (rentals == null)
+            if (Rentals == null)
             {
                 return false;
             }
-            foreach (Rental rental in rentals)
+            foreach (Rental rental in Rentals)
             {
                 if (rental.EndRental > DateTime.Now && rental.StartRental <= DateTime.Now || rental.StartRental.Day == DateTime.Now.Day)
-                { return true; }
-
-               
+                { 
+                    return true;
+                }
             }
             return false;
-
         }
     }
 }

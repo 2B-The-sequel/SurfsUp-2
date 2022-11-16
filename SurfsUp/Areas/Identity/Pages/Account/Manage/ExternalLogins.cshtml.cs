@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SurfsUpLibrary.Models;
+using SurfsUp.Models;
 
 namespace SurfsUp.Areas.Identity.Pages.Account.Manage
 {

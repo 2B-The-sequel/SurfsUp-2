@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfsUp.Models;
-using SurfsUpLibrary.Data;
+using SurfsUp.Data;
 using SurfsUpLibrary.Models;
 using SurfsUpLibrary.Models.Repositories;
 using System.Security.Claims;
@@ -392,6 +392,7 @@ namespace SurfsUp.Controllers
                 rental.UsersId = claims.Value;
             }
             rental.BoardId = id;
+            rental.Id = 0;
             ViewData["SelectedBoardId"] = rental.StartRental;
 
             try
@@ -401,13 +402,6 @@ namespace SurfsUp.Controllers
             catch (Exception)
             { 
                 return NotFound();
-            }
-                
-            rental.User = await _context.Users.FirstOrDefaultAsync(m => m.Id == rental.UsersId);
-
-            if (rental.User == null)
-            { 
-                return NotFound("User not found");
             }
 
             if (ModelState.IsValid)

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SurfsUpAPI.Data;
+using System;
 
 namespace SurfsUpAPI
 {
@@ -11,26 +12,33 @@ namespace SurfsUpAPI
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            // Add services to the container.
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MyAllowHeadersPolicy",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
 
+            // Add services to the container.
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
+            using (IServiceScope scope = app.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
-
+                IServiceProvider services = scope.ServiceProvider;
                 SeedData.Initialize(services);
             }
 
@@ -42,7 +50,7 @@ namespace SurfsUpAPI
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("MyAllowHeadersPolicy");
             app.UseAuthorization();
 
             app.MapControllers();
