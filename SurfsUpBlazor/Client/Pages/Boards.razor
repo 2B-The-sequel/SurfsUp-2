@@ -8,10 +8,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @page "/boards"
 
-
-
-
-
 <h1>Boards</h1>
 
 <form asp-action="Index" method="get">
@@ -27,6 +23,11 @@
 
 <table class="table">
     <thead>
+        <tr>
+            <th>
+                <Label For="@(() => boards[0].Name)" />
+            </th>
+        </tr>
         @*<tr>
              <th>
                 <label>@label</label>
@@ -73,10 +74,9 @@
                 @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity.IsAuthenticated)
                 {
                     //Priemium boards!
-
                     <tr>
                         <td>
-                            <image width="150px" src="@item.Image"></image>
+                            <image width="150px" asp-append-version="true" src="@item.Image"></image>
                         </td>
                         <td>
                             @item.Name
@@ -130,13 +130,14 @@
                 }
                 else
                 {
+                    //Non-Premium boards
                     if (item.Id % 2 == 0) //Mangler en måde at vægle enkelte bords, nu er det bare 50/50
                     {
 
 
                         <tr>
                             <td>
-                                <image width="150px" src="@item.Image"></image>
+                                <image src="@item.Image)"></image>
                             </td>
                             <td>
                                 @item.Name
@@ -201,16 +202,4 @@
         boards = await BoardRepo.GetAllFromAPI();
     }
 
-
-    [Parameter] public Expression<Func<Board>> For { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    private string label => GetDisplayName();
-
-    private string GetDisplayName()
-    {
-        var expression = (MemberExpression)For.Body;
-        var value = expression.Member.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-        return value?.Name ?? expression.Member.Name ?? "";
     }
-}
