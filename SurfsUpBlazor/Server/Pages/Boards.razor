@@ -1,0 +1,200 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization;
+@using SurfsUpLibrary.Models;
+@using System.Text.Json;
+@using SurfsUpLibrary.Models.Repositories;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@page "/boards"
+
+
+
+
+
+<h1>Boards</h1>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        Find ved navn & type  <input type="text" style="margin-left: 10px; display: inline-block; width: 200px; vertical-align: middle" class="form-control" name="SearchString" @*value="@ViewData[" CurrentFilter"]"*@ />
+        <input type="submit" value="Søg" style="vertical-align: middle" class="btn btn-outline-primary" />
+        @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+        {
+            <a asp-action="Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
+        }
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            @* <th>
+            @Html.DisplayNameFor(model => model[0].Image)
+            </th>
+            <th>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
+            @Html.DisplayNameFor(model => model[0].Name)
+            </a>
+            </th>
+            <th>
+            @Html.DisplayNameFor(model => model[0].Length)
+            </th>
+            <th>
+            @Html.DisplayNameFor(model => model[0].Width)
+            </th>
+            <th>
+            @Html.DisplayNameFor(model => model[0].Thickness)
+            </th>
+            <th>
+            @Html.DisplayNameFor(model => model[0].Volume)
+            </th>
+            <th>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
+            @Html.DisplayNameFor(model => model[0].Price)
+            </a>
+            </th>
+            <th>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
+            @Html.DisplayNameFor(model => model[0].Type)
+            </a>
+            </th>
+            <th>
+            @Html.DisplayNameFor(model => model[0].Equipment)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in boards)
+        {
+            @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Users") || !item.IsRented())
+            {
+                @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity.IsAuthenticated)
+                {
+                    //Priemium boards!
+
+                    <tr>
+                        <td>
+                            <image width="150px" src="@item.Image"></image>
+                        </td>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.Length
+                        </td>
+                        <td>
+                            @item.Width
+                        </td>
+                        <td>
+                            @item.Thickness
+                        </td>
+                        <td>
+                            @item.Length L
+                        </td>
+                        <td>
+                            @item.Price
+                        </td>
+                        <td>
+                            @item.Type
+                        </td>
+                        <td>
+                            @for (int i = 0; i < item.Equipment.Count; i++)
+                            {
+                                if (i == item.Equipment.Count - 1)
+                                {
+                                    <a>@item.Equipment[i].Name</a>
+                                }
+                                else
+                                {
+                                    <a>@item.Equipment[i].Name,</a>
+                                }
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                            {
+                                <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
+                            }
+
+                            @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                            {
+                                <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
+
+                            }
+                            <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
+                            <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    if (item.Id % 2 == 0) //Mangler en måde at vægle enkelte bords, nu er det bare 50/50
+                    {
+
+
+                        <tr>
+                            <td>
+                                <image width="150px" src="@item.Image"></image>
+                            </td>
+                            <td>
+                                @item.Name
+                            </td>
+                            <td>
+                                @item.Length
+                            </td>
+                            <td>
+                                @item.Width
+                            </td>
+                            <td>
+                                @item.Thickness
+                            </td>
+                            <td>
+                                @item.Length L
+                            </td>
+                            <td>
+                                @item.Price
+                            </td>
+                            <td>
+                                @item.Type
+                            </td>
+                            <td>
+                                @for (int i = 0; i < item.Equipment.Count; i++)
+                                {
+                                    if (i == item.Equipment.Count - 1)
+                                    {
+                                        <a>@item.Equipment[i].Name</a>
+                                    }
+                                    else
+                                    {
+                                        <a>@item.Equipment[i].Name,</a>
+                                    }
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                                {
+                                    <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
+                                }
+
+                                @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                                {
+                                    <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
+
+                                }
+                                <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
+                                <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+
+    public List<Board> boards { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        boards = await BoardRepo.GetAllFromAPI();
+    }
+}
