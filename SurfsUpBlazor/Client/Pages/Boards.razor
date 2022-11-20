@@ -20,16 +20,9 @@
         }
     </div>
 </form>
-<grid>
-    <table>
-        <thead>
-            Name
-        </thead>
-    </table>
-</grid>
 <table class="table">
     <thead>
-        <tr>
+       @* <tr>
           <th>
               <label>Billede</label>
           </th>
@@ -57,8 +50,8 @@
             <th>
                 <label>Udstyr</label>
             </th>
-        </tr>
-       @* <tr>
+        </tr>*@
+        <tr>
             <th>
                 <label>
                     <CustomLabel TItem="Board" aspfor="@nameof(board.Image)"></CustomLabel>
@@ -104,7 +97,7 @@
                     <CustomLabel TItem="Board" aspfor="@nameof(board.Equipment)"></CustomLabel>
                 </label>
             </th>
-        </tr>*@
+        </tr>
         @*<tr>
              <th>
                 <label>@label</label>
