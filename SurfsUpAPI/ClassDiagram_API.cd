@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SurfsUpAPI.Controllers.BoardEquipmentController" Collapsed="true">
+    <Position X="8.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BoardEquipmentController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Controllers.BoardsController" Collapsed="true">
+    <Position X="12.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BoardsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Controllers.EquipmentController" Collapsed="true">
+    <Position X="15" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\EquipmentController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Controllers.GenericAPIController&lt;T&gt;" Collapsed="true">
+    <Position X="11.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAEAAAAAABAAAAAAAACAAAAEAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\GenericAPIController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Controllers.RentalController" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\RentalController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Data.ApplicationDbContext" Collapsed="true">
+    <Position X="17.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAABAAAAAAAAAAASAAAAA=</HashCode>
+      <FileName>Data\ApplicationDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Data.SeedData" Collapsed="true">
+    <Position X="17.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\SeedData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Migrations.LOL" Collapsed="true">
+    <Position X="21" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20221114104858_LOL.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Migrations.PlsFix" Collapsed="true">
+    <Position X="17.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20221116105324_PlsFix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Migrations.PlsFix2" Collapsed="true">
+    <Position X="19.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20221116105928_PlsFix2.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Migrations.ApplicationDbContextModelSnapshot" Collapsed="true">
+    <Position X="19.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Migrations\ApplicationDbContextModelSnapshot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpAPI.Program" Collapsed="true">
+    <Position X="21" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

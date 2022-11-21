@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SurfsUpLibrary.Models.Repositories.BoardRepo" Collapsed="true">
+    <Position X="11" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAEAIAAAAAAAAAAAAAAAIAAAQ=</HashCode>
+      <FileName>Models\Repositories\BoardRepo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Repositories.EquipmentRepo" Collapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAAAAAAAAAAAAAAAAAAAEAgEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Repositories\EquipmentRepo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Repositories.RentalRepo" Collapsed="true">
+    <Position X="12.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAEAIAAAAAAAAAAAAAAAIAAAQ=</HashCode>
+      <FileName>Models\Repositories\RentalRepo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Validation.ValidEndDate" Collapsed="true">
+    <Position X="7.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Validation\ValidEndDate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Validation.ValidOnlyPositive" Collapsed="true">
+    <Position X="9.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Validation\ValidOnlyPositive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Validation.ValidStartDate" Collapsed="true">
+    <Position X="11" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Validation\ValidStartDate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Board" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgCAAAAAQABAAAAAAAAAERAAAAAABAAAQIAAQAAAAA=</HashCode>
+      <FileName>Models\Board.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.BoardEquipment" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAoAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Models\BoardEquipment.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Equipment" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Models\Equipment.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Lock" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Models\Lock.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SurfsUpLibrary.Models.Rental" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgACAAAAAAAAAAIgAAAAAAAAgAAAAAAAAAAAICAAAAA=</HashCode>
+      <FileName>Models\Rental.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="SurfsUpLibrary.Models.IIdentifiable" Collapsed="true">
+    <Position X="7.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\IIdentifiable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SurfsUpLibrary.Models.BoardType" Collapsed="true">
+    <Position X="7.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAACAAAAAAAAAgDAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\BoardType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
