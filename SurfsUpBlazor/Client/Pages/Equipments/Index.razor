@@ -12,10 +12,10 @@
 <h1>Udstyr</h1>
 
 <p>
-    @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
-    {
-        <a asp-action="Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
-    }
+    @*if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))*@
+    
+        <a asp-page="/Equipment/Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
+    
 </p>
 <table class="table">
     <thead>
@@ -40,12 +40,12 @@
                     <p>
                         @*@if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
                         {*@
-                            <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr </a>
+                            <a href="/Edit/@item.Id" class="btn btn-outline-success">Ændr </a>
                         @*}*@
 
                        @* @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
                         {*@
-                            <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet </a>
+                        <a @onclick="async () => await Delete(item)" cl" class="btn btn-outline-danger">Slet </a>
 
                        @* }*@
                         <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
@@ -60,10 +60,19 @@
     List<Equipment> equipments;
     protected override async Task OnInitializedAsync()
     {
-      
-            equipments = await SurfsUpLibrary.Models.Repositories.EquipmentRepo.Retrieve();
-        
+
+        equipments = await SurfsUpLibrary.Models.Repositories.EquipmentRepo.Retrieve();
+
     }
 
+    public void Edit ()
+    {
+
+    }
+
+    public async Task Delete(Equipment equipment)
+    {
+        await EquipmentRepo.Delete(equipment);
+    }
 
 }
