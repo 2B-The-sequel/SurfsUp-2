@@ -1,0 +1,108 @@
+﻿@page "/Boards/Create"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Tilføj</PageTitle>
+
+<h1>Tilføj</h1>
+
+<h4>Board</h4>
+<hr />
+<div class="row">
+    <EditForm Model="board" class="col-md-4">
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Name)"></CustomLabel>
+            <InputText @bind-Value="@board.Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Image)"></CustomLabel>
+            <InputText @bind-Value="@board.Image" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Length)"></CustomLabel>
+            <InputNumber @bind-Value="@board.Length" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Width)"></CustomLabel>
+            <InputNumber @bind-Value="@board.Width" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Thickness)"></CustomLabel>
+            <InputNumber @bind-Value="@board.Thickness" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Volume)"></CustomLabel>
+            <InputNumber @bind-Value="@board.Volume" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Price)"></CustomLabel>
+            <InputNumber @bind-Value="@board.Price" class="form-control" />
+        </div>
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Type)"></CustomLabel>
+            <InputSelect @bind-Value="@board.Type" class="form-control">
+                @foreach (var type in Enum.GetValues(typeof(BoardType)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+        </div><br />
+        <div class="form-group">
+            <CustomLabel TItem="Board" aspfor="@nameof(board.Equipment)"></CustomLabel><br />
+            @foreach(Check check in checkedEquipment) 
+            {
+                <InputCheckbox class="form-check-input" @bind-Value="check.Checked" />
+                <label class="form-check-label">@check.Equipment.Name</label>
+                <br />
+            }
+        </div><br />
+        <div class="form-group">
+            <button @onclick="Submit" class="btn btn-success">Tilføj</button>
+            <NavLink class="btn btn-primary" href="" Match="NavLinkMatch.All">Tilbage til listen</NavLink>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    List<Check> checkedEquipment { get; set; } = new();
+
+    Board board = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<Equipment> equipment = await EquipmentRepo.Retrieve();
+
+        for (int i = 0; i < equipment.Count; i++) {
+            Check check = new();
+            check.Equipment = equipment[i];
+            checkedEquipment.Add(check);
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    private void Submit() 
+    {
+        try
+        {
+            for (int i = 0; i < checkedEquipment.Count; i++)
+            {
+                if (checkedEquipment[i].Checked)
+                    board.Equipment.Add(checkedEquipment[i].Equipment);
+            }
+            BoardRepo.PostToAPI(board);
+        } 
+        catch (Exception)
+        {
+
+        }
+    }
+
+    private void Navigate() {
+        
+    }
+
+    private class Check {
+        public Equipment Equipment; 
+        public bool Checked;
+    }
+}

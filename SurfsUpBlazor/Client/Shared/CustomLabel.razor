@@ -1,10 +1,11 @@
 ﻿@using System.Linq
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
 
 @typeparam TItem
 
-<label for="@fortag">@label</label>
+<label for="@fortag" class="control-label">@label</label>
 
 @code {
     [Parameter] public string aspfor { get; set; }
@@ -18,8 +19,7 @@
     private string GetDisplayName(string propertyname)
     {
         MemberInfo myprop = typeof(TItem).GetProperty(propertyname) as MemberInfo;
-        var dd = myprop.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-        return dd?.Name ?? "";
+        DisplayNameAttribute dd = myprop.GetCustomAttribute(typeof(DisplayNameAttribute)) as DisplayNameAttribute;
+        return dd.DisplayName ?? fortag;
     }
-
 }
