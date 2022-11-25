@@ -19,7 +19,7 @@
     {
         MemberInfo myprop = typeof(TItem).GetProperty(propertyname) as MemberInfo;
         var dd = myprop.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-        return fortag/*dd?.Name ?? ""*/;
+        return dd?.Name ?? "";
     }
 
 }
