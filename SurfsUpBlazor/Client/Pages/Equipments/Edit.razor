@@ -1,26 +1,34 @@
 ﻿@page "/Equipment/Edit/{Id:int}"
 @inject NavigationManager NavManager
+@inject IToastService toastService
 @using SurfsUpLibrary.Models
 @using SurfsUpLibrary.Models.Repositories
 
 
 <h3>Opdatér</h3>
 
-<EditForm Model="@equipment" OnSubmit="HandleSubmit">
+<EditForm Model="@equipment" OnValidSubmit="HandleSubmit" OnInvalidSubmit="HandleInvalidSubmit">
     <div>
     <label for="Name">Navn:</label>
     <InputText id="Name" @bind-Value="equipment.Name">  </InputText>
     </div>
     <div >
-    <button style="margin-top:10px;" type="submit" class="btn btn-primary">Tilføj</button>
+    <button style="margin-top:10px;" type="submit" class="btn btn-primary">Ok</button>
     </div>
 </EditForm>
 <a style="margin-top:10px;" href="/Equipment"> Tilbage til listen </a>
-
+@if (displayValidationErrorMessages)
+{
+    <div class="col-md-4" style="margin-top:10px">
+        <label>Validation Messages: </label>
+        <ValidationSummary />
+    </div>
+}
 
 @code {
     [Parameter]
     public int Id { get; set; }
+    bool displayValidationErrorMessages = false;
 
     Equipment equipment;
     protected override async Task OnInitializedAsync()
@@ -36,12 +44,17 @@
         try
         {
             Equipment eq = await EquipmentRepo.Update(equipment);
-            NavManager.NavigateTo("/Equipment");
+            toastService.ShowSuccess($"Udstyr opdateret");
         }
         catch (Exception)
         {
             NavManager.NavigateTo("/NotFound");
         }
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        displayValidationErrorMessages = true;
     }
 
 }

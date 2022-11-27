@@ -1,12 +1,15 @@
-﻿@page "/Equipment/Details/{int:id}"
+﻿@page "/Equipment/Details/{Id:int}"
 @using SurfsUpLibrary.Models
 @using SurfsUpLibrary.Models.Repositories
 
 <h3>Detajler</h3>
-
-<label for="equipment"> @equipment.Name </label>
+<div>
+<label>Navn: </label>
+<label for="Name"> @equipment.Name </label>
+</div>
+<div>
 <a href="/Equipment" style="margin-top:10px"> Tilbage</a>
-
+</div>
 @code {
     [Parameter]
     public int Id { get; set; }

@@ -46,9 +46,9 @@
 
                        @* @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
                         {*@
-                            <a href="/Equipment/Delete/@item.Id" class="btn btn-outline-danger">Slet </a> 
+                            <a href="/Equipment/Delete/@item.Id" class="btn btn-outline-danger">Slet </a>
 
-                        <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
+                    <a href="/Equipment/Details/@item.Id" class="btn btn-outline-primary">Detaljer</a>
                     
                 </td>
             </tr>

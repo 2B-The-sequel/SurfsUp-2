@@ -1,5 +1,6 @@
 ﻿@page "/Equipment/Delete/{id:int}"
 @inject NavigationManager NavManager
+@inject IToastService toastService
 
 <h1>Slet</h1>
 
@@ -29,7 +30,7 @@
             try
             {
                 Equipment eq = await EquipmentRepo.Delete(equipment);
-                NavManager.NavigateTo("/Equipment");
+                toastService.ShowSuccess($"Udstyr: {equipment.Name} er slettet");
             }
             catch (Exception)
             {
