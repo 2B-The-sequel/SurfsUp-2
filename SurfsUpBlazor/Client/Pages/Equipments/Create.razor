@@ -1,34 +1,32 @@
 ﻿@page "/Equipment/Create"
 @using SurfsUpLibrary.Models
 @using SurfsUpLibrary.Models.Repositories
+@inject NavigationManager NavigationManager
 
 
 <h1>Tilføj</h1>
 
 <h4>Udstyr</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <input type="submit" value="Tilføj" class="btn btn-success" />
-                <a asp-action="Index" class="btn btn-primary">Tilbage til listen</a>
-            </div>
-        </form>
+<EditForm Model="equipment" OnSubmit="HandleSubmit">
+    <div class="form-group">
+        <label for="equipment.Name">Navn:</label>
+        <label for="equipment.Name"> @equipment.Name  </label>
+        <InputText id="Name" @bind-Value="equipment.Name">  </InputText>
     </div>
-</div>
-
+    <button style="margin-top:10px;" type="submit" class="btn btn-primary">Tilføj</button>
+</EditForm>
+<a style="margin-top:10px;"  href="/Equipment"> Tilbage til listen </a>
 
 
 @code {
-    public Equipment eq;
+    public Equipment equipment = new Equipment();
 
-    
+    public async void HandleSubmit()
+    {
+        await EquipmentRepo.Create(equipment);
+        NavigationManager.NavigateTo("/Equipment");
+    }
+
 
 }

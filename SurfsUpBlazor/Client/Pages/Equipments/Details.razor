@@ -1,5 +1,22 @@
-﻿<h3>Details</h3>
+﻿@page "/Equipment/Details/{int:id}"
+@using SurfsUpLibrary.Models
+@using SurfsUpLibrary.Models.Repositories
+
+<h3>Detajler</h3>
+
+<label for="equipment"> @equipment.Name </label>
+<a href="/Equipment" style="margin-top:10px"> Tilbage</a>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+    Equipment equipment;
+
+    protected override async Task OnInitializedAsync()
+    {
+        equipment = await EquipmentRepo.Retrieve(Id);
+    }
+
+
 
 }

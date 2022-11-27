@@ -1,7 +1,47 @@
-﻿@page "/Equipment/Edit/{id:int}"
+﻿@page "/Equipment/Edit/{Id:int}"
+@inject NavigationManager NavManager
+@using SurfsUpLibrary.Models
+@using SurfsUpLibrary.Models.Repositories
 
-<h3>Edit</h3>
+
+<h3>Opdatér</h3>
+
+<EditForm Model="@equipment" OnSubmit="HandleSubmit">
+    <div>
+    <label for="Name">Navn:</label>
+    <InputText id="Name" @bind-Value="equipment.Name">  </InputText>
+    </div>
+    <div >
+    <button style="margin-top:10px;" type="submit" class="btn btn-primary">Tilføj</button>
+    </div>
+</EditForm>
+<a style="margin-top:10px;" href="/Equipment"> Tilbage til listen </a>
+
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+
+    Equipment equipment;
+    protected override async Task OnInitializedAsync()
+    {
+
+        equipment = await SurfsUpLibrary.Models.Repositories.EquipmentRepo.Retrieve(Id);
+
+    }
+
+
+    public async Task HandleSubmit()
+    {
+        try
+        {
+            Equipment eq = await EquipmentRepo.Update(equipment);
+            NavManager.NavigateTo("/Equipment");
+        }
+        catch (Exception)
+        {
+            NavManager.NavigateTo("/NotFound");
+        }
+    }
 
 }

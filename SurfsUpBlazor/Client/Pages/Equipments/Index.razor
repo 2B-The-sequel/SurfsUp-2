@@ -1,5 +1,6 @@
 ﻿@page "/Equipment"
 @inject AuthenticationStateProvider AutenticationStateProvider
+@inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Text.Json
 @using SurfsUpLibrary.Models
@@ -14,7 +15,7 @@
 <p>
     @*if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))*@
     
-        <a asp-page="/Equipment/Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
+        <a href="/Equipment/Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
     
 </p>
 <table class="table">
@@ -37,19 +38,18 @@
                    @*@Html.DisplayFor(modelItem => item.Name)*@
                 </td>
                 <td style="text-align: right">
-                    <p>
+                  
                         @*@if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
                         {*@
-                            <a href="/Edit/@item.Id" class="btn btn-outline-success">Ændr </a>
+                            <a href="/Equipment/Edit/@item.Id" class="btn btn-outline-success">Ændr </a>
                         @*}*@
 
                        @* @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
                         {*@
-                        <a @onclick="async () => await Delete(item)" cl" class="btn btn-outline-danger">Slet </a>
+                            <a href="/Equipment/Delete/@item.Id" class="btn btn-outline-danger">Slet </a> 
 
-                       @* }*@
                         <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
-                    </p>
+                    
                 </td>
             </tr>
         }
@@ -70,9 +70,6 @@
 
     }
 
-    public async Task Delete(Equipment equipment)
-    {
-        await EquipmentRepo.Delete(equipment);
-    }
+   
 
 }
