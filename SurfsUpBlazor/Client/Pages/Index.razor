@@ -1,8 +1,16 @@
 ﻿@page "/"
+@inject IToastService toastService
+@using SurfsUpLibrary.Models.Repositories
+@using SurfsUpLibrary.Models
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
+
+<button class="btn btn-info" @onclick="@(() => toastService.ShowInfo("Info Message"))"> Info Toast</button>
+<button class="btn btn-success" @onclick="@(() => toastService.ShowSuccess("Successs Message"))"> Success Toast</button>
+<button class="btn btn-warning" @onclick="@(() => toastService.ShowWarning("Warning Message"))"> Info Toast</button>
+<button class="btn btn-danger" @onclick="@(() => toastService.ShowError("Error Message"))"> Info Toast</button>
 
 @if (user is not null)
 {

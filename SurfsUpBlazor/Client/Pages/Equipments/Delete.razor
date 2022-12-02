@@ -1,0 +1,42 @@
+﻿@page "/Equipment/Delete/{id:int}"
+@inject NavigationManager NavManager
+@inject IToastService toastService
+
+<h1>Slet</h1>
+
+<h5>Er du sikker på at du vil slette dette udstyr?</h5>
+
+<EditForm Model="equipment" OnSubmit="HandleSubmit">
+    <div class="form-group">
+    <label for="equipment.Name">Navn:</label>
+    <label for="equipment.Name"> @equipment.Name  </label>
+    </div>
+    <button style="margin-top:10px;" type="submit" class="btn btn-primary">Slet</button>
+</EditForm>
+<a style="margin-top:10px;" href="/Equipment"> Tilbage til listen </a>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    Equipment equipment;
+    protected override async Task OnInitializedAsync()
+    {
+
+        equipment = await EquipmentRepo.Retrieve(Id);
+    }
+
+        public async Task HandleSubmit()
+        {
+            try
+            {
+                Equipment eq = await EquipmentRepo.Delete(equipment);
+                toastService.ShowSuccess($"Udstyr: {equipment.Name} er slettet");
+            }
+            catch (Exception)
+            {
+                NavManager.NavigateTo("/NotFound");
+            }
+        }
+
+    }
+ 

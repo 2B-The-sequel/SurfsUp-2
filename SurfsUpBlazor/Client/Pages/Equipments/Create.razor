@@ -1,0 +1,48 @@
+﻿@page "/Equipment/Create"
+@using SurfsUpLibrary.Models
+@using SurfsUpLibrary.Models.Repositories
+@inject NavigationManager NavigationManager
+@inject IToastService toastService
+
+
+<h1>Tilføj</h1>
+
+<h4>Udstyr</h4>
+<hr />
+<EditForm Model="equipment" OnValidSubmit="HandleSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+    <div class="form-group">
+        <label for="equipment.Name">Navn:</label>
+        <InputText id="Name" @bind-Value="equipment.Name">  </InputText>
+    </div>
+    <button style="margin-top:10px;" type="submit" class="btn btn-primary">Tilføj</button>
+</EditForm>
+<a style="margin-top:10px;"  href="/Equipment"> Tilbage til listen </a>
+@if (displayValidationErrorMessages)
+{
+    <div class="col-md-4" style="margin-top:10px">
+        <label>Validation Messages: </label>
+        <ValidationSummary />
+    </div>
+}
+
+
+
+@code {
+    public Equipment equipment = new Equipment();
+    bool displayValidationErrorMessages = false;
+
+    public async void HandleSubmit()
+    {
+        displayValidationErrorMessages = false;
+        await EquipmentRepo.Create(equipment);
+        toastService.ShowSuccess($"Udstyr:{equipment.Name} tilføjet");
+       
+    }
+
+    public  void HandleInvalidSubmit()
+    {
+       
+        displayValidationErrorMessages = true;
+    }
+
+}

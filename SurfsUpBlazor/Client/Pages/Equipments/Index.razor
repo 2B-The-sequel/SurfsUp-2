@@ -1,0 +1,75 @@
+﻿@page "/Equipment"
+@inject AuthenticationStateProvider AutenticationStateProvider
+@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Text.Json
+@using SurfsUpLibrary.Models
+@using SurfsUpLibrary.Models.Repositories
+@using System.Linq.Expressions
+@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@using SurfsUpBlazor.Client.Pages
+
+<h1>Udstyr</h1>
+
+<p>
+    @*if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))*@
+    
+        <a href="/Equipment/Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
+    
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Equipment
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in equipments)
+        {
+            <tr>
+                <td>
+                    <label> @item.Name </label>  
+                    @*<CustomLabel TItem="Equipment" aspfor="@nameof(item.Name)"></CustomLabel>*@
+                    @*<span class"control-label col-md-6">@Html.DisplayFor(model => model.MyName)</span>*@
+                   @*@Html.DisplayFor(modelItem => item.Name)*@
+                </td>
+                <td style="text-align: right">
+                  
+                        @*@if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                        {*@
+                            <a href="/Equipment/Edit/@item.Id" class="btn btn-outline-success">Ændr </a>
+                        @*}*@
+
+                       @* @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                        {*@
+                            <a href="/Equipment/Delete/@item.Id" class="btn btn-outline-danger">Slet </a>
+
+                    <a href="/Equipment/Details/@item.Id" class="btn btn-outline-primary">Detaljer</a>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<Equipment> equipments;
+    protected override async Task OnInitializedAsync()
+    {
+
+        equipments = await SurfsUpLibrary.Models.Repositories.EquipmentRepo.Retrieve();
+
+    }
+
+    public void Edit ()
+    {
+
+    }
+
+   
+
+}
