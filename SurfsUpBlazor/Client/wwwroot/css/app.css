@@ -59,6 +59,27 @@ a, .btn-link {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
+
+.loadingcircle {
+    border: 16px solid silver;
+    border-top: 16px solid purple;
+    border-radius: 80%;
+    width: 100px;
+    height: 100px;
+    animation: spin 700ms linear infinite;
+    top: 40%;
+    left: 55% position: aboslute;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg)
     }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}

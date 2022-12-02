@@ -1,0 +1,37 @@
+﻿@using SurfsUpLibrary.Models
+@using SurfsUpLibrary.Models.Repositories
+@inject NavigationManager NavManager
+<h3>EditEquipment</h3>
+
+<EditForm Model="@equipment" OnSubmit="HandleSubmit">
+    <label for="@equipment.Name">Navn:</label>
+    <InputText @bind-Value="equipment.Name">  </InputText>
+    <button onclick="ToEquipmentPage"  class="btn btn-primary" > Tilbage til listen </button>
+    <button type="submit" class="btn btn-primary">Tilføj</button>
+
+</EditForm>
+
+@code {
+
+
+    Equipment equipment = new Equipment();
+
+    public async Task HandleSubmit()
+    {
+        try
+        {
+            Equipment eq = await EquipmentRepo.Update(equipment);
+            NavManager.NavigateTo("/Equipment");
+        }
+        catch (Exception)
+        {
+            NavManager.NavigateTo("/NotFound");
+        }
+    }
+
+
+    public void ToEquipmentPage()
+    {
+        NavManager.NavigateTo("/Equipment");
+    }
+}
