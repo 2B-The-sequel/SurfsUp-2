@@ -36,13 +36,16 @@
         displayValidationErrorMessages = false;
         await EquipmentRepo.Create(equipment);
         toastService.ShowSuccess($"Udstyr:{equipment.Name} tilføjet");
-       
+        Navigate("/Equipment");
     }
 
     public  void HandleInvalidSubmit()
     {
-       
         displayValidationErrorMessages = true;
     }
 
+    private void Navigate(string path)
+    {
+        NavigationManager.NavigateTo(path);
+    }
 }

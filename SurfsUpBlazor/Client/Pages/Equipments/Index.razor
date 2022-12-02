@@ -57,19 +57,14 @@
 </table>
 
 @code {
-    List<Equipment> equipments;
+    List<Equipment> equipments = new();
     protected override async Task OnInitializedAsync()
     {
-
         equipments = await SurfsUpLibrary.Models.Repositories.EquipmentRepo.Retrieve();
-
     }
 
     public void Edit ()
     {
 
     }
-
-   
-
 }

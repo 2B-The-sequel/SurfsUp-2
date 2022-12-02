@@ -18,10 +18,10 @@
     [Parameter]
     public int Id { get; set; }
 
-    Equipment equipment;
+    public Equipment equipment { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
-
         equipment = await EquipmentRepo.Retrieve(Id);
     }
 
@@ -31,6 +31,7 @@
             {
                 Equipment eq = await EquipmentRepo.Delete(equipment);
                 toastService.ShowSuccess($"Udstyr: {equipment.Name} er slettet");
+                NavManager.NavigateTo("/Equipment");
             }
             catch (Exception)
             {
