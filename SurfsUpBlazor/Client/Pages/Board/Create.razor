@@ -1,5 +1,6 @@
 ﻿@page "/Boards/Create"
 @inject NavigationManager NavigationManager
+@inject StateContainerService State 
 
 <PageTitle>Tilføj</PageTitle>
 
@@ -7,39 +8,40 @@
 
 <h4>Board</h4>
 <hr />
+@if (!submitting) {
 <div class="row">
     <EditForm Model="board" class="col-md-4">
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Name)"></CustomLabel>
-            <InputText @bind-Value="@board.Name" class="form-control" />
+            <InputText @bind-Value="@board.Name" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Image)"></CustomLabel>
-            <InputText @bind-Value="@board.Image" class="form-control" />
+                <InputText @bind-Value="@board.Image" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Length)"></CustomLabel>
-            <InputNumber @bind-Value="@board.Length" class="form-control" />
+                <InputNumber @bind-Value="@board.Length" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Width)"></CustomLabel>
-            <InputNumber @bind-Value="@board.Width" class="form-control" />
+            <InputNumber @bind-Value="@board.Width" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Thickness)"></CustomLabel>
-            <InputNumber @bind-Value="@board.Thickness" class="form-control" />
+            <InputNumber @bind-Value="@board.Thickness" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Volume)"></CustomLabel>
-            <InputNumber @bind-Value="@board.Volume" class="form-control" />
+            <InputNumber @bind-Value="@board.Volume" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Price)"></CustomLabel>
-            <InputNumber @bind-Value="@board.Price" class="form-control" />
+                <InputNumber @bind-Value="@board.Price" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Type)"></CustomLabel>
-            <InputSelect @bind-Value="@board.Type" class="form-control">
+                <InputSelect @bind-Value="@board.Type" @oninput="SaveBoard" class="form-control">
                 @foreach (var type in Enum.GetValues(typeof(BoardType)))
                 {
                     <option value="@type">@type</option>
@@ -57,18 +59,29 @@
         </div><br />
         <div class="form-group">
             <button @onclick="Submit" class="btn btn-success">Tilføj</button>
-            <NavLink class="btn btn-primary" href="" Match="NavLinkMatch.All">Tilbage til listen</NavLink>
+            <button @onclick="Return" class="btn btn-primary">Tilbage til listen</button>
         </div>
     </EditForm>
 </div>
+}
+else
+{
+    <div class="loadingcircle"></div>
+}
 
 @code {
     List<Check> checkedEquipment { get; set; } = new();
 
-    Board board = new();
+    [Parameter]
+    public Board board { get; set; } = new();
+    bool submitting = false;
 
     protected override async Task OnInitializedAsync()
     {
+        State.OnStateChange += StateHasChanged;
+
+        if (State.board != null)
+            board = State.board;
         List<Equipment> equipment = await EquipmentRepo.Retrieve();
 
         for (int i = 0; i < equipment.Count; i++) {
@@ -80,8 +93,20 @@
         await base.OnInitializedAsync();
     }
 
-    private void Submit() 
+    private void Return() {
+        Navigate("/Boards");
+        SaveBoard();
+    }
+
+    private void SaveBoard() {
+        State.SetBoard(board);
+        StateHasChanged();
+    }
+
+    private async void Submit() 
     {
+        submitting = true;
+
         try
         {
             for (int i = 0; i < checkedEquipment.Count; i++)
@@ -89,16 +114,23 @@
                 if (checkedEquipment[i].Checked)
                     board.Equipment.Add(checkedEquipment[i].Equipment);
             }
-            BoardRepo.PostToAPI(board);
+            await BoardRepo.PostToAPI(board);
+            Thread.Sleep(3000);
+            Navigate("/Boards");
+            State.SetBoard(new Board());
         } 
         catch (Exception)
         {
-
+            submitting = false;
         }
     }
 
-    private void Navigate() {
-        
+    public void Dispose() {
+        State.OnStateChange -= StateHasChanged;
+    }
+
+    private void Navigate(string path) {
+        NavigationManager.NavigateTo(path);
     }
 
     private class Check {

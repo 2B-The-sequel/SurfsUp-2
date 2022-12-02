@@ -152,7 +152,6 @@ namespace SurfsUpLibrary.Models.Repositories
 
         public async static Task<Board> PostToAPI(Board board)
         {
-            Board boardToCheck = new Board();
             // BIG CREDIT TO THE OG Pete the Speed
             using HttpClient client = new()
             {
@@ -167,16 +166,67 @@ namespace SurfsUpLibrary.Models.Repositories
             message.Content = content;
 
             // Tjek om Board er postet fra API
+            Board boardFromAPI;
             using (HttpResponseMessage response = await client.SendAsync(message))
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
+                boardFromAPI = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
 
                 if (board == null)
                 {
                     throw new Exception("There was an error Posting the board");
                 }
-                return boardToCheck;
+            }
+
+            foreach (Equipment equipment in board.Equipment)
+            {
+                BoardEquipment boardEquipment = new()
+                {
+                    BoardId = boardFromAPI.Id,
+                    EquipmentId = equipment.Id
+                };
+
+                await Request(HttpMethod.Post, boardEquipment);
+            }
+
+            return boardFromAPI;
+        }
+
+        private async static Task<T> Request<T>(HttpMethod method, T item) where T : IIdentifiable
+        {
+            // BIG CREDIT TO THE OG KC
+            using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7122/")
+            };
+
+            // NØDVENDIG, så JSON ignorer forskellen mellem f.eks. "Name" og "name" i property navne.
+            JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+            HttpRequestMessage message;
+            if (method == HttpMethod.Post || method == HttpMethod.Put)
+            {
+                message = new(method, $"api/{typeof(T).Name}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+                string json = JsonSerializer.Serialize(item);
+                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                message.Content = content;
+            }
+            else
+            {
+                message = new(method, $"api/{typeof(T).Name}/{item.Id}?apikey=4d1bb604-377f-41e0-99c7-59846080bb47");
+            }
+
+            //Hent Equipment fra API
+            using HttpResponseMessage response = await client.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<T>(jsonResponse, options)!;
+            }
+            else
+            {
+                throw new Exception("The response from api/Equipment failed to succeed");
             }
         }
 
