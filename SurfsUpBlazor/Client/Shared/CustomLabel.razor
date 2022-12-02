@@ -1,0 +1,25 @@
+﻿@using System.Linq
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
+
+@typeparam TItem
+
+<label for="@fortag" class="control-label">@label</label>
+
+@code {
+    [Parameter] public string aspfor { get; set; }
+
+    Board board = new();
+
+    private string label => GetDisplayName(aspfor);
+
+    private string fortag => aspfor;
+
+    private string GetDisplayName(string propertyname)
+    {
+        MemberInfo myprop = typeof(TItem).GetProperty(propertyname) as MemberInfo;
+        DisplayNameAttribute dd = myprop.GetCustomAttribute(typeof(DisplayNameAttribute)) as DisplayNameAttribute;
+        return dd.DisplayName ?? fortag;
+    }
+}

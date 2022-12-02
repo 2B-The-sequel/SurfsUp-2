@@ -2,7 +2,7 @@ using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using SurfsUpBlazor.Client;
+using SurfsUpBlazor.Client.StateService;
 
 namespace SurfsUpBlazor.Client
 {
@@ -19,6 +19,7 @@ namespace SurfsUpBlazor.Client
 
 			// Supply HttpClient instances that include access tokens when making requests to the server project
 			builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SurfsUpBlazor.ServerAPI"));
+			builder.Services.AddSingleton<StateContainerService>();
 
 			builder.Services.AddApiAuthorization();
 			builder.Services.AddBlazoredToast();
