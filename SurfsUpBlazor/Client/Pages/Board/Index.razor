@@ -124,7 +124,7 @@
                          
 
                         
-                                <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id" @onclick="@(()=> ModalService.Show<Delete>("Slet board?"))">Slet</a>
+                                <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id" @onclick="@(()=> ModalService.Show<DeleteModal>("Slet board?"))">Slet</a>
 
                             <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
                             <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>

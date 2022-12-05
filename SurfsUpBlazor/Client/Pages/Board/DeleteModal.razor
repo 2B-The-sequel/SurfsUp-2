@@ -5,16 +5,18 @@
 <p>Er du sikker på du vil slette dette board?</p>
 
 <button class="btn-primary" @onclick="Cancel">Anuller</button>
-<button class="btn-warning">Slet</button>
+<button class="btn-warning" @onclick="DeleteBoard">Slet</button>
 
 @code {
-    public Board board;
+    public Board board = new();
     private void Cancel()
     {
         navManager.NavigateTo("/Boards");
     }
 
-    public void DeleteBoard()
+    public async void DeleteBoard()
     {
+        await BoardRepo.DeleteToAPI(board.Id);
+        navManager.NavigateTo("/Boards");
     }
 }
