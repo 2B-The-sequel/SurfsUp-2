@@ -120,7 +120,7 @@
                         </td>
                         <td style="text-align: right">
                            
-                                <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
+                                <a asp-action="Edit" class="btn btn-outline-success" @onclick="() => Edit(item.Id)" >Ændr</a>
                          
 
                         
@@ -157,6 +157,14 @@
        .Add(nameof(DeleteModal.Id), id.ToString());
 
         ModalService.Show<DeleteModal>("Slet Board?", parameters);
+    }
+
+    public void Edit(int id)
+    {
+        ModalParameters parameters = new ModalParameters()
+        .Add(nameof(EditModal.Id), id.ToString());
+
+        ModalService.Show<EditModal>("Ændr board", parameters);
     }
 
     private bool IsAdmin() 

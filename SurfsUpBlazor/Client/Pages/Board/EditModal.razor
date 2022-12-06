@@ -1,0 +1,23 @@
+﻿<InputText Value=""></InputText>
+
+
+<button class="btn-outline-light">Anuller</button>
+<button class="btn-warning">Gem ændringer</button>
+
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        GetBoard();
+        return base.OnInitializedAsync();
+    }
+
+    [Parameter]
+    public string Id { get; set; }
+
+
+    public async void GetBoard()
+    {
+        await BoardRepo.GetFromAPI(int.Parse(Id));
+    }
+
+}
