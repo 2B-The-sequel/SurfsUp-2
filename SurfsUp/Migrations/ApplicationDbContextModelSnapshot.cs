@@ -22,21 +22,6 @@ namespace SurfsUp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BoardEquipment", b =>
-                {
-                    b.Property<int>("BoardsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BoardsId", "EquipmentId");
-
-                    b.HasIndex("EquipmentId");
-
-                    b.ToTable("BoardEquipment");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -239,117 +224,6 @@ namespace SurfsUp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SurfsUp.Models.Board", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Length")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<float>("Thickness")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<float>("Volume")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Width")
-                        .HasColumnType("real");
-
-                    b.Property<string>("applicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("applicationUserId");
-
-                    b.ToTable("Board");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Equipment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Equipment");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Rental", b =>
-                {
-                    b.Property<int>("RentalID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentalID"), 1L, 1);
-
-                    b.Property<int>("BoardId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndRental")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GuestName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartRental")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RentalID");
-
-                    b.HasIndex("BoardId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Rental");
-                });
-
-            modelBuilder.Entity("BoardEquipment", b =>
-                {
-                    b.HasOne("SurfsUp.Models.Board", null)
-                        .WithMany()
-                        .HasForeignKey("BoardsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SurfsUp.Models.Equipment", null)
-                        .WithMany()
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -399,42 +273,6 @@ namespace SurfsUp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Board", b =>
-                {
-                    b.HasOne("SurfsUp.Models.ApplicationUser", "applicationUser")
-                        .WithMany()
-                        .HasForeignKey("applicationUserId");
-
-                    b.Navigation("applicationUser");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Rental", b =>
-                {
-                    b.HasOne("SurfsUp.Models.Board", "Board")
-                        .WithMany("rentals")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SurfsUp.Models.ApplicationUser", "User")
-                        .WithMany("rentals")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Board");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("rentals");
-                });
-
-            modelBuilder.Entity("SurfsUp.Models.Board", b =>
-                {
-                    b.Navigation("rentals");
                 });
 #pragma warning restore 612, 618
         }

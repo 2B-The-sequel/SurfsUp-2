@@ -1,6 +1,7 @@
 ﻿@page "/Boards/Create"
 @inject NavigationManager NavigationManager
 @inject StateContainerService State 
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <PageTitle>Tilføj</PageTitle>
 
@@ -13,7 +14,7 @@
     <EditForm Model="board" class="col-md-4">
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Name)"></CustomLabel>
-            <InputText @bind-Value="@board.Name" @oninput="SaveBoard" class="form-control" />
+                <InputText @bind-Value="@board.Name" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Image)"></CustomLabel>
@@ -80,8 +81,14 @@ else
     {
         State.OnStateChange += StateHasChanged;
 
-        if (State.board != null)
-            board = State.board;
+        if (State.Board != null)
+            board = State.Board;
+        else
+        {
+            Board saved = await sessionStorage.GetItemAsync<Board>("board");
+            if (saved != null)
+                board = saved;
+        }
         List<Equipment> equipment = await EquipmentRepo.Retrieve();
 
         for (int i = 0; i < equipment.Count; i++) {
@@ -100,6 +107,7 @@ else
 
     private void SaveBoard() {
         State.SetBoard(board);
+        sessionStorage.SetItemAsync("board", board);
         StateHasChanged();
     }
 
