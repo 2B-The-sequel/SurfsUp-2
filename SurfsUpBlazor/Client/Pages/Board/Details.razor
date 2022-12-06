@@ -1,0 +1,70 @@
+﻿@page "/Boards/Details/{Id:int}"
+@using SurfsUpLibrary.Models
+@using SurfsUpLibrary.Models.Repositories
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+
+<h3>Detajler</h3>
+<div>
+    <label>Navn: </label>
+    <label for="Name"> @board.Name </label>
+</div>
+<div>
+    <label>Pris: </label>
+    <label for="Price"> @board.Price </label>
+</div>
+<div>
+    <label>Længde: </label>
+    <label for="Length"> @board.Length </label>
+</div>
+<div>
+    <label>Tykkelse: </label>
+    <label for="Thickness"> @board.Thickness </label>
+</div>
+<div>
+    <label>Lyd?: </label>
+    <label for="Volume"> @board.Volume </label>
+</div>
+<div>
+    <label>Bredte: </label>
+    <label for="Width"> @board.Width </label>
+</div>
+<div>
+    <label>Type: </label>
+    <label for="Type"> @board.Type </label>
+</div>
+<div>
+
+    <label>Kort: </label>
+    <iframe width="600" height="450" style="border:0" loading="lazy" allowfullscreen
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAGSBimUkEm4bwOgG0AqWz45gc4-ftBw-E&zoom=17&
+                center=55.597587,10.385401"></iframe>
+    
+</div>
+<div>
+    <a href="/Boards" style="margin-top:10px"> Tilbage</a>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    Board board;
+
+    int zoom = 3;  //mangler q, aka mangler nok et sted den kan finde og ikke selve lat og lon
+    string latitude = "55.59761231594652";
+    string longitude = "10.38620529762533";
+
+    protected override async Task OnInitializedAsync()
+    {
+        board = await BoardRepo.GetFromAPI(Id);
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initialize", null);
+        }
+    }
+}

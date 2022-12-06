@@ -126,7 +126,7 @@
                                 <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
 
                             }
-                            <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
+                            <a href="Boards/Details/@item.Id" class="btn btn-outline-primary">Detaljer</a>
                             <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
                         </td>
                     </tr>
