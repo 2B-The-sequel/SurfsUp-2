@@ -4,13 +4,13 @@ namespace SurfsUpBlazor.Client.StateService
 {
     public class StateContainerService
     {
-        public Board board { get; set; }
+        public Board Board { get; set; }
 
         public event Action OnStateChange;
 
-        public void SetBoard(Board board)
+        public void SetBoard(Board Board)
         {
-            this.board = board;
+            this.Board = Board;
             NotifyStateChanged();
         }
 
