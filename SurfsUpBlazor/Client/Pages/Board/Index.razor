@@ -124,7 +124,7 @@
                          
 
                         
-                                <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id" @onclick="@(()=> ModalService.Show<DeleteModal>("Slet board?"))">Slet</a>
+                                <button class="btn btn-outline-danger" @onclick="() => Delete(item.Id)">Slet</button>
 
                             <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
                             <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
@@ -149,6 +149,14 @@
     protected override async Task OnInitializedAsync()
     {
         boards = await BoardRepo.GetAllFromAPI();
+    }
+
+    public void Delete(int id)
+    {
+        ModalParameters parameters = new ModalParameters()
+       .Add(nameof(DeleteModal.Id), id.ToString());
+
+        ModalService.Show<DeleteModal>("Slet Board?", parameters);
     }
 
     private bool IsAdmin() 

@@ -8,7 +8,10 @@
 <button class="btn-warning" @onclick="DeleteBoard">Slet</button>
 
 @code {
-    public Board board = new();
+
+    [Parameter]
+    public string Id { get; set; }
+
     private void Cancel()
     {
         navManager.NavigateTo("/Boards");
@@ -16,7 +19,7 @@
 
     public async void DeleteBoard()
     {
-        await BoardRepo.DeleteToAPI(board.Id);
+        await BoardRepo.DeleteToAPI(int.Parse(Id));
         navManager.NavigateTo("/Boards");
     }
 }
