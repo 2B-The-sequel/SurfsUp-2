@@ -1,0 +1,101 @@
+﻿@page "/"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@inherits WeatherCastBase 
+@using System.Text.Json
+@using System.Net.Http.Json
+@using System.Text.Json.Serialization
+@using System.Linq;
+
+<PageTitle>Vejrudsigt</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<h2>Vejret i: @forecast.city.name</h2>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+<EditForm Model="WCB" OnValidSubmit="HandleSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+    <div>
+        <label for="Start Date">Start Dato:</label>
+        <InputDate id="StartDate" @bind-Value="WCB.StartDate">  </InputDate>
+    </div>
+    <div>
+        <label for="End Date">Slut Dato:</label>
+        <InputDate id="EndDate" @bind-Value="WCB.EndDate">  </InputDate>
+    </div>
+    <div>
+        <button style="margin-top:10px;" type="submit" class="btn btn-primary">Ok</button>
+    </div>
+</EditForm>
+@if (displayValidationErrorMessages)
+{
+    <div class="col-md-4" style="margin-top:10px">
+        <label>Validation Messages: </label>
+        <ValidationSummary />
+    </div>
+}
+
+@if (forecast == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Clouds</th>
+                <th>Temp. (C)</th>
+                <th>Temp. min</th>
+                <th>Temp. max</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecast.list)
+            {
+                @if (forecast.dt_txt.Contains("12:00:00"))
+                  {
+                    <tr>
+                        <td>@forecast.dt_txt</td>
+                         <td>@forecast.clouds.all</td>
+                         <td>@forecast.main.temp</td>
+                         <td>@forecast.main.temp_min</td>
+                         <td>@forecast.main.temp_max</td>
+                     </tr>
+                  }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public WeatherCastBase WCB = new WeatherCastBase();
+    public Root forecast;
+    bool displayValidationErrorMessages = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecast = await Http.GetFromJsonAsync<Root>("https://api.openweathermap.org/data/2.5/forecast?lat=55.3959&lon=10.3883&appid=dbcfe554dc301fab3d16fb5279cddf95");
+    }
+
+    public async Task HandleSubmit()
+    {
+        try
+        {
+            
+        }
+        catch (Exception)
+        {
+            NavManager.NavigateTo("/NotFound");
+        }
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        displayValidationErrorMessages = true;
+    }
+
+
+}

@@ -7,6 +7,8 @@
 
 <h1>Hello, world!</h1>
 
+<WeatherCast WeatherDate="weatherDate"></WeatherCast>
+
 <button class="btn btn-info" @onclick="@(() => toastService.ShowInfo("Info Message"))"> Info Toast</button>
 <button class="btn btn-success" @onclick="@(() => toastService.ShowSuccess("Successs Message"))"> Success Toast</button>
 <button class="btn btn-warning" @onclick="@(() => toastService.ShowWarning("Warning Message"))"> Info Toast</button>
@@ -47,6 +49,8 @@ else
 }
 
 @code {
+    WeatherDate weatherDate;
+
     [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
 
     private System.Security.Claims.ClaimsPrincipal user;
@@ -55,5 +59,6 @@ else
     {
         var authState = await AuthTask;
         this.user = authState.User;
+        weatherDate = new();
     }
 }
