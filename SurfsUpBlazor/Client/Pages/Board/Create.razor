@@ -14,15 +14,15 @@
     <EditForm Model="board" class="col-md-4">
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Name)"></CustomLabel>
-                <InputText @bind-Value="@board.Name" @oninput="SaveBoard" class="form-control" />
+            <InputText @bind-Value="@board.Name" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Image)"></CustomLabel>
-                <InputText @bind-Value="@board.Image" @oninput="SaveBoard" class="form-control" />
+            <InputText @bind-Value="@board.Image" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Length)"></CustomLabel>
-                <InputNumber @bind-Value="@board.Length" @oninput="SaveBoard" class="form-control" />
+            <InputNumber @bind-Value="@board.Length" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Width)"></CustomLabel>
@@ -38,15 +38,15 @@
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Price)"></CustomLabel>
-                <InputNumber @bind-Value="@board.Price" @oninput="SaveBoard" class="form-control" />
+            <InputNumber @bind-Value="@board.Price" @oninput="SaveBoard" class="form-control" />
         </div>
         <div class="form-group">
             <CustomLabel TItem="Board" aspfor="@nameof(board.Type)"></CustomLabel>
-                <InputSelect @bind-Value="@board.Type" @oninput="SaveBoard" class="form-control">
-                @foreach (var type in Enum.GetValues(typeof(BoardType)))
-                {
-                    <option value="@type">@type</option>
-                }
+            <InputSelect @bind-Value="@board.Type" @oninput="SaveBoard" class="form-control">
+            @foreach (var type in Enum.GetValues(typeof(BoardType)))
+            {
+                <option value="@type">@type</option>
+            }
             </InputSelect>
         </div><br />
         <div class="form-group">

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using SurfsUpBlazor.Server.Hubs;
 using SurfsUpBlazor.Server.Data;
 using SurfsUpBlazor.Server.Models;
 
@@ -27,6 +28,9 @@ namespace SurfsUpBlazor
 
 			builder.Services.AddControllersWithViews();
 			builder.Services.AddRazorPages();
+
+			builder.Services.AddServerSideBlazor();
+			builder.Services.AddSignalR();
 
 			var app = builder.Build();
 
@@ -59,7 +63,10 @@ namespace SurfsUpBlazor
 			app.MapControllers();
 			app.MapFallbackToFile("index.html");
 
-			app.Run();
+            app.MapBlazorHub();
+            app.MapHub<ChatHub>("/chathub");
+
+            app.Run();
 		}
 	}
 }

@@ -27,8 +27,9 @@ namespace SurfsUpBlazor.Client
 			builder.Services.AddApiAuthorization();
 			builder.Services.AddBlazoredToast();
           
+            WebAssemblyHost app = builder.Build();
 
-            await builder.Build().RunAsync();
+            await app.RunAsync();
 		}
 	}
 }
