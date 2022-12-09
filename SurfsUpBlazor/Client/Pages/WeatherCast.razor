@@ -1,5 +1,4 @@
-﻿@page "/"
-@inject HttpClient Http
+﻿@inject HttpClient Http
 @inject NavigationManager NavManager
 @inherits WeatherCastBase 
 @using System.Text.Json
@@ -10,19 +9,20 @@
 <PageTitle>Vejrudsigt</PageTitle>
 
 <h1>Weather forecast</h1>
+@if (forecast != null)
+{
+    <h2>Vejret i: @forecast.city.name</h2>
+}
 
-<h2>Vejret i: @forecast.city.name</h2>
 
-<p>This component demonstrates fetching data from the server.</p>
-
-<EditForm Model="WCB" OnValidSubmit="HandleSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+<EditForm Model="WeatherDate" OnValidSubmit="HandleSubmit" OnInvalidSubmit="HandleInvalidSubmit">
     <div>
         <label for="Start Date">Start Dato:</label>
-        <InputDate id="StartDate" @bind-Value="WCB.StartDate">  </InputDate>
+        <InputDate id="StartDate" @bind-Value="WeatherDate.StartDate">  </InputDate>
     </div>
     <div>
         <label for="End Date">Slut Dato:</label>
-        <InputDate id="EndDate" @bind-Value="WCB.EndDate">  </InputDate>
+        <InputDate id="EndDate" @bind-Value="WeatherDate.EndDate">  </InputDate>
     </div>
     <div>
         <button style="margin-top:10px;" type="submit" class="btn btn-primary">Ok</button>

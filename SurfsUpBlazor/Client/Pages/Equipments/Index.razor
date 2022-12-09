@@ -39,17 +39,17 @@
                 </td>
                 <td style="text-align: right">
                   
-                        @*@if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
-                        {*@
+                        @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                        {
                             <a href="/Equipment/Edit/@item.Id" class="btn btn-outline-success">Ændr </a>
-                        @*}*@
+                        }
 
-                       @* @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
-                        {*@
+                        @if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
+                        {
                             <a href="/Equipment/Delete/@item.Id" class="btn btn-outline-danger">Slet </a>
 
                     <a href="/Equipment/Details/@item.Id" class="btn btn-outline-primary">Detaljer</a>
-                    
+                        }
                 </td>
             </tr>
         }
