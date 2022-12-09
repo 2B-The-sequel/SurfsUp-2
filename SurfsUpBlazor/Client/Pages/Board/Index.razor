@@ -162,7 +162,7 @@
     public void Edit(int id)
     {
         ModalParameters parameters = new ModalParameters()
-        .Add(nameof(EditModal.Id), id.ToString());
+        .Add(nameof(EditModal.id), id.ToString());
 
         ModalService.Show<EditModal>("Ændr board", parameters);
     }

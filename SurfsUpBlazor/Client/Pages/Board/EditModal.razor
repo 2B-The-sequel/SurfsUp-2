@@ -1,23 +1,47 @@
-﻿<InputText Value=""></InputText>
+﻿@using SurfsUpLibrary.Models.Repositories
+@inject NavigationManager NavManager
+@inject IToastService ToastService
 
+<EditForm Model="board" class="col-md-4">
+    <CustomLabel TItem="Board" aspfor="@nameof(board.Name)"></CustomLabel>
+    <InputText @bind-Value="@board.Name"class="form-control" />
+    <CustomLabel TItem="Board" aspfor="@nameof(board.Length)"></CustomLabel>
+    <InputNumber @bind-Value="@board.Length" class="form-control" />
+    <CustomLabel TItem="Board" aspfor="@nameof(board.Width)"></CustomLabel>
+    <InputNumber @bind-Value="@board.Width" class="form-control" />
+    <CustomLabel TItem="Board" aspfor="@nameof(board.Thickness)"></CustomLabel>
+    <InputNumber @bind-Value="@board.Thickness" class="form-control" />
+    <CustomLabel TItem="Board" aspfor="@nameof(board.Volume)"></CustomLabel>
+    <InputNumber @bind-Value="@board.Volume" class="form-control" />
+    <CustomLabel TItem="Board" aspfor="@nameof(board.Price)"></CustomLabel>
+    <InputNumber @bind-Value="@board.Price" class="form-control" />
+</EditForm>
 
-<button class="btn-outline-light">Anuller</button>
-<button class="btn-warning">Gem ændringer</button>
+<button class="btn-outline-light" @onclick="Cancel">Anuller</button>
+<button class="btn-warning" @onclick="SaveChangedBoard">Gem ændringer</button>
 
 @code {
-    protected override Task OnInitializedAsync()
+    Board board = new();
+
+    protected async override Task OnInitializedAsync()
     {
-        GetBoard();
-        return base.OnInitializedAsync();
+        board = await SurfsUpLibrary.Models.Repositories.BoardRepo.GetFromAPI(int.Parse(id));
     }
 
     [Parameter]
-    public string Id { get; set; }
+    public string id { get; set; }
 
 
-    public async void GetBoard()
+    private void Cancel()
     {
-        await BoardRepo.GetFromAPI(int.Parse(Id));
+        NavManager.NavigateTo("/Boards");
+    }
+
+    private async void SaveChangedBoard()
+    {
+       await BoardRepo.PutToAPI(board);
+       NavManager.NavigateTo("/Boards", true);
+       ToastService.ShowSuccess($"Board opdateret");
     }
 
 }
