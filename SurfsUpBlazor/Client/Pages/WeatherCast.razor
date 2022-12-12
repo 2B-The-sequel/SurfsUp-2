@@ -80,11 +80,13 @@ else
         forecast = await Http.GetFromJsonAsync<Root>("https://api.openweathermap.org/data/2.5/forecast?lat=55.3959&lon=10.3883&appid=dbcfe554dc301fab3d16fb5279cddf95");
     }
 
-    public async Task HandleSubmit()
+    public void HandleSubmit()
     {
         try
         {
-            
+            displayValidationErrorMessages = false;
+            WCB.WeatherDate.UpdateStartDate(WCB.WeatherDate);
+            WCB.WeatherDate.UpdateEndDate(WCB.WeatherDate);
         }
         catch (Exception)
         {

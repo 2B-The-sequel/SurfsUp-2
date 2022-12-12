@@ -18,5 +18,12 @@ namespace SurfsUpBlazor.Client.Pages
         [DataType(DataType.Date)]
         [DisplayName("Slutdato")]
         public DateTime EndDate { get; set; } = DateTime.Now.AddDays(5);
+
+        public void UpdateStartDate(WeatherDate date)
+        { StartDate = date.StartDate; }
+
+        public void UpdateEndDate(WeatherDate date)
+        { EndDate = date.EndDate; }
+
     }
 }

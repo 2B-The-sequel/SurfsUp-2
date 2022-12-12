@@ -13,7 +13,7 @@
 <h1>Udstyr</h1>
 
 <p>
-    @*if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))*@
+    if (AutenticationStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("Adminstrators"))
     
         <a href="/Equipment/Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
     
