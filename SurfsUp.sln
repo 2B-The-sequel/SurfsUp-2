@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfsUpBlazor.Server", "Sur
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfsUpBlazor.Client", "SurfsUpBlazor\Client\SurfsUpBlazor.Client.csproj", "{60524C1B-0BCB-4AC8-8311-96A55973AC2B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfsUpUnitTest", "SurfsUpUnitTest\SurfsUpUnitTest.csproj", "{720AEEF6-C26C-4B0E-AA10-7D2EBF200FEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{60524C1B-0BCB-4AC8-8311-96A55973AC2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60524C1B-0BCB-4AC8-8311-96A55973AC2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60524C1B-0BCB-4AC8-8311-96A55973AC2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720AEEF6-C26C-4B0E-AA10-7D2EBF200FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720AEEF6-C26C-4B0E-AA10-7D2EBF200FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720AEEF6-C26C-4B0E-AA10-7D2EBF200FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720AEEF6-C26C-4B0E-AA10-7D2EBF200FEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
