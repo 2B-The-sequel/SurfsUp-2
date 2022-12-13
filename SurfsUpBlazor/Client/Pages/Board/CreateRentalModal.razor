@@ -7,14 +7,21 @@
     <div>
         <CustomLabel TItem="Rental" aspfor="@nameof(rental.StartRental)"></CustomLabel>
         <InputDate  @bind-Value="@rental.StartRental"></InputDate>
-
     </div>
      <div>
         <CustomLabel TItem="Rental" aspfor="@nameof(rental.EndRental)"></CustomLabel>
         <InputDate  @bind-Value="@rental.EndRental"></InputDate>
     </div>
+    @if(user is null)
+    {
+    <div>
+        <CustomLabel TItem="Rental" aspfor="@nameof(rental.GuestName)"></CustomLabel>
+        <InputText @bind-Value="rental.GuestName"></InputText>
+    </div>
+    }
     <div>
         <button class="btn btn-primary" type="submit">Lej</button>
+        <button class="btn btn-primary" @onclick="Cancel">Anuller</button>
     </div>
 </EditForm>
 @if (displayValidationErrorMessages)
@@ -33,14 +40,19 @@
 
     public Board board { get; set; }
 
+    private System.Security.Claims.ClaimsPrincipal user;
+
     bool displayValidationErrorMessages = false;
 
     public async Task MakeRental()
     {
+        rental.BoardId = int.Parse(Id);
+        rental.UsersId = user.Identity.ToString();
         try
         {
             Rental re = await RentalRepo.PostToAPI(rental);
             toastService.ShowSuccess($"Leje oprettet");
+            NavManager.NavigateTo("/Boards");
         }
         catch (Exception)
         {
@@ -56,7 +68,14 @@
 
     protected async override Task OnInitializedAsync()
     {
-       board = await SurfsUpLibrary.Models.Repositories.BoardRepo.GetFromAPI(int.Parse(Id));
+        board = await SurfsUpLibrary.Models.Repositories.BoardRepo.GetFromAPI(int.Parse(Id));
+        rental.StartRental = DateTime.Now;
+        rental.EndRental = rental.StartRental.AddDays(1);
+    }
+
+    public void Cancel()
+    {
+        NavManager.NavigateTo("/Boards");
     }
 
     
