@@ -40,14 +40,13 @@
 
     public Board board { get; set; }
 
-    private System.Security.Claims.ClaimsPrincipal user;
+    private System.Security.Claims.ClaimsPrincipal user = new();
 
     bool displayValidationErrorMessages = false;
 
     public async Task MakeRental()
     {
         rental.BoardId = int.Parse(Id);
-        rental.UsersId = user.Identity.ToString();
         try
         {
             Rental re = await RentalRepo.PostToAPI(rental);
