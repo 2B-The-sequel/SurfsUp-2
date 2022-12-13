@@ -1,0 +1,63 @@
+﻿@using SurfsUpLibrary.Models
+@inject IToastService toastService
+@inject NavigationManager NavManager
+
+
+<EditForm Model="rental" class="col-md-4" OnValidSubmit="MakeRental" OnInvalidSubmit="HandleInvalidSubmit">
+    <div>
+        <CustomLabel TItem="Rental" aspfor="@nameof(rental.StartRental)"></CustomLabel>
+        <InputDate  @bind-Value="@rental.StartRental"></InputDate>
+
+    </div>
+     <div>
+        <CustomLabel TItem="Rental" aspfor="@nameof(rental.EndRental)"></CustomLabel>
+        <InputDate  @bind-Value="@rental.EndRental"></InputDate>
+    </div>
+    <div>
+        <button class="btn btn-primary" type="submit">Lej</button>
+    </div>
+</EditForm>
+@if (displayValidationErrorMessages)
+{
+    <div class="col-md-4" style="margin-top:10px">
+        <label>Validation Messages: </label>
+        <ValidationSummary />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    public Rental rental = new Rental();
+
+    public Board board { get; set; }
+
+    bool displayValidationErrorMessages = false;
+
+    public async Task MakeRental()
+    {
+        try
+        {
+            Rental re = await RentalRepo.PostToAPI(rental);
+            toastService.ShowSuccess($"Leje oprettet");
+        }
+        catch (Exception)
+        {
+            NavManager.NavigateTo("/NotFound");
+        }
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        displayValidationErrorMessages = true;
+    }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+       board = await SurfsUpLibrary.Models.Repositories.BoardRepo.GetFromAPI(int.Parse(Id));
+    }
+
+    
+}

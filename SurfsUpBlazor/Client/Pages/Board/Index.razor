@@ -124,7 +124,7 @@
                                 <button class="btn btn-outline-danger" @onclick="() => Delete(item.Id)">Slet</button>
                             }
                             <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
-                            <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
+                            <a asp-action="CreateRental" class="btn btn-outline-primary" @onclick="() => CreateRental(item.Id)">Lej</a>
                         </td>
                     </tr>
                 }
@@ -161,7 +161,15 @@
         ModalParameters parameters = new ModalParameters()
         .Add(nameof(EditModal.id), id.ToString());
 
-        ModalService.Show<EditModal>("Ændr board", parameters);
+        ModalService.Show<EditModal>("Ændr Board", parameters);
+    }
+
+    public void CreateRental(int id)
+    {
+        ModalParameters parameters = new ModalParameters()
+        .Add(nameof(CreateRentalModal.Id), id.ToString());
+
+        ModalService.Show<CreateRentalModal>("Lej Board", parameters);
     }
 
     private bool IsAdmin() 
