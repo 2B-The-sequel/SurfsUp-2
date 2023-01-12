@@ -11,7 +11,7 @@
     <div class="form-actions no-color">
         Find ved navn & type  <input type="text" style="margin-left: 10px; display: inline-block; width: 200px; vertical-align: middle" class="form-control" name="SearchString" value="@ViewData["CurrentFilter"]" />
         <input type="submit" value="Søg" style="vertical-align: middle" class="btn btn-outline-primary" />
-        @if (User.IsInRole("Adminstrators"))
+        @if (IsAdmin())
         {
             <a asp-action="Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
         }
@@ -59,7 +59,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-    @if (User.IsInRole("Adminstrators") || !item.IsRented())
+    @if (IsAdmin() || !item.IsRented())
     {
         @if (User.Identity.IsAuthenticated)
         {
@@ -104,12 +104,12 @@
                 }
                 </td>
                 <td style="text-align: right">
-                    @if (User.IsInRole("Adminstrators"))
+                    @if (IsAdmin())
                     {
                         <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
                     }
 
-                    @if (User.IsInRole("Adminstrators"))
+                    @if (IsAdmin())
                     {
                         <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
 
@@ -164,12 +164,12 @@
                     }
                     </td>
                     <td style="text-align: right">
-                        @if (User.IsInRole("Adminstrators"))
+                                @if (IsAdmin())
                         {
                             <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
                         }
 
-                        @if (User.IsInRole("Adminstrators"))
+                        @if (IsAdmin())
                         {
                             <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
 
@@ -188,6 +188,11 @@
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+
+    bool IsAdmin() {
+        //return User.IsInRole("Adminstrators");
+        return User.Identity.Name == "Admin";
+    }
 }
 
 <a asp-action="Index"
