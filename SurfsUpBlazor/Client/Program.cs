@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Blazored.SessionStorage;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Web;
@@ -26,6 +27,7 @@ namespace SurfsUpBlazor.Client
 
 			builder.Services.AddApiAuthorization();
 			builder.Services.AddBlazoredToast();
+			builder.Services.AddBlazoredModal();
           
 
             await builder.Build().RunAsync();
