@@ -6,9 +6,12 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Reflection
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService ModalService
 @page "/Boards"
 
 <h1>Boards</h1>
+
+
 
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
@@ -75,7 +78,7 @@
         {
             @if (IsAdmin() || !item.IsRented())
             {
-                @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity.IsAuthenticated || item.Id % 2 == 0) //item.Id%2==0 betyder Non-Premium boards
+               @if (AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity.IsAuthenticated || item.Id % 2 == 0) //item.Id%2==0 betyder Non-Premium boards
                 {
                     <tr>
                         <td>
@@ -116,18 +119,12 @@
                             }
                         </td>
                         <td style="text-align: right">
-                            @if (IsAdmin())
-                            {
-                                <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr</a>
-                            }
-
-                            @if (IsAdmin())
-                            {
-                                <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet</a>
-
+                           @if (IsAdmin()){
+                                <a asp-action="Edit" class="btn btn-outline-success" @onclick="() => Edit(item.Id)" >Ændr</a>
+                                <button class="btn btn-outline-danger" @onclick="() => Delete(item.Id)">Slet</button>
                             }
                             <a asp-action="Details" class="btn btn-outline-primary" asp-route-id="@item.Id">Detaljer</a>
-                            <a asp-action="CreateRental" class="btn btn-outline-primary" asp-route-id="@item.Id">Lej</a>
+                            <a asp-action="CreateRental" class="btn btn-outline-primary" @onclick="() => CreateRental(item.Id)">Lej</a>
                         </td>
                     </tr>
                 }
@@ -153,6 +150,30 @@
 
     private bool IsLoggedIn() {
         return AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity.IsAuthenticated;
+    }
+
+    public void Delete(int id)
+    {
+        ModalParameters parameters = new ModalParameters()
+       .Add(nameof(DeleteModal.Id), id.ToString());
+
+        ModalService.Show<DeleteModal>("Slet Board?", parameters);
+    }
+
+    public void Edit(int id)
+    {
+        ModalParameters parameters = new ModalParameters()
+        .Add(nameof(EditModal.id), id.ToString());
+
+        ModalService.Show<EditModal>("Ændr Board", parameters);
+    }
+
+    public void CreateRental(int id)
+    {
+        ModalParameters parameters = new ModalParameters()
+        .Add(nameof(CreateRentalModal.Id), id.ToString());
+
+        ModalService.Show<CreateRentalModal>("Lej Board", parameters);
     }
 
     private bool IsAdmin() 

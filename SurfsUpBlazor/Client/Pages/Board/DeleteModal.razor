@@ -1,0 +1,27 @@
+﻿@inject NavigationManager navManager
+@using SurfsUpLibrary
+@using SurfsUpLibrary.Models.Repositories
+
+<p>Er du sikker på du vil slette dette board?</p>
+
+<button class="btn-primary" @onclick="Cancel">Anuller</button>
+<button class="btn-warning" @onclick="DeleteBoard">Slet</button>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private void Cancel()
+    {
+        navManager.NavigateTo("/Boards");
+    }
+
+    public async void DeleteBoard()
+    {
+        await BoardRepo.DeleteToAPI(int.Parse(Id));
+        navManager.NavigateTo("/Boards", true);
+        
+
+    }
+}
