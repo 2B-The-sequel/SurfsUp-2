@@ -1,4 +1,5 @@
 using Blazored.Modal;
+using Blazored.SessionStorage;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -18,8 +19,10 @@ namespace SurfsUpBlazor.Client
 			builder.Services.AddHttpClient("SurfsUpBlazor.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
 				.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-			// Supply HttpClient instances that include access tokens when making requests to the server project
-			builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SurfsUpBlazor.ServerAPI"));
+            builder.Services.AddBlazoredSessionStorage();
+
+            // Supply HttpClient instances that include access tokens when making requests to the server project
+            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SurfsUpBlazor.ServerAPI"));
 			builder.Services.AddSingleton<StateContainerService>();
 
 			builder.Services.AddApiAuthorization();
