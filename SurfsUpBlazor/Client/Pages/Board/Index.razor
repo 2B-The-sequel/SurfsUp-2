@@ -17,7 +17,7 @@
     <div class="form-actions no-color">
         Find ved navn & type  <input type="text" style="margin-left: 10px; display: inline-block; width: 200px; vertical-align: middle" class="form-control" name="SearchString" @*value="@ViewData[" CurrentFilter"]"*@ />
         <input type="submit" value="Søg" style="vertical-align: middle" class="btn btn-outline-primary" />
-        @if (IsAdmin())
+        @if (IsLoggedIn())
         {
             <a href="/Boards/Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
         }
@@ -146,6 +146,10 @@
     protected override async Task OnInitializedAsync()
     {
         boards = await BoardRepo.GetAllFromAPI();
+    }
+
+    private bool IsLoggedIn() {
+        return AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity.IsAuthenticated;
     }
 
     public void Delete(int id)

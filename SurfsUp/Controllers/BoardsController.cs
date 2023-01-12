@@ -106,7 +106,7 @@ namespace SurfsUp.Controllers
             // Hent specifik board fra API
             Board board = await BoardRepo.GetFromAPI(id);
            
-            if (id == null || board == null)
+            if (board == null)
             {
                 return NotFound();
             }
