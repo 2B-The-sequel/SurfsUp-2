@@ -318,7 +318,7 @@ namespace SurfsUpLibrary.Models.Repositories
 
         public async static Task<Board> DeleteToAPI(int id)
         {
-            Board boardToCheck = new Board();
+            Board boardToCheck = new();
             // BIG CREDIT TO THE OG Pete the Speed
             using HttpClient client = new()
             {
@@ -333,14 +333,24 @@ namespace SurfsUpLibrary.Models.Repositories
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 boardToCheck = JsonSerializer.Deserialize<Board>(jsonResponse, options)!;
-
-                if(response.StatusCode == System.Net.HttpStatusCode.OK)
-                { return boardToCheck; }
-                else
-                { throw new Exception($"{response.StatusCode}"); }
-
             }
 
+            List<BoardEquipment> boardEquipment;
+            using (HttpResponseMessage response = await client.GetAsync("api/BoardEquipment?apikey=4d1bb604-377f-41e0-99c7-59846080bb47"))
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                boardEquipment = JsonSerializer.Deserialize<List<BoardEquipment>>(jsonResponse, options)!;
+            }
+
+            foreach (BoardEquipment be in boardEquipment)
+            {
+                if (be.BoardId == boardToCheck.Id)
+                {
+                    await Request(HttpMethod.Delete, be);
+                }
+            }
+
+            return boardToCheck;
         }
     }
 }

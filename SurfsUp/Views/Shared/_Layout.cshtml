@@ -27,7 +27,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Boards" asp-action="Index">Boards</a>
                         </li>
-                        @if (User.IsInRole("Adminstrators"))
+                        @if (IsAdmin())
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Equipments" asp-action="Index">Udstyr</a>
@@ -59,3 +59,10 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+@{
+    bool IsAdmin() {
+        //return User.IsInRole("Adminstrators");
+        return User.Identity.Name == "Admin";
+    }
+}

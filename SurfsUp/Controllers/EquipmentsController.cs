@@ -52,7 +52,6 @@ namespace SurfsUp.Controllers
         // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(Equipment equipment)
         {
             if (ModelState.IsValid)
@@ -66,7 +65,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Equipments/Edit/5
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id)
         {
             if (Lock(id))
@@ -88,7 +86,6 @@ namespace SurfsUp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, Equipment equipment)
         {
             if (id != equipment.Id)
@@ -116,7 +113,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Equipments/Delete/5
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int id)
         {
             if (Lock(id))
@@ -136,7 +132,6 @@ namespace SurfsUp.Controllers
         // POST: Equipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Equipment equipment = await EquipmentRepo.Retrieve(id);

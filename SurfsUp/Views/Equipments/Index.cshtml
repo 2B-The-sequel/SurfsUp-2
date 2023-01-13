@@ -7,7 +7,7 @@
 <h1>Udstyr</h1>
 
 <p>
-    @if (User.IsInRole("Adminstrators"))
+    @if (IsAdmin())
     {
         <a asp-action="Create" style="float: right; margin-right: 10px" class="btn btn-success">Tilføj ny</a>
     }
@@ -29,12 +29,12 @@
             </td>
             <td style="text-align: right">
                 <p>
-                @if (User.IsInRole("Adminstrators"))
+                        @if (IsAdmin())
                 {
                     <a asp-action="Edit" class="btn btn-outline-success" asp-route-id="@item.Id">Ændr </a>
                 }
                 
-                @if (User.IsInRole("Adminstrators"))
+                @if (IsAdmin())
                 { 
                     <a asp-action="Delete" class="btn btn-outline-danger" asp-route-id="@item.Id">Slet </a>
                     
@@ -56,3 +56,11 @@
             window.alert(message);
     }
 </script>
+
+@{
+    bool IsAdmin()
+    {
+        //return User.IsInRole("Adminstrators");
+        return User.Identity.Name == "Admin";
+    }
+}

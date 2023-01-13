@@ -63,7 +63,7 @@
                 }
             </div><br />
             <div class="form-group">
-                @if (User.IsInRole("Adminstrators"))
+                @if (IsAdmin())
                 {
                     <input type="submit" value="Tilføj" class="btn btn-success" />
                 }
@@ -72,6 +72,13 @@
         </form>
     </div>
 </div>
+
+@{
+    bool IsAdmin() {
+        //return User.IsInRole("Adminstrators");
+        return User.Identity.Name == "Admin";
+    }
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

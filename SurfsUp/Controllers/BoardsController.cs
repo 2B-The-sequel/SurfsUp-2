@@ -116,7 +116,6 @@ namespace SurfsUp.Controllers
 
         // GET: Boards/Create
         // Husk og ændre ting i databasen så rollen er Admin
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create()
         {
             //Hent alle Equipment til checkboxes
@@ -147,7 +146,6 @@ namespace SurfsUp.Controllers
         // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Create(BoardViewModel bvm)
         {
             Board board = new()
@@ -183,7 +181,6 @@ namespace SurfsUp.Controllers
 
         // GET: Boards/Edit/5
         // Husk og ændre ting i databasen så rollen er Admin
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id)
         {
             if (Lock(id))
@@ -249,7 +246,6 @@ namespace SurfsUp.Controllers
         // Husk og ændre ting i databasen så rollen er Admin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Edit(int id, BoardViewModel bvm)
         {
             if (id != bvm.Id)
@@ -307,7 +303,6 @@ namespace SurfsUp.Controllers
         }
 
         // GET: Boards/Delete/5
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> Delete(int id)
         {
             if (Lock(id))
@@ -332,7 +327,6 @@ namespace SurfsUp.Controllers
         // POST: Boards/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Adminstrators")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try

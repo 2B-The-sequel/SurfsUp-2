@@ -62,6 +62,14 @@
     </form>
 </div>
 
+@{
+    bool IsAdmin()
+    {
+        //return User.IsInRole("Adminstrators");
+        return User.Identity.Name == "Admin";
+    }
+}
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("~/Views/Shared/_Timeout.cshtml");
